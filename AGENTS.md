@@ -44,7 +44,7 @@ The spec is the contract. The origin doc is the explanation. They must not drift
 
 ## Cross-host parity
 
-The scaffold ships canonical agent specs in `.claude/agents/` plus thin Codex wrappers in `.codex/agents/` as a worked example. Adopting projects often add Gemini (`.gemini/agents/*.md`) and OpenCode (`.opencode/agents/*.md`) wrappers around the same canonical Claude specs.
+The scaffold ships canonical agent specs in `.claude/agents/` plus thin wrappers in `.codex/agents/`, `.gemini/agents/`, and `.opencode/agents/` as worked examples for each supported host. Skills mirror in full to `.codex/skills/` and `.gemini/skills/`; OpenCode is wrapper-only by convention (no `skills/` folder).
 
 The convention is **thin wrappers for agents** (each non-Claude wrapper points at `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) for the agent-wrapper pattern and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md) for skill mirroring.
 

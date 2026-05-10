@@ -100,11 +100,13 @@ Read `agent-workshop/docs/conventions/` and choose:
 
 Write equivalents in your project's `docs/conventions/` rather than copying verbatim — the conventions reference your specific paths.
 
-### 6. Add cross-host wrappers if you target multiple hosts
+### 6. Cross-host wrappers (already shipped — copy what you need)
 
-If your project will be used with Codex, Gemini, or OpenCode in addition to Claude Code, the scaffold's `.codex/agents/*.toml` files are worked examples of the **thin-wrapper** pattern — each points at `.claude/agents/<name>.md` as canonical with a brief scope summary and host-specific notes. Add Gemini and OpenCode wrappers using the same shape.
+The scaffold ships agent wrappers for Codex (`.codex/agents/*.toml`), Gemini (`.gemini/agents/*.md`), and OpenCode (`.opencode/agents/*.md`) as worked examples of the **thin-wrapper** pattern. Each wrapper points at `.claude/agents/<name>.md` as canonical with a brief scope summary and host-specific notes.
 
-For skills, the convention is different: skills mirror in full across hosts (`.codex/skills/`, `.gemini/skills/`) because each host loads SKILL.md content directly.
+If your project supports a host the scaffold ships wrappers for, copy that host's wrappers along with `.claude/agents/`. If your project doesn't support a host, drop that host's wrapper folder.
+
+For skills, the convention is different: skills mirror in full across hosts (`.codex/skills/`, `.gemini/skills/`) because each host loads SKILL.md content directly. OpenCode is wrapper-only by convention (no `skills/` folder).
 
 The pattern is documented in [`docs/conventions/cross-host-wrappers.md`](conventions/cross-host-wrappers.md) for agent wrappers and [`docs/conventions/skill-parity.md`](conventions/skill-parity.md) for skill mirroring.
 
