@@ -114,7 +114,7 @@ The skill assembles a brief and dispatches the `research` agent. Brief fields:
 - `output_filename` — `docs/research/YYYY-MM-DD-<category>[-<short-topic>].md`
 - `schema` — required schema sections, scoring axes, Horizon flag values, validation rules
 
-The `research` agent reads its full spec at `.Codex/agents/research.md` for canonical behavior.
+The `research` agent reads its full spec at `.claude/agents/research.md` for canonical behavior.
 
 ## Output validation
 

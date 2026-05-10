@@ -49,7 +49,7 @@ Example invocation:
 
 Or, for a custom one-off run:
 
-> /research other "How should we evolve the playtest harness's metric coverage as the gameplay surface grows?"
+> /research other "How should we evolve the test harness's metric coverage as the system surface grows?"
 
 ## Pitfalls observed
 
@@ -62,8 +62,8 @@ Or, for a custom one-off run:
 
 ## Adaptation notes
 
-- The category list is **project-specific**. The originating project defined eight categories (gameplay, architecture, code-quality, tests, ui-ux, project-org, web-tooling, playtest-harness). Your project should define its own. Start with one or two high-frequency categories; add more as the pattern earns its keep.
-- The originating project also added a **lens** dimension orthogonal to category (inventory / prioritization / regression / ops-health / gameplay-gap-detection). This is **advanced layering** — adopt it only after the simple category framework has proven its value through several runs. The scaffold ships only the category framework.
+- The category list is **project-specific**. Pick a small set that maps to recurring research questions in your work — common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two high-frequency categories; add more as the pattern earns its keep.
+- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering** — adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
 - Per-category recipes are the project-specific binding between category and inputs. Document them in the skill file or in a sibling reference doc. The agent reads the brief; the skill assembles it from the recipe.
 - External lookup integration (Context7 for library docs, WebSearch for design patterns) is opt-in per category. Some categories don't benefit from external research and should declare `external_sources: none` so the agent skips the lookup phase.
 - The contents-block update is held until validation passes — the agent never updates the index itself. This separation is load-bearing; without it, malformed notes get indexed before being noticed.

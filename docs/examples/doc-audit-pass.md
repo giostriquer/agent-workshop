@@ -42,7 +42,7 @@ Total findings: 11
 - `docs/architecture/old-roster.md` not linked from any routing doc; last-modified 2026-02-12.
 
 ### Check 3: Link integrity
-- `docs/systems/economy.md` links to `docs/systems/old-economy.md` which has been renamed to `docs/systems/economy-history.md`.
+- `docs/systems/auth.md` links to `docs/systems/old-auth.md` which has been renamed to `docs/systems/auth-history.md`.
 
 (... continued for checks 4–14)
 
@@ -73,7 +73,7 @@ For Tier 1 mechanical fixes (broken links, orphaned pages, README coverage):
 
 > Dispatch `wiki-maintainer`. Apply the confirmed Tier 1 fixes from the doc audit report:
 > - Remove the orphan reference at `docs/architecture/code/_index.md`.
-> - Fix the broken link at `docs/systems/economy.md` line 47 (rename target to `economy-history.md`).
+> - Fix the broken link at `docs/systems/auth.md` line 47 (rename target to `auth-history.md`).
 > - Add the missing tag to `docs/research/2026-05-09-architecture-survey.md`.
 
 For Tier 2 terminology candidates (after user picks which to define):
@@ -85,8 +85,8 @@ For Tier 2 terminology candidates (after user picks which to define):
 For Tier 2 change-log gaps:
 
 > Use the `change-log` skill to record the missed entries:
-> - Commit abc123 — feat: add reward progression unlock thresholds (2026-05-04)
-> - Commit def456 — refactor: extract event scheduler into Core (2026-05-06)
+> - Commit abc123 — feat: add rate-limit configuration (2026-05-04)
+> - Commit def456 — refactor: extract event scheduler into core (2026-05-06)
 
 For Tier 3 ADR candidates (the user typically drafts these in main session):
 

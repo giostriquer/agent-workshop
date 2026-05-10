@@ -17,15 +17,15 @@ Operate inside the current repository.
 
 Read:
 
-- `.Codex/agents/`
+- `.claude/agents/`
 - `.codex/agents/` (if Codex is supported)
 - `.gemini/agents/` (if Gemini is supported)
 - `.opencode/agents/` (if OpenCode is supported)
-- `.Codex/skills/`
+- `.claude/skills/`
 - `.codex/skills/` (if applicable)
 - `.gemini/skills/` (if applicable)
 - `AGENTS.md`
-- `AGENTS.md`
+- `CLAUDE.md`
 - `docs/agents/` (if it exists)
 - workflow ADRs, change-log entries, and conventions when relevant
 
@@ -37,7 +37,7 @@ Do not edit files outside the project repo. If a host or pre-check finds a user/
 - `/agent-audit target PATH` — review one agent, skill, wrapper, or workflow doc
 - `/agent-audit consult SUMMARY_OR_PATH` — review a proposed agent or skill change before implementation
 - `/agent-audit wrappers` — check canonical-agent to wrapper parity
-- `/agent-audit skills` — check Codex/Codex/Gemini repo-local skill parity and stale workflow instructions
+- `/agent-audit skills` — check Claude/Codex/Gemini repo-local skill parity and stale workflow instructions
 - `/agent-audit record` — run the full audit and write an accepted audit-log entry
 
 Plain-language triggers include:
@@ -55,7 +55,7 @@ Plain-language triggers include:
 - `target` — audit one agent, skill, wrapper, or workflow doc
 - `consult` — review a proposed change before implementation
 - `wrappers` — canonical-to-wrapper parity check
-- `skills` — Codex/Codex/Gemini skill parity check
+- `skills` — Claude/Codex/Gemini skill parity check
 - `record` — full audit plus a written audit-log entry
 
 If no mode is provided, infer the narrowest useful mode and state it.
@@ -65,14 +65,14 @@ If no mode is provided, infer the narrowest useful mode and state it.
 Run the checks that match the mode before invoking `vigil`:
 
 ```powershell
-Get-ChildItem -Name .Codex/agents
+Get-ChildItem -Name .claude/agents
 Get-ChildItem -Name .codex/agents
 Get-ChildItem -Name .gemini/agents
 Get-ChildItem -Name .opencode/agents
-Get-ChildItem -Name .Codex/skills
+Get-ChildItem -Name .claude/skills
 Get-ChildItem -Name .codex/skills
 Get-ChildItem -Name .gemini/skills
-rg -n "<previously-used-but-removed-agent-name>|<deprecated-skill-pattern>" AGENTS.md AGENTS.md docs/agents .Codex .codex .gemini .opencode
+rg -n "<previously-used-but-removed-agent-name>|<deprecated-skill-pattern>" AGENTS.md CLAUDE.md docs/agents .claude .codex .gemini .opencode
 ```
 
 Adapt the regex line to scan for stale-reference patterns specific to your project (renamed agents, retired skills, deprecated dispatch shapes).
@@ -89,10 +89,10 @@ For skills mode, run a deterministic mechanical drift report (typically `scripts
    - deterministic pre-check summary
    - relevant source paths
    - whether an audit-log entry is requested
-2. Confirm `vigil` resolves to the repo-local declaration. If it resolves to a user/global or upstream declaration outside this repo, do not dispatch; read `.Codex/agents/vigil.md` and run the review in the main session.
+2. Confirm `vigil` resolves to the repo-local declaration. If it resolves to a user/global or upstream declaration outside this repo, do not dispatch; read `.claude/agents/vigil.md` and run the review in the main session.
 3. Dispatch the local `vigil` agent with the brief, naming the session when possible so same-audit re-review can continue it.
 4. For re-review of the same target / scope / mode, continue the same `vigil` session when the host supports it.
-5. If dispatch is unavailable, read `.Codex/agents/vigil.md` and run the review in the main session. Label the output `orchestrator-run fallback`.
+5. If dispatch is unavailable, read `.claude/agents/vigil.md` and run the review in the main session. Label the output `orchestrator-run fallback`.
 
 ## Output
 

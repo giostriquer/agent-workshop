@@ -40,7 +40,7 @@ Do NOT invoke for small targeted changes — that remains diff-driven `wiki-main
 
 **Check 1: Section-README coverage.** For each section README that advertises pages or topics, verify every advertised topic resolves to a linked page that exists on disk. Finding shape: README path → advertised topic → expected page path → status.
 
-**Check 2: Orphaned pages.** Build a link graph of all docs under `docs/` plus root-level `AGENTS.md`, `AGENTS.md`, and `README.md`. Flag pages not reachable by link from any routing doc. Exempt files with `obsidian-only: true` (or equivalent project marker) in frontmatter.
+**Check 2: Orphaned pages.** Build a link graph of all docs under `docs/` plus root-level `AGENTS.md`, `CLAUDE.md`, and `README.md`. Flag pages not reachable by link from any routing doc. Exempt files with `obsidian-only: true` (or equivalent project marker) in frontmatter.
 
 **Check 3: Link integrity.** Scan all `.md` files under `docs/` plus root-level workflow files for links to local files. Validate both standard `[label](path.md)` and any host-specific syntax the project uses. Report broken links.
 

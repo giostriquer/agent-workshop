@@ -50,7 +50,7 @@ Example invocations:
 
 > Critique these candidates and decide the next pass.
 
-> Help me explore broader options for the hero sprite; the current direction feels stuck.
+> Help me explore broader options for the landing page illustration; the current direction feels stuck.
 
 > Should this candidate be promoted to baseline?
 
@@ -64,8 +64,8 @@ Example invocations:
 
 ## Adaptation notes
 
-- The originating project's domain is gameplay-Unity-sprite-and-animation work. The skill's *shape* — mode discipline, advisor / implementer split, verdict ladder, retrieval-first — generalizes to web UI, document mockups, marketing visuals, etc. Sanitize the canonical spec freely.
-- The "Minimal context" reading list in the skill references the originating project's visual-stack docs. Replace these with your project's visual-stack docs.
+- The skill's *shape* — mode discipline, advisor / implementer split, verdict ladder, retrieval-first — generalizes across visual-asset domains: game art, web UI, document mockups, marketing visuals, illustrations. Sanitize the canonical spec to your project's domain.
+- The "Minimal context" reading list in the skill references generic project paths. Replace these with your project's visual-stack docs.
 - Pair with `visual-implementer`. Without the implementer side, the advisor has nowhere to send approved prompts.
 - If your project doesn't have AI-generated visuals as a recurring workflow, this skill and the paired agent probably don't earn their keep. Leave them out — the scaffold's discipline is "lived-in proof or nothing."
-- The HUD-specific scaffold-doc references in the originating project are project-specific. Drop or replace for your project.
+- Mode-specific scaffold-doc references (e.g., HUD prompt scaffolds, animation reference contracts) are project-specific. Drop or replace for your project.

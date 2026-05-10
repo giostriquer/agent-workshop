@@ -102,9 +102,11 @@ Write equivalents in your project's `docs/conventions/` rather than copying verb
 
 ### 6. Add cross-host wrappers if you target multiple hosts
 
-If your project will be used with Codex, Gemini, or OpenCode in addition to Claude Code, add thin wrappers under `.codex/agents/`, `.gemini/agents/`, `.opencode/agents/` that read the canonical `.claude/agents/<name>.md` at session start. Same for skills under `.codex/skills/` and `.gemini/skills/`.
+If your project will be used with Codex, Gemini, or OpenCode in addition to Claude Code, the scaffold's `.codex/agents/*.toml` files are worked examples of the **thin-wrapper** pattern — each points at `.claude/agents/<name>.md` as canonical with a brief scope summary and host-specific notes. Add Gemini and OpenCode wrappers using the same shape.
 
-The scaffold doesn't ship the wrappers — your adopting project adds them as needed. The pattern is documented in `docs/conventions/skill-parity.md`.
+For skills, the convention is different: skills mirror in full across hosts (`.codex/skills/`, `.gemini/skills/`) because each host loads SKILL.md content directly.
+
+The pattern is documented in [`docs/conventions/cross-host-wrappers.md`](conventions/cross-host-wrappers.md) for agent wrappers and [`docs/conventions/skill-parity.md`](conventions/skill-parity.md) for skill mirroring.
 
 ### 7. Use them
 

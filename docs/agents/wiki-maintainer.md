@@ -2,7 +2,7 @@
 
 ## Origin
 
-Documentation drift was the first agent-justifying pressure to appear in the originating project. Earlier in the project's life, when it was mostly concept framing and prototype planning, a local documentation agent would have been premature. The repo first needed enough moving pieces to justify it: active client code, scene/prefab work, edit-mode tests, architecture and decision docs, and emerging implementation-adjacent planning notes.
+Documentation drift was the first agent-justifying pressure to appear in the originating project. Earlier in the project's life, when it was mostly concept framing and early planning, a local documentation agent would have been premature. The repo first needed enough moving pieces to justify it: active code surface, build artifacts, automated test coverage, architecture and decision docs, and emerging implementation-adjacent planning notes.
 
 That combination created real documentation drift risk. After the first few weeks of "the docs say X but the code does Y" moments, `wiki-maintainer` was introduced as the local documentation owner. It is the oldest agent in the set.
 
@@ -42,7 +42,7 @@ Meaningful implementation tasks follow: **Spec → Plan → Execute → Review �
 
 Example dispatch shape from a Claude session, mid-feature:
 
-> Dispatch `wiki-maintainer` to review documentation impact for the current diff and update relevant docs. The diff touches the reward-progression scoring rules, the player-facing UI for unlock cards, and the math doc for hero progression.
+> Dispatch `wiki-maintainer` to review documentation impact for the current diff and update relevant docs. The diff touches the rate-limiting policy, the user-facing settings UI, and the architecture doc for the auth middleware.
 
 ## Pitfalls observed
 

@@ -190,5 +190,5 @@ When asked to create a new doc that does not yet exist:
 
 - Review docs impact for the current diff.
 - Update docs for the current branch.
-- Check whether prototype-loop changes require docs updates.
+- Check whether scope or architecture changes require docs updates.
 - Run the end-of-flow consolidated doc pass before branch closure.

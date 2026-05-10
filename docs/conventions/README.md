@@ -8,7 +8,8 @@ Portable conventions that govern how the agents and skills compose. Each convent
 |---|---|---|
 | [reviewer-session-continuation.md](reviewer-session-continuation.md) | Multi-round reviews must continue the same reviewer session, not respawn. | Always — every project with reviewer agents needs this. |
 | [per-task-fresh-dispatches.md](per-task-fresh-dispatches.md) | Each new task gets fresh review-stage dispatches; cross-task SendMessage-resume is the cross-artifact mistake. | When using subagent-driven development with multiple sequential tasks. |
-| [skill-parity.md](skill-parity.md) | Cross-host skill mirroring (`.claude/` → `.codex/` → `.gemini/`). | When your project supports multiple hosts. |
+| [cross-host-wrappers.md](cross-host-wrappers.md) | Claude is canonical; Codex / Gemini / OpenCode use thin wrappers that point at `.claude/agents/<name>.md`. | When your project supports multiple agent-capable CLIs. |
+| [skill-parity.md](skill-parity.md) | Cross-host skill mirroring in full (`.claude/` → `.codex/` → `.gemini/`). | When your project supports multiple hosts. |
 | [doc-routing.md](doc-routing.md) | Dispatch-vs-read-direct decision for `doc-indexer`. | When you adopt `doc-indexer`. |
 | [scripts-discipline.md](scripts-discipline.md) | Authoring rules for repo-local `scripts/` content. | When your project has a substantial `scripts/` directory. |
 

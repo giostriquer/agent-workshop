@@ -48,7 +48,7 @@ Read directly (skip dispatch) for:
 
 Example dispatch shape:
 
-> Dispatch `doc-indexer`. Tell me which docs are relevant for understanding the reward progression system before I write the spec.
+> Dispatch `doc-indexer`. Tell me which docs are relevant for understanding the auth middleware before I write the spec.
 
 Or, for an audit:
 

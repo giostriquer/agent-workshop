@@ -62,7 +62,7 @@ If you encounter an old spec / plan still in active that should have been moved,
 
 ## Skill mirror update reminder
 
-If the change being recorded includes an edit to `.Codex/skills/<name>/SKILL.md`, also update `.codex/skills/<name>/SKILL.md` and `.gemini/skills/<name>/SKILL.md` (and any other host mirrors the project supports) so all skill-supporting hosts stay in sync. The project's skill-parity convention should describe how to verify mirroring (e.g., a `scripts/skill-parity.ps1` script).
+If the change being recorded includes an edit to `.claude/skills/<name>/SKILL.md`, also update `.codex/skills/<name>/SKILL.md` and `.gemini/skills/<name>/SKILL.md` (and any other host mirrors the project supports) so all skill-supporting hosts stay in sync. The project's skill-parity convention should describe how to verify mirroring (e.g., a `scripts/skill-parity.ps1` script).
 
 ## What does NOT belong here
 

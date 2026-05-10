@@ -49,7 +49,7 @@ Example invocations:
 
 > /research architecture
 
-> /research other "How should we evolve the test surface as the gameplay grows?"
+> /research other "How should we evolve the test surface as the system grows?"
 
 ## Pitfalls observed
 
@@ -61,8 +61,8 @@ Example invocations:
 
 ## Adaptation notes
 
-- The **category list** is project-specific. The originating project defined eight categories (gameplay, architecture, code-quality, tests, ui-ux, project-org, web-tooling, playtest-harness). Start with one or two for your project; add as needed.
-- The originating project also added a **lens** dimension (inventory / prioritization / regression / ops-health / gameplay-gap-detection) orthogonal to category. This is **advanced layering** — adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
+- The **category list** is project-specific. Pick a small set that maps to recurring research questions in your work — common shapes include `architecture`, `tests`, `code-quality`, `ui-ux`, `project-org`, plus a domain-specific one or two for your area. Start with one or two; add as needed.
+- A **lens** dimension orthogonal to category (e.g., `inventory` / `prioritization` / `regression` / `ops-health`) is a useful layering when one category needs multiple shapes of pass. This is **advanced layering** — adopt only after the simple category framework has earned its value over several runs. The scaffold ships only the category framework.
 - **Per-category recipes** are the binding between category and inputs. Document them in the skill file or in a sibling reference doc.
 - **External lookup integration** (Context7 for library docs, WebSearch for design patterns) is opt-in per category. Some categories don't benefit; declare `external_sources: none` so the agent skips the lookup phase.
 - The validation lifecycle is load-bearing — without it, malformed notes get indexed before being noticed. Adopt the held-until-PASS index update.

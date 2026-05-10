@@ -16,7 +16,7 @@ The scaffold's value is its **fitness for adoption**. Every change should ask:
 2. Could a new adopter copy this in without inheriting domain coupling they don't want?
 3. Does the origin doc still tell the truth about what pressure created the piece?
 
-Changes that drift the scaffold toward a specific project's domain are the failure mode. If you find yourself adding "for example, in the dungeon-pressure case..." into a sanitized agent spec, stop and either generalize or move that example into a project-specific overlay doc.
+Changes that drift the scaffold toward a specific project's domain are the failure mode. If you find yourself adding "for example, in the [specific gameplay loop / web app / payment flow] case..." into a sanitized agent spec, stop and either generalize or move that example into a project-specific overlay doc.
 
 ## Workflow expectations
 
@@ -71,7 +71,7 @@ The scaffold should not accumulate. If a piece stops earning its keep in real us
 
 ## Scope discipline
 
-This repo is intentionally narrow. It is *agent definitions and skills* + *origin docs* + *portable conventions*. It is not a host (no portal, no playtest harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
+This repo is intentionally narrow. It is *agent definitions and skills* + *origin docs* + *portable conventions*. It is not a host (no application server, no test harness, no domain-specific tooling). Adding scope beyond that is out-of-scope; route to a separate project.
 
 ## On adopting from this repo into another project
 

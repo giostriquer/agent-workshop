@@ -2,7 +2,7 @@
 
 ## Origin
 
-The originating project added AI-generated visual asset workflows — sprites, environmental art, UI mockups, animation pipeline work. Initial passes had the advisor (a model in advisor mode) doing both the taste critique *and* the asset implementation. Two failure modes appeared:
+The originating project added AI-generated visual asset workflows — characters or actors, environmental art, UI mockups, animation pipeline work. Initial passes had the advisor (a model in advisor mode) doing both the taste critique *and* the asset implementation. Two failure modes appeared:
 
 1. **Self-blessing.** When the same agent generates a candidate and then judges it, the gate collapses. "Looks good to me" — but no one independent has read it.
 2. **Drift from the prompt.** The implementer would notice an issue with a candidate and start "improving" it, expanding scope into redesign. The original visual question got lost.
@@ -49,7 +49,7 @@ When dispatching `visual-implementer` for an approved AI-generated visual asset,
 
 Example dispatch shape:
 
-> Dispatch `visual-implementer` with the approved prompt at `docs/architecture/visuals/2026-05-10-hero-idle-down-prompt.md`. Implement as canonical v0 and validate in the host runtime. Name the session `visual-implementer-hero-idle-down` so iteration rounds can continue it.
+> Dispatch `visual-implementer` with the approved prompt at `docs/architecture/visuals/2026-05-10-landing-illustration-prompt.md`. Implement as canonical v0 and validate in the host runtime. Name the session `visual-implementer-landing-illustration` so iteration rounds can continue it.
 
 ## Pitfalls observed
 
@@ -62,8 +62,8 @@ Example dispatch shape:
 
 ## Adaptation notes
 
-- The originating project's visual stack is gameplay-Unity-sprite-and-animation specific (warm-gothic visual thesis, sprite layering contract, harness visual-smoke scenarios). Sanitize the canonical spec freely — the *shape* (advisor / implementer split, retrieval-first, runtime proof, narrow recommendations) is portable to web UI, document mockups, marketing visuals, etc.
+- The originating project's visual stack involved a specific visual thesis, layering contract, and runtime-validation harness. Sanitize the canonical spec to your project's specifics — the *shape* (advisor / implementer split, retrieval-first, runtime proof, narrow recommendations) is portable across visual-asset domains: game art, web UI, document mockups, marketing visuals, illustrations.
 - The agent uses `permissionMode: acceptEdits` because visual work involves many small file changes. Adjust to your project's permission needs.
-- The default visual re-grounding targets in the canonical spec reference the originating project's docs (`docs/architecture/ui/gameplay-visuals/...`). Replace these with your project's visual-stack docs.
+- The default visual re-grounding targets in the canonical spec reference docs under `docs/architecture/visuals/...` (or your project's equivalent). Adapt to your visual-stack docs.
 - Pair the agent with the `visual-advisor` skill. Without the advisor side, role separation collapses.
 - If your project doesn't have AI-generated visuals as a recurring workflow, this agent and the paired skill probably don't earn their keep. Leave them out.
