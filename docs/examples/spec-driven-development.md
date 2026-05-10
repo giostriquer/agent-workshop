@@ -1,12 +1,78 @@
-# Full Feature Loop
+# Spec-Driven Development
 
-End-to-end walkthrough of a meaningful implementation task using the scaffold's agents and skills, from spec authoring to branch closure.
+End-to-end walkthrough of a meaningful implementation task using the scaffold's agents and skills, from spec authoring to branch closure. The loop shape is the canonical **spec-driven development** flow: design intent → plan shape → implementation → multi-stage review → critique handoff → final docs.
+
+## Framework compatibility
+
+This loop was developed and validated against the [Superpowers](https://github.com/anthropics/superpowers) workflow framework — specifically, the subagent-driven-development pattern with its three review stages (spec compliance → code quality → pattern). The scaffold's agents and skills are framework-agnostic, though: any spec-driven pipeline that has analogous stages (a pre-implementation review gate, an in-loop review pass, a documentation step) can host them.
+
+When adapting to a different framework, the durable shape is:
+
+- A **spec author** stage with a fresh-eyes review gate before user validation.
+- A **plan author** stage with the same review gate, dispatched fresh per artifact.
+- An **execution** stage that may dispatch subagents per task.
+- A **multi-stage review** loop where pattern review is a separate dispatch from code quality review.
+- A **documentation** trace (change-log entry + opportunistic broader doc updates).
+- A **consolidated end-of-flow** documentation pass at branch closure.
+
+The agents and skills here slot into those stages regardless of which framework owns the orchestration.
 
 ## Loop shape
 
 **Spec → Plan → Execute → Review → Critique → Final-Docs**
 
 Each stage has a primary actor (the model running in the main session, henceforth "the orchestrator") and one or more dispatched agents or invoked skills.
+
+## Visual flow
+
+```mermaid
+flowchart TD
+    Start([Meaningful task]) --> S1[Author spec<br/>docs/superpowers/specs/]
+    S1 --> S2{spec-reviewer<br/>mode: spec}
+    S2 -->|"ISSUES_FOUND<br/>(continue same session)"| S1
+    S2 -->|PASS| S3[User reviews and approves spec]
+
+    S3 --> P1[Author plan<br/>docs/superpowers/plans/]
+    P1 --> P2{spec-reviewer<br/>mode: plan<br/>fresh dispatch}
+    P2 -->|"ISSUES_FOUND<br/>(continue same session)"| P1
+    P2 -->|PASS| P3[User reviews and approves plan]
+
+    P3 --> E1[Execute next task]
+    E1 --> R1{Spec compliance review<br/>fresh dispatch per task}
+    R1 -->|issues| E1
+    R1 -->|pass| R2{Code quality review<br/>fresh dispatch}
+    R2 -->|issues| E1
+    R2 -->|pass| R3{pattern-reviewer<br/>fresh dispatch}
+    R3 -->|structural fix| R2
+    R3 -->|"mechanical fix<br/>(continue same session)"| R3
+    R3 -->|pattern compliant| D1[change-log skill<br/>+ opportunistic<br/>wiki-maintainer]
+
+    D1 --> M{More tasks?}
+    M -->|yes| E1
+    M -->|no| C1[Propose next critique round<br/>docs/critique/]
+
+    C1 --> F1[wiki-maintainer<br/>end-of-flow consolidated pass<br/>fresh dispatch over full branch diff]
+    F1 --> Close([Branch closed])
+
+    classDef actor fill:#fff3e0,stroke:#f57c00,color:#000
+    classDef gate fill:#e3f2fd,stroke:#1976d2,color:#000
+    classDef skill fill:#f3e5f5,stroke:#7b1fa2,color:#000
+    classDef terminal fill:#e8f5e9,stroke:#2e7d32,color:#000
+
+    class S1,P1,E1,C1 actor
+    class S2,P2,R1,R2,R3,M gate
+    class D1,F1 skill
+    class Start,S3,P3,Close terminal
+```
+
+Legend:
+
+- **Orange (rectangles):** orchestrator actions — authoring, executing, proposing.
+- **Blue (diamonds):** review gates — agents that classify and report.
+- **Purple (rectangles):** documentation skills and the wiki-maintainer end-of-flow pass.
+- **Green (rounded):** user-touch points (start, approval gates, branch close).
+
+The annotations on edges (`continue same session`, `fresh dispatch`) call out the [reviewer-session-continuation](../conventions/reviewer-session-continuation.md) and [per-task-fresh-dispatches](../conventions/per-task-fresh-dispatches.md) discipline that holds the loop together.
 
 ## Stage 1 — Spec
 

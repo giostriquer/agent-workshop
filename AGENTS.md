@@ -24,7 +24,7 @@ The scaffold's value is its fitness for adoption. Every change should make a pie
 
 ## Standard maintenance workflow
 
-The full loop documented in `docs/examples/full-feature-loop.md` applies to **adopting projects**, not to this scaffold. For scaffold maintenance, the lighter loop is:
+The full loop documented in `docs/examples/spec-driven-development.md` applies to **adopting projects**, not to this scaffold. For scaffold maintenance, the lighter loop is:
 
 1. **Identify the change.** Mechanical (typo, link, formatting), substantive (new agent/skill, behavior change, convention shift), or structural (layout reorganization).
 2. **Mechanical changes** apply directly. No spec, no review, no change-log.

@@ -6,7 +6,7 @@ These are illustrative — the specific paths, workflow steps, and sample dispat
 
 ## Contents
 
-- [`full-feature-loop.md`](full-feature-loop.md) — the full Spec → Plan → Execute → Review → Critique → Final-Docs loop, showing where each agent and skill plugs in.
+- [`spec-driven-development.md`](spec-driven-development.md) — the full Spec → Plan → Execute → Review → Critique → Final-Docs loop, with a Mermaid diagram showing where each agent and skill plugs in. Validated against the Superpowers framework but framework-agnostic.
 - [`doc-audit-pass.md`](doc-audit-pass.md) — running a proactive doc audit, triaging findings, and routing fixes to the right agents.
 
 ## How to use these
