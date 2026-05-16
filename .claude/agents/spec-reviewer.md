@@ -151,7 +151,7 @@ For every new API or method the plan introduces:
 
 - **Access:** Does the consuming code have access to the state it needs?
 - **State initialization:** Are new fields initialized on all code paths that create the owning type?
-- **Body sketch coverage:** If the spec describes a new production method's semantics in prose only (control flow, side effects, ordering), does the plan include a code-sketch body the reviewer can cross-check against the spec? Trivial getters, setters, or one-line forwarders do not need sketches.
+- **Body sketch coverage:** If the spec describes a new production method's semantics in prose only (control flow, side effects, ordering), does the plan include a code-sketch body the reviewer can cross-check against the spec? Trivial getters, setters, or one-line forwarders do not need sketches. This check is for **production** methods only — planned test method bodies are out of scope (see Test existence below and the Boundary with test-quality-reviewer note under Scope rules).
 - **Defensive-guard purpose:** If a sketch includes guards beyond what the spec requires, is the purpose obvious from context, or does the plan need a one-line note?
 
 For config changes:
@@ -168,8 +168,8 @@ For spec coverage:
 For test coverage:
 
 - **Test existence (literal walk):** Walk the spec's testing-surface section top-to-bottom. For every named test, grep the plan for that exact name or for the closest variant. Record each as Present, Renamed, or Missing. The check is **directional from spec → plan**.
-- **Test correctness:** Do the test sketches actually verify the behavior described, or do they test something adjacent? Watch for trivially-passing setups.
-- **Test body coverage:** A test needs a pre-written body in the plan when **reverse-engineering it from the spec's scenario alone would require unwritten implementation-mechanics knowledge**. Tests whose Arrange/Act/Assert flows directly from the test name plus the spec's scenario prose can stay as bullet stubs paired with a one-line precedent cue.
+
+This literal existence walk is the **only** test-related check in plan review. Whether planned tests are well-designed, non-trivial, and cover the right edge cases is **not** reviewed here — per TDD discipline the implementer writes each test body fresh against the requirement statement, and implemented test-code quality and test design are owned by `test-quality-reviewer`, exercised on real test code at the fourth review stage (see Boundary with test-quality-reviewer under Scope rules). Do not flag a plan for trivially-passing test sketches, missing test bodies, or weak planned assertions; those are out of scope.
 
 ## Output format
 
@@ -253,6 +253,10 @@ This agent reviews specs and plans. It does not:
 - review implementation code (that belongs to `pattern-reviewer` and the in-loop implementation review)
 - update documentation (that belongs to `wiki-maintainer`)
 - write or modify specs or plans (that belongs to the author)
+
+### Boundary with test-quality-reviewer
+
+Test-code quality and test design — whether implemented tests are trustworthy, non-trivial, and cover the right edge cases — belong to `test-quality-reviewer`, which reviews implemented test code as the fourth review stage. `spec-reviewer`'s only test-related checks are the spec-mode `Testability` check (is the spec written so a fast test can exercise its rules) and the plan-mode `Test existence (literal walk)` (does the plan name every test the spec's testing surface calls for). Do not review planned test sketches for correctness, do not check for pre-written test bodies, and do not flag trivially-passing or weak planned tests — that is `test-quality-reviewer`'s domain, exercised on real test code rather than plan sketches.
 
 ## Suggested invocation
 

@@ -4,14 +4,14 @@ End-to-end walkthrough of a meaningful implementation task using the scaffold's 
 
 ## Framework compatibility
 
-This loop was developed and validated against the [Superpowers](https://github.com/anthropics/superpowers) workflow framework — specifically, the subagent-driven-development pattern with its three review stages (spec compliance → code quality → pattern). The scaffold's agents and skills are framework-agnostic, though: any spec-driven pipeline that has analogous stages (a pre-implementation review gate, an in-loop review pass, a documentation step) can host them.
+This loop was developed and validated against the [Superpowers](https://github.com/anthropics/superpowers) workflow framework — specifically, the subagent-driven-development pattern, extended here to four review stages (spec compliance → code quality → pattern → test quality). The scaffold's agents and skills are framework-agnostic, though: any spec-driven pipeline that has analogous stages (a pre-implementation review gate, an in-loop review pass, a documentation step) can host them.
 
 When adapting to a different framework, the durable shape is:
 
 - A **spec author** stage with a fresh-eyes review gate before user validation.
 - A **plan author** stage with the same review gate, dispatched fresh per artifact.
 - An **execution** stage that may dispatch subagents per task.
-- A **multi-stage review** loop where pattern review is a separate dispatch from code quality review.
+- A **multi-stage review** loop where pattern review and test-quality review are each a separate dispatch, distinct from code-quality review.
 - A **documentation** trace (change-log entry + opportunistic broader doc updates).
 - A **consolidated end-of-flow** documentation pass at branch closure.
 
@@ -45,7 +45,9 @@ flowchart TD
     R2 -->|pass| R3{pattern-reviewer<br/>fresh dispatch}
     R3 -->|structural fix| R2
     R3 -->|"mechanical fix<br/>(continue same session)"| R3
-    R3 -->|pattern compliant| D1[change-log skill<br/>+ opportunistic<br/>wiki-maintainer]
+    R3 -->|pattern compliant| R4{test-quality-reviewer<br/>mode: diff<br/>fresh dispatch}
+    R4 -->|issues| E1
+    R4 -->|tests trustworthy| D1[change-log skill<br/>+ opportunistic<br/>wiki-maintainer]
 
     D1 --> M{More tasks?}
     M -->|yes| E1
@@ -60,7 +62,7 @@ flowchart TD
     classDef terminal fill:#e8f5e9,stroke:#2e7d32,color:#000
 
     class S1,P1,E1,C1 actor
-    class S2,P2,R1,R2,R3,M gate
+    class S2,P2,R1,R2,R3,R4,M gate
     class D1,F1 skill
     class Start,S3,P3,Close terminal
 ```
@@ -110,7 +112,7 @@ For multi-task plans using subagents, each task gets its own subagent dispatch. 
 
 ## Stage 4 — Review
 
-For each task's diff, three review stages, each a **separate dispatch**:
+For each task's diff, four review stages, each a **separate dispatch**:
 
 ### 4a. Spec compliance
 
@@ -137,9 +139,23 @@ If pattern-reviewer flags issues:
 - If the fix was structural (new files, changed interfaces, extracted layer), loop back to code-quality review before final pattern re-review.
 - If the fix was mechanical (field vs property, switch arm, namespace swap), skip back to pattern re-review.
 
-**Important:** each task's three stages are fresh dispatches per stage per task. Do not SendMessage-resume a reviewer that completed a prior task's review on a new task's diff. See [`docs/conventions/per-task-fresh-dispatches.md`](../conventions/per-task-fresh-dispatches.md).
+**Important:** each task's four stages are fresh dispatches per stage per task. Do not SendMessage-resume a reviewer that completed a prior task's review on a new task's diff. See [`docs/conventions/per-task-fresh-dispatches.md`](../conventions/per-task-fresh-dispatches.md).
 
-### 4d. Per-task documentation
+### 4d. Test quality
+
+Dispatch `test-quality-reviewer` in `mode: diff`:
+
+> Dispatch `test-quality-reviewer` with `mode: diff` against Task N's diff. Spec compliance, code quality, and pattern review have passed.
+
+If test-quality-reviewer flags issues:
+
+- Implementer fixes them.
+- Test-quality re-review continues the same `test-quality-reviewer` session.
+- The `PASS` / `ISSUES_FOUND` bar is constant across revision rounds.
+
+This stage reviews test-code trustworthiness and test design — whether the task's tests actually protect the behavior they claim to. It is distinct from code-quality review, which inspects the production code. See [`docs/agents/test-quality-reviewer.md`](../agents/test-quality-reviewer.md).
+
+### 4e. Per-task documentation
 
 After review passes, the orchestrator (or a dispatched `wiki-maintainer` if broader doc impact is visible) updates docs and runs the `change-log` skill:
 

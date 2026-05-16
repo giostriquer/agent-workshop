@@ -36,7 +36,7 @@ A reasonable starter set for most projects:
 - `change-log` skill (paired with `wiki-maintainer`)
 - `push` skill (universal)
 
-Add `spec-reviewer` and `pattern-reviewer` once you adopt a spec-driven development loop. Add `vigil` and `agent-audit` only if you grow to multiple hosts or substantial agent-layer churn. Add `research` and the visual pair only if you have those workflows.
+Add `spec-reviewer`, `pattern-reviewer`, and `test-quality-reviewer` once you adopt a spec-driven development loop. Add `vigil` and `agent-audit` only if you grow to multiple hosts or substantial agent-layer churn. Add `research` and the visual pair only if you have those workflows.
 
 ### 2. Copy the canonical specs
 

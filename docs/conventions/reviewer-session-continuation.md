@@ -8,6 +8,7 @@ This applies to:
 
 - `spec-reviewer` (multi-round until PASS on the same spec or plan)
 - `pattern-reviewer` (revision rounds on the same task's diff)
+- `test-quality-reviewer` (revision rounds on the same task's diff)
 - `wiki-maintainer` audit mode (multi-round audit on the same scope)
 - `vigil` same-audit re-review (same target, scope, mode)
 - `visual-implementer` same visual task across iterations (same asset slot or surface)

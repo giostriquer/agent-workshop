@@ -23,10 +23,10 @@ When you see this:
 
 ## Applies across review stages
 
-In an SDD task with three review stages (spec compliance → code quality → pattern review), each stage is a separate dispatch. None of them carry across to the next task:
+In an SDD task with four review stages (spec compliance → code quality → pattern review → test quality), each stage is a separate dispatch. None of them carry across to the next task:
 
-- Task 1: fresh spec-compliance reviewer → fresh code-quality reviewer → fresh pattern-reviewer.
-- Task 2: fresh spec-compliance reviewer → fresh code-quality reviewer → fresh pattern-reviewer.
+- Task 1: fresh spec-compliance reviewer → fresh code-quality reviewer → fresh pattern-reviewer → fresh test-quality-reviewer.
+- Task 2: fresh spec-compliance reviewer → fresh code-quality reviewer → fresh pattern-reviewer → fresh test-quality-reviewer.
 - Task 3: same.
 
 Within a single task's revision rounds, the *same* stage's reviewer continues across rounds (per `reviewer-session-continuation.md`). But across tasks, every stage starts fresh.

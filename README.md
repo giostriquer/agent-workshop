@@ -8,7 +8,7 @@ The goal: when you start a new project that wants AI-agent infrastructure, copy 
 
 ## What's here
 
-- `.claude/agents/` — seven canonical agent definitions (`doc-indexer`, `pattern-reviewer`, `spec-reviewer`, `research`, `vigil`, `visual-implementer`, `wiki-maintainer`).
+- `.claude/agents/` — eight canonical agent definitions (`doc-indexer`, `pattern-reviewer`, `spec-reviewer`, `test-quality-reviewer`, `research`, `vigil`, `visual-implementer`, `wiki-maintainer`).
 - `.codex/agents/`, `.gemini/agents/`, `.opencode/agents/` — thin wrappers pointing at the canonical Claude specs, in each host's native format. Worked examples of the cross-host wrapper pattern (see `docs/conventions/cross-host-wrappers.md`).
 - `.claude/skills/`, `.codex/skills/`, `.gemini/skills/` — six working skills (`agent-audit`, `change-log`, `doc-audit`, `push`, `research`, `visual-advisor`), mirrored in full across hosts. OpenCode is wrapper-only by convention and does not carry a `skills/` folder.
 - `docs/agents/` — origin story per agent: what pressure created it, what problem it solves, how it works in practice, real workflow snippets, observed pitfalls.

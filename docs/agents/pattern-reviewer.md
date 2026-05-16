@@ -44,10 +44,11 @@ When using the subagent-driven-development workflow:
 1. **Spec compliance review** — separate dispatch with a spec-compliance prompt.
 2. **Code quality review** — separate dispatch with a code-quality prompt.
 3. **Pattern review** — `pattern-reviewer` against the task's diff, with `mode:` matching the touched surface (e.g. `mode: backend`, `mode: frontend`, `mode: auto`).
+4. **Test quality review** — `test-quality-reviewer` (`mode: diff`) against the task's diff, checking test-code trustworthiness and design.
 
 If pattern review flags issues, the implementer fixes them. Pattern re-review confirms the fix. If the fix was structural (new files, changed interfaces, extracted config layer), loop back to code quality review before final pattern re-review. If the fix was mechanical (field vs property, switch arm, namespace swap), skip back to pattern re-review.
 
-Each review stage is a separate dispatch. Do not collapse the three into a single agent call.
+Each review stage is a separate dispatch. Do not collapse the four into a single agent call.
 ```
 
 Example dispatch shape:
