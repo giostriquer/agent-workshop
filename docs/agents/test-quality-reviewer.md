@@ -28,7 +28,7 @@ Code-first, two modes:
 
 It reads production code to judge tests but **reports only on test files**. Production-code-quality, pattern, and spec findings belong to the other reviewers; emitting them here blurs the gate.
 
-**Judgment-driven checklist.** The agent flags trivially-passing setups, weak or absent assertions, wrong-path testing, missing edge cases, brittle over-coupled tests, non-deterministic tests, and test-code-quality smells. The rule is to flag an issue only when you can name a concrete way the test fails to protect the behavior it claims to protect — not for stylistic preference.
+**Judgment-driven checklist.** The agent flags trivially-passing setups, weak or absent assertions, mock-saturated (tautological-mock) tests, wrong-path testing, missing edge cases, brittle over-coupled tests, non-deterministic tests, and test-code-quality smells. The rule is to flag an issue only when you can name a concrete way the test fails to protect the behavior it claims to protect — not for stylistic preference.
 
 **Optional metrics input.** If the project produces coverage and complexity metrics, the agent uses them to prioritize which production code's tests warrant the closest scrutiny — code that is both complex and weakly covered is where weak tests matter most. Metrics are never a hard dependency: when absent, the agent says so and performs the full qualitative checklist anyway.
 

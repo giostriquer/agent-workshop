@@ -95,6 +95,7 @@ Flag test code exhibiting:
 
 - **Trivially-passing setup** — the test configures a degenerate case or triggers a guard's early-return so the path under test never executes; the assertion is reached but vacuous.
 - **Weak or absent assertions** — the test exercises code but asserts nothing load-bearing, asserts a tautology, or only asserts "no exception thrown" when the behavior under test has an observable result.
+- **Mock-saturated / tautological-mock tests** — the test mocks the very behavior it claims to verify, so it only re-asserts the configured mock return and would still pass if the production logic were wrong; or it over-mocks same-domain collaborators that real setup or a shared fixture could exercise. Mock only across real boundaries (external vendors, network, out-of-domain dependencies).
 - **Wrong-path / adjacent testing** — the test name claims behavior X but the body exercises behavior Y; or a prerequisite (setup step, state transition) was skipped so the intended target state was never reached.
 - **Missing edge cases** — boundary values (exactly at / just below / just above a threshold), failure paths, and coincidence cases the production code supports but no test covers.
 - **Brittle / over-coupled tests** — assertions on incidental implementation detail rather than the contract, which will break on unrelated refactors.

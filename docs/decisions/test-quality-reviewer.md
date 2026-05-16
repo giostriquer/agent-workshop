@@ -23,3 +23,7 @@ The originating project pairs this agent with engine-specific coverage tooling (
 ## Adoption note
 
 Adopters that take `test-quality-reviewer` should also apply the handoff realignment to their `spec-reviewer` and `pattern-reviewer` so review ownership stays partitioned. See the Adaptation notes in `docs/agents/test-quality-reviewer.md`.
+
+## Addendum 2026-05-16 — mock-quality category added
+
+A review against the cross-repo `test-quality-reviewer` skeleton found the propagated checklist was missing the skeleton's mock anti-patterns ("tests that only reassert mocked values," "over-mocking of same-domain services"). The source agent this was sanitized from had dropped them — its domain's test surface is mock-light — and the propagation inherited the omission. Since the scaffold serves mock-heavy adopters (backends, services), a **Mock-saturated / tautological-mock tests** category was added to the Test-quality checklist, restoring parity with the skeleton's coverage. The category is generic — mock only across real boundaries; do not mock the behavior under test.
