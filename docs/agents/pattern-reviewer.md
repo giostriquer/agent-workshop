@@ -62,6 +62,7 @@ Example dispatch shape:
 - **Editing known-drift mid-loop.** Adding or removing entries during a non-terminal round creates thrash where an entry is added one round and removed the next. Apply pending updates only on the terminal pattern-compliant round.
 - **Treating pattern-reviewer as a code-quality reviewer.** It is narrower — it checks pattern conformance, not correctness or readability. If a finding sounds like "this method could be cleaner," that's code-quality territory.
 - **Cross-task SendMessage-resume.** Each task's pattern review is a fresh dispatch. The reviewer-session-continuation rule applies to revision rounds **on the same task**, not across tasks.
+- **Silent no-op on an unrecognized surface.** A review stage produces false confidence not only by mis-judging code but by never examining it. In the originating project a whole recurring category of work lived in a repo-local automation/scripts directory the domain layout never covered — `mode: auto` classified those files into no domain, recorded them "not reviewed," and the stage emitted a non-failing verdict. Large diffs passed a mandatory review gate that had enforced nothing on them. The **Domain coverage gaps** rule in the canonical spec is the fix: files matching no defined domain are a coverage-gap *finding*, not a clean pass, and the recurring uncovered directory is the signal to extend the domain layout.
 
 ## Adaptation notes
 

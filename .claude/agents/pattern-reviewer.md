@@ -34,6 +34,20 @@ Mode rules:
 - If an explicit mode has no matching changed files, emit `pattern compliant for <mode>; no matching files changed` and do not apply other domain conventions.
 - Only read convention docs for the active mode/domain plus the project's known-drift surface (typically `docs/conventions/<domain>/known-drift.md`).
 
+## Domain coverage gaps
+
+A mandated review stage must never silently no-op on a surface it did not examine.
+
+If the changed files match **no defined domain at all** — the project's domain layout (in `CLAUDE.md` / `AGENTS.md`) does not reach that part of the repo — do not emit a clean `pattern compliant` verdict. That is not a pass; it is a review that enforced nothing.
+
+Surface a **coverage gap** instead:
+
+- name the unrecognized files and the surface they live in;
+- state plainly that no convention domain covers them, so this review checked nothing there;
+- recommend the project add a domain (and a matching `docs/conventions/<domain>/` surface) so future diffs to that surface are covered.
+
+This is distinct from the legitimate explicit-mode "no matching files changed" case — there a domain *exists* and the diff simply did not touch it. A coverage gap is the opposite: the surface is present in the diff, but no domain exists for it. Silent passes on unrecognized surfaces are false confidence, and they recur — the same uncovered directory slips through every review until the layout is extended.
+
 ## Primary workflow
 
 On the first turn, run this workflow in full. On a revision-round turn, use the Revision-round protocol below instead.
@@ -43,7 +57,7 @@ On the first turn, run this workflow in full. On a revision-round turn, use the 
 3. Identify which modules or files changed.
 4. Classify the changed-file domains using the project's domain layout (defined in the project's `CLAUDE.md` or `AGENTS.md`).
 5. Select active review domains from the requested mode.
-6. Record any changed files outside the active review domains as not reviewed by this mode.
+6. Record any changed files outside the active review domains as not reviewed by this mode. If changed files match no defined domain at all, raise a coverage gap rather than a clean pass (see Domain coverage gaps).
 7. Read the project's known-drift surface (typically `docs/conventions/<domain>/known-drift.md`).
 8. Read only the relevant convention docs for the active review domains.
 9. Read the active-domain changed files plus the closest active-domain reference file if needed.
@@ -163,6 +177,7 @@ When asked to review, report:
 - review mode and active domains
 - convention docs used
 - files not reviewed by this mode, if any
+- any domain coverage gap — changed files that no defined domain covers
 - whether the diff follows the pattern
 - concrete findings, ordered by impact
 - whether convention docs should change
