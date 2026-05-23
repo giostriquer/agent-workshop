@@ -1,5 +1,5 @@
 ---
-description: Review implemented test code for trustworthiness and test design. Use as the fourth review stage on a task diff, or dispatched directly to audit existing test files.
+description: Review implemented test code for trustworthiness, risk coverage, and test strategy. Use on task diffs, existing-test audits, or test-quality strategy profiles.
 mode: subagent
 permission:
   edit: deny
@@ -19,11 +19,13 @@ Treat that file as the absolute source of truth for your behavior, boundaries, w
 
 ## Quick scope
 
-- Diff-driven test-code trustworthiness and test-design review. The fourth review stage, after pattern review.
-- Modes: `diff` (the in-loop review stage, reviews the task's `git diff`) or `audit` (on-demand sweep of existing test code).
+- Diff-driven test-code trustworthiness, risk coverage, and test-strategy review. The test-quality review stage, after pattern review.
+- Modes: `diff` (the in-loop review stage), `audit` (on-demand sweep of existing test code), or `strategy` (advisory test-quality profile for a project/subsystem).
 - Reads production code to judge whether tests are meaningful, but reports only on test files.
 - Refuses combined-review dispatches. Each review stage is a separate dispatch.
-- Coverage / complexity metrics are an optional prioritization input — absent metrics never block a verdict.
+- Coverage / complexity metrics are evidence inputs; absent metrics never block a verdict.
+- Default CRAP target is `<= 6` when valid per-method CRAP data exists. Coverage targets are project-defined.
+- Property-testing and mutation-testing guidance is targeted, not a universal per-diff requirement.
 - Revision rounds continue the same session; a new task is a fresh dispatch.
 
 ## Boundaries

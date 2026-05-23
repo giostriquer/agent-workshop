@@ -169,7 +169,7 @@ For test coverage:
 
 - **Test existence (literal walk):** Walk the spec's testing-surface section top-to-bottom. For every named test, grep the plan for that exact name or for the closest variant. Record each as Present, Renamed, or Missing. The check is **directional from spec → plan**.
 
-This literal existence walk is the **only** test-related check in plan review. Whether planned tests are well-designed, non-trivial, and cover the right edge cases is **not** reviewed here — per TDD discipline the implementer writes each test body fresh against the requirement statement, and implemented test-code quality and test design are owned by `test-quality-reviewer`, exercised on real test code at the fourth review stage (see Boundary with test-quality-reviewer under Scope rules). Do not flag a plan for trivially-passing test sketches, missing test bodies, or weak planned assertions; those are out of scope.
+This literal existence walk is the **only** test-related check in plan review. Whether planned tests are well-designed, non-trivial, cover the right edge cases, or satisfy the project's test-risk profile is **not** reviewed here — per TDD discipline the implementer writes each test body fresh against the requirement statement, and implemented test-code quality, risk coverage, and test strategy are owned by `test-quality-reviewer`, exercised on real test code at the fourth review stage (see Boundary with test-quality-reviewer under Scope rules). Do not flag a plan for trivially-passing test sketches, missing test bodies, weak planned assertions, or missing property/mutation strategy; those are out of scope.
 
 ## Output format
 
@@ -256,7 +256,7 @@ This agent reviews specs and plans. It does not:
 
 ### Boundary with test-quality-reviewer
 
-Test-code quality and test design — whether implemented tests are trustworthy, non-trivial, and cover the right edge cases — belong to `test-quality-reviewer`, which reviews implemented test code as the fourth review stage. `spec-reviewer`'s only test-related checks are the spec-mode `Testability` check (is the spec written so a fast test can exercise its rules) and the plan-mode `Test existence (literal walk)` (does the plan name every test the spec's testing surface calls for). Do not review planned test sketches for correctness, do not check for pre-written test bodies, and do not flag trivially-passing or weak planned tests — that is `test-quality-reviewer`'s domain, exercised on real test code rather than plan sketches.
+Test-code quality, risk coverage, and test strategy — whether implemented tests are trustworthy, non-trivial, cover the right edge cases, and protect high-impact behavior — belong to `test-quality-reviewer`, which reviews implemented test code as the fourth review stage. `spec-reviewer`'s only test-related checks are the spec-mode `Testability` check (is the spec written so a fast test can exercise its rules) and the plan-mode `Test existence (literal walk)` (does the plan name every test the spec's testing surface calls for). Do not review planned test sketches for correctness, do not check for pre-written test bodies, and do not flag trivially-passing, weak, or strategy-light planned tests — that is `test-quality-reviewer`'s domain, exercised on real test code rather than plan sketches.
 
 ## Suggested invocation
 

@@ -27,3 +27,30 @@ Adopters that take `test-quality-reviewer` should also apply the handoff realign
 ## Addendum 2026-05-16 — mock-quality category added
 
 A review against the cross-repo `test-quality-reviewer` skeleton found the propagated checklist was missing the skeleton's mock anti-patterns ("tests that only reassert mocked values," "over-mocking of same-domain services"). The source agent this was sanitized from had dropped them — its domain's test surface is mock-light — and the propagation inherited the omission. Since the scaffold serves mock-heavy adopters (backends, services), a **Mock-saturated / tautological-mock tests** category was added to the Test-quality checklist, restoring parity with the skeleton's coverage. The category is generic — mock only across real boundaries; do not mock the behavior under test.
+
+## Addendum 2026-05-23 — add risk and strategy lanes
+
+The canonical agent was rewritten around explicit capability lanes instead of a single
+flat checklist. The baseline test-trustworthiness gate remains, but the agent now also
+documents metrics, property-testing, mutation-testing, and high-impact project lanes.
+
+Key decisions:
+
+- Keep one agent. Splitting CRAP, coverage, property testing, and mutation testing into
+  separate default reviewers would add orchestration cost before projects prove they need
+  it.
+- Do not make every lane mandatory in every diff review. Metrics and advanced techniques
+  are evidence inputs and strategy prompts unless an adopting project explicitly makes
+  them gates.
+- Set `CRAP <= 6` as the scaffold's default recommended ceiling when valid per-method CRAP
+  data exists. Coverage remains project-defined because useful targets vary by product and
+  test surface.
+- Add `mode: strategy` so high-impact projects can ask for a test-quality profile:
+  coverage target, CRAP target, property-test candidates, mutation-test candidates, and
+  audit cadence.
+- Treat acceptance mutation testing as a targeted strategy under the mutation lane:
+  mutate a behavior an acceptance/integration test claims to protect and verify the test
+  fails. It is not a universal per-diff requirement.
+
+This keeps the agent portable while giving projects such as local infrastructure, terminal
+tools, and operator dashboards a stronger scaffold for risk-aware test quality.

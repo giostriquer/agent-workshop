@@ -153,7 +153,7 @@ If test-quality-reviewer flags issues:
 - Test-quality re-review continues the same `test-quality-reviewer` session.
 - The `PASS` / `ISSUES_FOUND` bar is constant across revision rounds.
 
-This stage reviews test-code trustworthiness and test design — whether the task's tests actually protect the behavior they claim to. It is distinct from code-quality review, which inspects the production code. See [`docs/agents/test-quality-reviewer.md`](../agents/test-quality-reviewer.md).
+This stage reviews test-code trustworthiness, risk coverage, and test design — whether the task's tests actually protect the behavior they claim to. It is distinct from code-quality review, which inspects the production code. See [`docs/agents/test-quality-reviewer.md`](../agents/test-quality-reviewer.md). Use `mode: strategy` outside the per-task loop when a project needs a broader test-quality profile with coverage targets, CRAP targets, property-test candidates, mutation-test candidates, and audit cadence.
 
 ### 4e. Per-task documentation
 

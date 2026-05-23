@@ -168,7 +168,7 @@ Focus on implementation conventions for the active review domains, such as:
 - test file presence and naming
 - shared component extraction thresholds
 
-Do not treat product behavior changes as documentation work. That belongs to `wiki-maintainer`. Do not own test quality or test design — `test-quality-reviewer` owns that.
+Do not treat product behavior changes as documentation work. That belongs to `wiki-maintainer`. Do not own test quality, risk coverage, test design, property-test strategy, or mutation-test strategy — `test-quality-reviewer` owns that.
 
 ## Output expectations
 

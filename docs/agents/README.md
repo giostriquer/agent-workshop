@@ -19,7 +19,7 @@ The agent specs in `.claude/agents/<name>.md` are the canonical contracts. These
 | [`doc-indexer`](doc-indexer.md) | Routing and audit helper; reduces context burden on `wiki-maintainer`. |
 | [`pattern-reviewer`](pattern-reviewer.md) | Diff-driven implementation-pattern compliance check after code-quality review. |
 | [`spec-reviewer`](spec-reviewer.md) | Pre-implementation gate for design specs and implementation plans. |
-| [`test-quality-reviewer`](test-quality-reviewer.md) | Diff-driven test-code trustworthiness review; the fourth review stage, audit-mode on request. |
+| [`test-quality-reviewer`](test-quality-reviewer.md) | Test-code trustworthiness, risk coverage, and test-strategy review; diff, audit, and strategy modes. |
 | [`research`](research.md) | Forward-looking research notes with structured scoring; dispatched by the `research` skill. |
 | [`vigil`](vigil.md) | Advisory review of the agent / skill / workflow-instruction layer itself. |
 | [`visual-implementer`](visual-implementer.md) | Execution agent for approved AI-generated visual assets. |
@@ -30,7 +30,7 @@ These agents are designed to compose, not duplicate:
 
 - **Documentation:** `wiki-maintainer` owns; `doc-indexer` retrieves and audits.
 - **Pre-implementation review:** `spec-reviewer` (specs and plans, before code).
-- **Implementation review:** the project's code-quality reviewer, then `pattern-reviewer`, then `test-quality-reviewer` (after code).
+- **Implementation review:** the project's code-quality reviewer, then `pattern-reviewer`, then `test-quality-reviewer` (after code; use `mode: strategy` separately for project-level test-quality profiles).
 - **Forward-looking research:** `research` (skill) → `research` (agent).
 - **Visual execution:** `visual-advisor` (skill, taste) → `visual-implementer` (agent, execution).
 - **Governance:** `vigil` audits the agent layer itself.
