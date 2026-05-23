@@ -1,0 +1,14 @@
+{
+  "name": "agent-workshop",
+  "description": "Local marketplace for Agent Workshop",
+  "owner": { "name": "Agent Workshop" },
+  "plugins": [
+    {
+      "name": "agent-workshop",
+      "version": "0.1.0",
+      "source": "./",
+      "description": "Onboard repo-local agent scaffolding with one guided skill",
+      "author": { "name": "Agent Workshop" }
+    }
+  ]
+}

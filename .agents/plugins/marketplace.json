@@ -1,0 +1,20 @@
+{
+  "name": "agent-workshop",
+  "interface": {
+    "displayName": "Agent Workshop"
+  },
+  "plugins": [
+    {
+      "name": "agent-workshop",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-workshop"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
