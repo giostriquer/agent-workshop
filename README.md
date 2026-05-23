@@ -12,6 +12,8 @@ The goal: when you start a new project that wants AI-agent infrastructure, copy 
 - `.codex/agents/`, `.gemini/agents/`, `.opencode/agents/` — thin wrappers pointing at the canonical Claude specs, in each host's native format. Worked examples of the cross-host wrapper pattern (see `docs/conventions/cross-host-wrappers.md`).
 - `.claude/skills/`, `.codex/skills/`, `.gemini/skills/` — six working skills (`agent-audit`, `change-log`, `doc-audit`, `push`, `research`, `visual-advisor`), mirrored in full across hosts. OpenCode is wrapper-only by convention and does not carry a `skills/` folder.
 - `marketplace/catalog.json` — machine-readable catalog of agent packs, maturity labels, role boundaries, host-wrapper support, and project profile slots.
+- `.claude-plugin/` and `.agents/plugins/marketplace.json` — native Claude Code and Codex marketplace metadata for the guided `agent-workshop-onboard` plugin.
+- `plugins/agent-workshop/` and `skills/agent-workshop-onboard/` — the native plugin payload and root skill copy. The plugin exposes only `agent-workshop-onboard`; scaffold agents stay bundled references until copied into a target repo by an approved plan.
 - `docs/agents/` — origin story per agent: what pressure created it, what problem it solves, how it works in practice, real workflow snippets, observed pitfalls.
 - `docs/skills/` — same shape, per skill.
 - `docs/conventions/` — portable conventions that govern how the agents and skills compose: reviewer-session continuation, per-task fresh dispatches, cross-host skill parity, doc routing, scripts discipline.
@@ -29,9 +31,11 @@ It is not for: turnkey end-user products, plug-and-play "just install it" experi
 
 ## How to use it
 
-Start with [`docs/setup.md`](docs/setup.md). It describes the lift-and-shift path (copy `.claude/`, write project-specific `CLAUDE.md` and `AGENTS.md`, drop in the conventions you need) and the more involved path (read the origin docs first, decide which agents earn their keep for your project, omit or replace the rest).
+Start with the native onboarding plugin when your host supports it. Install the Claude Code or Codex marketplace entry, invoke `agent-workshop-onboard` in the target repo, and let `mode: plan` produce a read-only adoption plan before approving `mode: apply`.
 
-For pack-based adoption, start with [`docs/marketplace/README.md`](docs/marketplace/README.md) and [`marketplace/catalog.json`](marketplace/catalog.json), then use [`docs/setup.md`](docs/setup.md) for the file-copy mechanics.
+Manual setup remains available in [`docs/setup.md`](docs/setup.md). It describes the lift-and-shift path (copy `.claude/`, write project-specific `CLAUDE.md` and `AGENTS.md`, drop in the conventions you need) and the more involved path (read the origin docs first, decide which agents earn their keep for your project, omit or replace the rest).
+
+For pack-based adoption, start with [`docs/marketplace/native-plugin.md`](docs/marketplace/native-plugin.md), [`docs/marketplace/README.md`](docs/marketplace/README.md), and [`marketplace/catalog.json`](marketplace/catalog.json), then use [`docs/setup.md`](docs/setup.md) for the manual file-copy mechanics when you do not use the plugin.
 
 If you're trying to understand a specific agent or skill, the matching `docs/agents/<name>.md` or `docs/skills/<name>.md` is the entry point. Each one explains why the agent or skill exists, what problem it solved, and what real workflow instructions look like in the project that originated it.
 
@@ -44,13 +48,15 @@ If a piece doesn't earn its keep, omit it. The discipline is "ship the smallest 
 ## Adoption checklist
 
 1. Read [`docs/marketplace/README.md`](docs/marketplace/README.md) and choose the smallest pack set that fits your project.
-2. Read [`docs/setup.md`](docs/setup.md).
-3. Copy the selected `.claude/agents/`, `.claude/skills/`, and host wrappers into your project's repo root.
-4. Write your project's own `CLAUDE.md` and `AGENTS.md` — do not copy this repo's; they are for maintaining the scaffold itself.
-5. Fill the required profile slots in your project docs and workflow instructions.
-6. Read the origin docs for the agents and skills you copied. Sanitize any project-specific paths.
-7. Drop in the conventions you'll actually use; skip the rest.
-8. Use the agents in real work for a few weeks. Keep what earns its keep, prune what doesn't.
+2. Prefer the native plugin: run `agent-workshop-onboard` with `mode: plan` in the target repo.
+3. Review the proposed file set, profile slots, omitted agents, and validation checks.
+4. Approve `mode: apply` only when the plan names exact project-local paths.
+5. If you are not using the plugin, read [`docs/setup.md`](docs/setup.md) and manually copy the selected `.claude/agents/`, `.claude/skills/`, and host wrappers into your project's repo root.
+6. Write your project's own `CLAUDE.md` and `AGENTS.md` — do not copy this repo's; they are for maintaining the scaffold itself.
+7. Fill the required profile slots in your project docs and workflow instructions.
+8. Read the origin docs for the agents and skills you copied. Sanitize any project-specific paths.
+9. Drop in the conventions you'll actually use; skip the rest.
+10. Use the agents in real work for a few weeks. Keep what earns its keep, prune what doesn't.
 
 ## What this repo does NOT promise
 

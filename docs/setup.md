@@ -2,6 +2,12 @@
 
 This guide describes how to drop the scaffold's agents, skills, and conventions into a new project. The paths assume your target project's repo root is `<project>/`.
 
+When Claude Code or Codex can load native marketplace plugins, prefer the guided
+path first: install the Agent Workshop plugin and invoke `agent-workshop-onboard`
+with `mode: plan` in the target repo. Use `mode: apply` only after you approve an
+exact file set. The manual copy flow below remains available for other hosts,
+offline work, or operators who want to apply every file by hand.
+
 ## What you copy
 
 ```
@@ -20,7 +26,7 @@ The conventions, origin docs, and examples in `agent-workshop/docs/` are referen
 
 ## Adoption flow
 
-If you want a pack-based starting point, read [`docs/marketplace/README.md`](marketplace/README.md) first. The marketplace catalog groups agents into packs and names the profile slots you need to fill before the agents become safe project-local workflow.
+If you want a pack-based starting point, read [`docs/marketplace/native-plugin.md`](marketplace/native-plugin.md) and [`docs/marketplace/README.md`](marketplace/README.md) first. The marketplace catalog groups agents into packs and names the profile slots you need to fill before the agents become safe project-local workflow.
 
 ### 1. Decide which agents and skills earn their keep
 
@@ -38,7 +44,26 @@ The marketplace names these common pack choices:
 - `governance` for `vigil` when the agent/skill/wrapper layer itself needs review.
 - `specialized` for `research` and `visual-implementer` only when those workflows exist.
 
-### 2. Copy the canonical specs
+### 2. Copy the canonical specs, or approve plugin apply mode
+
+With the native plugin, keep this step read-only until the plan is concrete:
+
+```text
+agent-workshop-onboard mode: plan
+```
+
+Review the selected agents, profile slots, proposed files, and validation checks.
+Only then approve:
+
+```text
+agent-workshop-onboard mode: apply
+```
+
+The apply mode writes project-local files only. It does not edit global host
+configuration, expose all scaffold agents as plugin-global agents, or commit
+unless the approved plan explicitly asks for a commit.
+
+For manual adoption, copy the selected canonical files yourself:
 
 ```powershell
 # Example PowerShell

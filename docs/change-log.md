@@ -2,6 +2,13 @@
 
 ## 2026-05-23
 
+### Native onboarding plugin
+
+Added Claude Code and Codex marketplace packaging for a single guided
+`agent-workshop-onboard` skill. The plugin keeps scaffold agents as bundled
+references, defaults to read-only `mode: plan`, gates writes behind approved
+`mode: apply`, and includes a validator for manifest shape and reference parity.
+
 ### Manifest-backed agent marketplace
 
 Added a marketplace layer for pack-based adoption. The new catalog defines initial agent packs (`review-core`, `docs-core`, `governance`, `specialized`), role and maturity labels, host-wrapper support, prerequisites, and project profile slots. Marketplace docs explain pack selection and keep project-specific behavior in profiles rather than canonical agent specs.
