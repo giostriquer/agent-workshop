@@ -20,6 +20,8 @@ The conventions, origin docs, and examples in `agent-workshop/docs/` are referen
 
 ## Adoption flow
 
+If you want a pack-based starting point, read [`docs/marketplace/README.md`](marketplace/README.md) first. The marketplace catalog groups agents into packs and names the profile slots you need to fill before the agents become safe project-local workflow.
+
 ### 1. Decide which agents and skills earn their keep
 
 Read the origin doc for each agent and skill in `agent-workshop/docs/`. For each, ask:
@@ -29,14 +31,12 @@ Read the origin doc for each agent and skill in `agent-workshop/docs/`. For each
 
 If the answer is "no" or "not sure", omit it. The scaffold's discipline is "ship the smallest working version and let real use shape what stays" — applied to your project too. You can add more later.
 
-A reasonable starter set for most projects:
+The marketplace names these common pack choices:
 
-- `wiki-maintainer` (most projects need this once docs accumulate)
-- `doc-indexer` (worth it once `wiki-maintainer` starts loading for routing questions)
-- `change-log` skill (paired with `wiki-maintainer`)
-- `push` skill (universal)
-
-Add `spec-reviewer`, `pattern-reviewer`, and `test-quality-reviewer` once you adopt a spec-driven development loop. Add `vigil` and `agent-audit` only if you grow to multiple hosts or substantial agent-layer churn. Add `research` and the visual pair only if you have those workflows.
+- `review-core` for `spec-reviewer`, `pattern-reviewer`, and `test-quality-reviewer` once you adopt a spec-driven development loop.
+- `docs-core` for `doc-indexer` and `wiki-maintainer` once docs routing and source-of-truth maintenance are recurring work.
+- `governance` for `vigil` when the agent/skill/wrapper layer itself needs review.
+- `specialized` for `research` and `visual-implementer` only when those workflows exist.
 
 ### 2. Copy the canonical specs
 

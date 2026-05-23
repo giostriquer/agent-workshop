@@ -11,18 +11,20 @@ Origin docs for the eight agents shipped in `.claude/agents/`. Each doc covers:
 
 The agent specs in `.claude/agents/<name>.md` are the canonical contracts. These docs explain the *why*.
 
+Marketplace pack metadata lives in [`../../marketplace/catalog.json`](../../marketplace/catalog.json), with operator-facing guidance in [`../marketplace/`](../marketplace/). The roster below explains agent roles; the marketplace explains adoption bundles and required project profiles.
+
 ## Roster
 
-| Agent | One-line role |
-|---|---|
-| [`wiki-maintainer`](wiki-maintainer.md) | Repo-local documentation owner; diff-driven by default, audit-mode on request. |
-| [`doc-indexer`](doc-indexer.md) | Routing and audit helper; reduces context burden on `wiki-maintainer`. |
-| [`pattern-reviewer`](pattern-reviewer.md) | Diff-driven implementation-pattern compliance check after code-quality review. |
-| [`spec-reviewer`](spec-reviewer.md) | Pre-implementation gate for design specs and implementation plans. |
-| [`test-quality-reviewer`](test-quality-reviewer.md) | Test-code trustworthiness, risk coverage, and test-strategy review; diff, audit, and strategy modes. |
-| [`research`](research.md) | Forward-looking research notes with structured scoring; dispatched by the `research` skill. |
-| [`vigil`](vigil.md) | Advisory review of the agent / skill / workflow-instruction layer itself. |
-| [`visual-implementer`](visual-implementer.md) | Execution agent for approved AI-generated visual assets. |
+| Agent | Pack | One-line role |
+|---|---|---|
+| [`wiki-maintainer`](wiki-maintainer.md) | `docs-core` | Repo-local documentation owner; diff-driven by default, audit-mode on request. |
+| [`doc-indexer`](doc-indexer.md) | `docs-core` | Routing and audit helper; reduces context burden on `wiki-maintainer`. |
+| [`pattern-reviewer`](pattern-reviewer.md) | `review-core` | Diff-driven implementation-pattern compliance check after code-quality review. |
+| [`spec-reviewer`](spec-reviewer.md) | `review-core` | Pre-implementation gate for design specs and implementation plans. |
+| [`test-quality-reviewer`](test-quality-reviewer.md) | `review-core` | Test-code trustworthiness, risk coverage, and test-strategy review; diff, audit, and strategy modes. |
+| [`research`](research.md) | `specialized` | Forward-looking research notes with structured scoring; dispatched by the `research` skill. |
+| [`vigil`](vigil.md) | `governance` | Advisory review of the agent / skill / workflow-instruction layer itself. |
+| [`visual-implementer`](visual-implementer.md) | `specialized` | Execution agent for approved AI-generated visual assets. |
 
 ## Roles that compose
 
