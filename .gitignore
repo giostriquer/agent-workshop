@@ -12,6 +12,7 @@ desktop.ini
 
 # Local scratch
 .temp/
+.worktrees/
 *.log
 
 # Tooling caches
