@@ -55,9 +55,15 @@ function Assert-SameFile {
         Fail "missing mirrored file: $ActualPath"
     }
 
-    $expectedHash = (Get-FileHash -LiteralPath $ExpectedPath -Algorithm SHA256).Hash
-    $actualHash = (Get-FileHash -LiteralPath $ActualPath -Algorithm SHA256).Hash
-    if ($expectedHash -ne $actualHash) {
+    $expectedBytes = [System.IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $ExpectedPath).Path)
+    $actualBytes = [System.IO.File]::ReadAllBytes((Resolve-Path -LiteralPath $ActualPath).Path)
+    if ([System.Linq.Enumerable]::SequenceEqual($expectedBytes, $actualBytes)) {
+        return
+    }
+
+    $expectedText = ([System.IO.File]::ReadAllText((Resolve-Path -LiteralPath $ExpectedPath).Path) -replace "`r`n", "`n")
+    $actualText = ([System.IO.File]::ReadAllText((Resolve-Path -LiteralPath $ActualPath).Path) -replace "`r`n", "`n")
+    if ($expectedText -ne $actualText) {
         Fail "file differs from source: $ActualPath"
     }
 }
