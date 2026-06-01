@@ -61,6 +61,11 @@ It ships:
 - host plugin metadata for Claude Code and Codex
 - documentation explaining how to invoke the onboarding skill in a target repo
 
+Marketplace entries point at the slim `plugins/agent-workshop/` payload, not the
+repo root. This keeps the scaffold's canonical `.claude/skills/` tree out of the
+marketplace package. Bundled skill templates also avoid nested `SKILL.md`
+filenames so plugin hosts do not discover them as active skills.
+
 It does not ship active `agents/` entries in the plugin payload. Active agents
 should be repo-local files written into the adopting project after the onboarding
 skill has created an adoption plan and the operator approves `mode: apply`.
@@ -72,24 +77,29 @@ they are project-local workflow contracts.
 
 ### Claude Code
 
-Claude plugin payload:
+Claude marketplace wrapper and plugin payload:
 
 ```text
 .claude-plugin/
-  plugin.json
   marketplace.json
-skills/
-  agent-workshop-onboard/
-    SKILL.md
-    references/
-      catalog.json
-      templates/
-      docs/
-README.md
+plugins/
+  agent-workshop/
+    .claude-plugin/
+      plugin.json
+    skills/
+      agent-workshop-onboard/
+        SKILL.md
+        references/
+          catalog.json
+          templates/
+          docs/
+    README.md
 ```
 
-The Claude plugin uses native skill discovery. The plugin may include only a
-`skills/` directory and does not need plugin-level `agents/` or `.mcp.json`.
+The Claude marketplace entry points at `./plugins/agent-workshop`. The Claude
+plugin uses native skill discovery from that payload. The payload may include
+only a `skills/` directory and does not need plugin-level `agents/` or
+`.mcp.json`.
 
 `plugin.json` should describe the plugin as a local agent-scaffold onboarding
 assistant. It should not register MCP servers.
@@ -263,12 +273,12 @@ skills/agent-workshop-onboard/
       gemini/
       opencode/
     skills/
-      agent-audit/
-      change-log/
-      doc-audit/
-      push/
-      research/
-      visual-advisor/
+      agent-audit.md
+      change-log.md
+      doc-audit.md
+      push.md
+      research.md
+      visual-advisor.md
     docs/
       agents/
       skills/
@@ -278,7 +288,7 @@ skills/agent-workshop-onboard/
 
 The onboarding skill reads from `references/` and writes selected content into
 the target repo. Hosts should not auto-discover `references/agents/` as active
-agent definitions.
+agent definitions or `references/skills/` as active skill definitions.
 
 ## Project Profile Output
 

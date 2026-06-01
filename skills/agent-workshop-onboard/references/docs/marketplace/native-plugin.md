@@ -10,11 +10,18 @@ smallest useful pack set, and apply only an approved project-local file set.
 
 ## Marketplace Files
 
-- Claude Code: `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+- Claude Code: `.claude-plugin/marketplace.json` with payload in `plugins/agent-workshop/`
 - Codex: `.agents/plugins/marketplace.json` with payload in `plugins/agent-workshop/`
 
-Both surfaces point to the same skill contract. The root skill copy supports
-Claude Code discovery, and the plugin payload copy supports Codex discovery.
+Both marketplace surfaces point to the same slim plugin payload. That payload
+contains `plugins/agent-workshop/.claude-plugin/plugin.json`,
+`plugins/agent-workshop/.codex-plugin/plugin.json`, and exactly one active skill
+directory: `plugins/agent-workshop/skills/agent-workshop-onboard/`.
+
+The root `skills/agent-workshop-onboard/` copy remains a source copy for this
+repo, not the marketplace source. Marketplace installs must not point at repo
+root, because repo root also contains the scaffold's canonical `.claude/skills/`
+tree.
 
 ## Skill Modes
 
@@ -36,8 +43,13 @@ The plugin bundles copies of:
 - `marketplace/catalog.json`
 - canonical `.claude/agents/*.md`
 - host wrappers under `.codex/`, `.gemini/`, and `.opencode/`
-- mirrored `.claude/skills/*/SKILL.md`
+- non-discoverable Markdown copies of mirrored `.claude/skills/*/SKILL.md`
 - marketplace, agent, skill, and convention docs
+
+Those files live under the onboarding skill's `references/` directory. They are
+templates for approved repo-local adoption, not additional active plugin skills.
+Reference skill templates are stored as `references/skills/<skill>.md`, not as
+nested `SKILL.md` files.
 
 The validator keeps those copies in sync with the canonical scaffold files:
 

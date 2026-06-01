@@ -109,7 +109,8 @@
       ],
       "adoptionNotes": [
         "Do not install as a real gate until the project defines domain modes and convention docs.",
-        "The agent is portable because project-specific anti-patterns live in the project profile."
+        "The agent is portable because project-specific anti-patterns live in the project profile.",
+        "A discovery/inference fallback lets it review with reduced confidence when no domain layout exists; full domain-aware gating still requires convention docs."
       ]
     },
     "research": {

@@ -5,9 +5,16 @@
   "plugins": [
     {
       "name": "agent-workshop",
-      "version": "0.1.0",
-      "source": "./",
+      "version": "0.1.1",
+      "source": "./plugins/agent-workshop",
       "description": "Onboard repo-local agent scaffolding with one guided skill",
+      "author": { "name": "Agent Workshop" }
+    },
+    {
+      "name": "reviewers",
+      "version": "0.1.0",
+      "source": "./plugins/reviewers",
+      "description": "Use a curated set of standalone review and governance agents directly, without onboarding.",
       "author": { "name": "Agent Workshop" }
     }
   ]

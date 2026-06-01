@@ -13,7 +13,7 @@ Review code changes for conformance with repository implementation patterns.
 
 This agent is **code-first and diff-driven**. It reviews and surfaces drift; it does not patch code. The implementer owns the fix.
 
-It may surface documentation implications for conventions, but it is not the documentation authority — that's `wiki-maintainer`.
+It may surface documentation implications for conventions, but it is not the documentation authority — documentation maintenance is a separate responsibility.
 
 Do not rewrite unrelated code just to make it more uniform.
 
@@ -38,6 +38,8 @@ Mode rules:
 
 A mandated review stage must never silently no-op on a surface it did not examine.
 
+This rule covers the case where a domain layout *exists* but does not reach some changed files. When the project defines **no domain layout at all** — no domain map and no `docs/conventions/<domain>/` convention docs — use Discovery mode instead (see the Discovery mode section) and fall back to discovered or inferred conventions rather than gapping every file.
+
 If the changed files match **no defined domain at all** — the project's domain layout (in `CLAUDE.md` / `AGENTS.md`) does not reach that part of the repo — do not emit a clean `pattern compliant` verdict. That is not a pass; it is a review that enforced nothing.
 
 Surface a **coverage gap** instead:
@@ -48,6 +50,41 @@ Surface a **coverage gap** instead:
 
 This is distinct from the legitimate explicit-mode "no matching files changed" case — there a domain *exists* and the diff simply did not touch it. A coverage gap is the opposite: the surface is present in the diff, but no domain exists for it. Silent passes on unrecognized surfaces are false confidence, and they recur — the same uncovered directory slips through every review until the layout is extended.
 
+## Discovery mode (no documented domain layout)
+
+The Domain coverage gaps rule assumes the project *has* a domain layout and some
+surface falls outside it. A different case is a project with **no domain layout at
+all** — no `CLAUDE.md` / `AGENTS.md` domain map and no `docs/conventions/<domain>/`
+structure. There, refusing to review anything is unhelpful for a diff that clearly
+follows some de-facto convention.
+
+When, and only when, the project defines no domain layout and no prescribed
+`docs/conventions/<domain>/` convention docs exist, fall back to discovery mode
+instead of a blanket coverage gap:
+
+1. **Discover documented conventions anywhere.** Look for convention or pattern
+   docs outside the prescribed layout — `docs/` files whose names or headings
+   describe conventions, style, architecture, or patterns. If found, treat them as
+   the convention source for this review and note where they live.
+2. **Infer from sibling files.** If no convention docs exist, infer the de-facto
+   conventions from the closest sibling files to those changed — the established
+   files in the same directory or module that the diff should resemble. Review the
+   changed files for consistency with those inferred patterns: naming, folder
+   placement, type-shape choices, import/layer boundaries, and test-file presence.
+3. **Label confidence honestly.** Mark discovery-mode findings as **inferred
+   (lower confidence)**. Inference is weaker evidence than a documented rule; say so
+   in the report.
+4. **Still surface the gap as an observation.** Report that the project documents
+   no conventions, so this review relied on discovery/inference, and recommend the
+   project add a domain layout and a `docs/conventions/<domain>/` surface so future
+   reviews are grounded in documented rules.
+
+Discovery mode preserves the no-silent-false-confidence principle: it never emits a
+clean `pattern compliant` verdict on an unexamined surface. It examines, infers,
+labels the confidence, and names the missing documentation. It is a fallback only —
+when a domain layout *does* exist, the standard documented-domain behavior and the
+Domain coverage gaps rule apply unchanged.
+
 ## Primary workflow
 
 On the first turn, run this workflow in full. On a revision-round turn, use the Revision-round protocol below instead.
@@ -57,7 +94,7 @@ On the first turn, run this workflow in full. On a revision-round turn, use the 
 3. Identify which modules or files changed.
 4. Classify the changed-file domains using the project's domain layout (defined in the project's `CLAUDE.md` or `AGENTS.md`).
 5. Select active review domains from the requested mode.
-6. Record any changed files outside the active review domains as not reviewed by this mode. If changed files match no defined domain at all, raise a coverage gap rather than a clean pass (see Domain coverage gaps).
+6. Record any changed files outside the active review domains as not reviewed by this mode. If changed files match no defined domain at all, raise a coverage gap rather than a clean pass (see Domain coverage gaps). If the project defines no domain layout at all, use Discovery mode (see the Discovery mode section) instead of a blanket coverage gap.
 7. Read the project's known-drift surface (typically `docs/conventions/<domain>/known-drift.md`).
 8. Read only the relevant convention docs for the active review domains.
 9. Read the active-domain changed files plus the closest active-domain reference file if needed.
@@ -168,7 +205,7 @@ Focus on implementation conventions for the active review domains, such as:
 - test file presence and naming
 - shared component extraction thresholds
 
-Do not treat product behavior changes as documentation work. That belongs to `wiki-maintainer`. Do not own test quality, risk coverage, test design, property-test strategy, or mutation-test strategy — `test-quality-reviewer` owns that.
+Do not treat product behavior changes as documentation work. That is a separate documentation-maintenance responsibility. Do not own test quality, risk coverage, test design, property-test strategy, or mutation-test strategy — `test-quality-reviewer` owns that.
 
 ## Output expectations
 

@@ -8,6 +8,11 @@ with `mode: plan` in the target repo. Use `mode: apply` only after you approve a
 exact file set. The manual copy flow below remains available for other hosts,
 offline work, or operators who want to apply every file by hand.
 
+The native marketplace payload is `plugins/agent-workshop/`. It exposes only the
+onboarding skill; the scaffold's agents and skills are stored as
+non-discoverable references and copied into adopting projects only from an
+approved onboarding plan or by the manual flow below.
+
 ## What you copy
 
 ```

@@ -98,6 +98,19 @@ function Assert-SingleSkill {
     }
 }
 
+function Assert-OnlyAllowedPluginSkillFiles {
+    $pluginRoot = "plugins/agent-workshop"
+    $allowedSkillFile = "plugins/agent-workshop/skills/agent-workshop-onboard/SKILL.md"
+
+    $skillFiles = @(Get-ChildItem -LiteralPath $pluginRoot -Recurse -File -Filter "SKILL.md" |
+        ForEach-Object { $_.FullName.Replace((Resolve-Path ".").Path + "\", "").Replace("\", "/") })
+
+    if ($skillFiles.Count -ne 1 -or $skillFiles[0] -ne $allowedSkillFile) {
+        $details = ($skillFiles -join "; ")
+        Fail "plugin payload must contain only the active onboarding SKILL.md; found: $details"
+    }
+}
+
 function Assert-OnlyAllowedPluginAgents {
     $pluginRoot = "plugins/agent-workshop"
     $allowedAgentFile = "plugins/agent-workshop/skills/agent-workshop-onboard/agents/openai.yaml"
@@ -131,6 +144,34 @@ function Assert-OnlyAllowedPluginAgents {
     }
 }
 
+function Assert-ReviewersPlugin {
+    $root = "plugins/reviewers"
+    $manifest = Read-JsonFile "$root/.claude-plugin/plugin.json"
+
+    if ($manifest.name -ne "reviewers") {
+        Fail "reviewers plugin name must be reviewers"
+    }
+    if (Has-Property $manifest "mcpServers") {
+        Fail "reviewers manifest must not contain mcpServers"
+    }
+    if (Test-Path -LiteralPath "$root/skills" -PathType Container) {
+        Fail "reviewers must not contain a skills directory"
+    }
+
+    $agentDir = "$root/agents"
+    if (-not (Test-Path -LiteralPath $agentDir -PathType Container)) {
+        Fail "reviewers must contain an agents directory"
+    }
+
+    $expected = @("pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
+    $actual = @(Get-ChildItem -LiteralPath $agentDir -File | Select-Object -ExpandProperty Name | Sort-Object)
+    Assert-SameFileList $expected $actual "reviewers agents"
+
+    foreach ($name in $expected) {
+        Assert-SameFile ".claude/agents/$name" "$agentDir/$name"
+    }
+}
+
 function Assert-ReferenceSetMatchesSources {
     param([Parameter(Mandatory = $true)] [string] $ReferenceRoot)
 
@@ -149,7 +190,7 @@ function Assert-ReferenceSetMatchesSources {
         Assert-SameFile $file.FullName "$ReferenceRoot/wrappers/opencode/$($file.Name)"
     }
     foreach ($skill in Get-ChildItem -LiteralPath ".claude/skills" -Directory) {
-        Assert-SameFile "$($skill.FullName)/SKILL.md" "$ReferenceRoot/skills/$($skill.Name)/SKILL.md"
+        Assert-SameFile "$($skill.FullName)/SKILL.md" "$ReferenceRoot/skills/$($skill.Name).md"
     }
 
     foreach ($name in "agents", "skills", "conventions", "marketplace") {
@@ -163,9 +204,11 @@ function Assert-ReferenceSetMatchesSources {
 
 $claudeManifest = Read-JsonFile ".claude-plugin/plugin.json"
 $claudeMarketplace = Read-JsonFile ".claude-plugin/marketplace.json"
+$claudePayloadManifest = Read-JsonFile "plugins/agent-workshop/.claude-plugin/plugin.json"
 $codexMarketplace = Read-JsonFile ".agents/plugins/marketplace.json"
 $codexManifest = Read-JsonFile "plugins/agent-workshop/.codex-plugin/plugin.json"
 $catalog = Read-JsonFile "marketplace/catalog.json"
+$reviewersManifest = Read-JsonFile "plugins/reviewers/.claude-plugin/plugin.json"
 
 if ($claudeManifest.name -ne "agent-workshop") {
     Fail "Claude plugin name must be agent-workshop"
@@ -177,8 +220,42 @@ if (Has-Property $claudeManifest "agents") {
     Fail "Claude plugin manifest must not expose agents"
 }
 
-if ($claudeMarketplace.plugins.Count -ne 1 -or $claudeMarketplace.plugins[0].name -ne "agent-workshop") {
-    Fail "Claude marketplace must contain only the agent-workshop plugin"
+$claudePlugins = @($claudeMarketplace.plugins)
+if ($claudePlugins.Count -ne 2) {
+    Fail "Claude marketplace must contain exactly two plugins (agent-workshop, reviewers)"
+}
+$onboardEntry = $claudePlugins | Where-Object { $_.name -eq "agent-workshop" }
+$reviewersEntry = $claudePlugins | Where-Object { $_.name -eq "reviewers" }
+if (-not $onboardEntry) {
+    Fail "Claude marketplace must contain the agent-workshop plugin"
+}
+if (-not $reviewersEntry) {
+    Fail "Claude marketplace must contain the reviewers plugin"
+}
+if ($onboardEntry.source -ne "./plugins/agent-workshop") {
+    Fail "agent-workshop marketplace source must be ./plugins/agent-workshop"
+}
+if ($onboardEntry.version -ne $claudeManifest.version) {
+    Fail "agent-workshop marketplace version must match the plugin manifest"
+}
+if ($reviewersEntry.source -ne "./plugins/reviewers") {
+    Fail "reviewers marketplace source must be ./plugins/reviewers"
+}
+if ($reviewersEntry.version -ne $reviewersManifest.version) {
+    Fail "reviewers marketplace version must match its plugin manifest"
+}
+
+if ($claudePayloadManifest.name -ne "agent-workshop") {
+    Fail "Claude plugin payload name must be agent-workshop"
+}
+if ($claudePayloadManifest.version -ne $claudeManifest.version) {
+    Fail "Claude payload manifest version must match the root Claude manifest"
+}
+if (Has-Property $claudePayloadManifest "mcpServers") {
+    Fail "Claude plugin payload manifest must not contain mcpServers"
+}
+if (Has-Property $claudePayloadManifest "agents") {
+    Fail "Claude plugin payload manifest must not expose agents"
 }
 
 if ($codexMarketplace.plugins.Count -ne 1 -or $codexMarketplace.plugins[0].name -ne "agent-workshop") {
@@ -200,6 +277,9 @@ if (-not (Has-Property $codexMarketplace.plugins[0] "category")) {
 if ($codexManifest.name -ne "agent-workshop") {
     Fail "Codex plugin name must be agent-workshop"
 }
+if ($codexManifest.version -ne $claudeManifest.version) {
+    Fail "Codex plugin manifest version must match the Claude manifest"
+}
 if ($codexManifest.skills -ne "./skills") {
     Fail "Codex plugin manifest must set skills to ./skills"
 }
@@ -219,11 +299,16 @@ if ($capabilities.Count -ne 1 -or $capabilities[0] -ne "Skills") {
 
 Assert-SingleSkill "skills" "agent-workshop-onboard"
 Assert-SingleSkill "plugins/agent-workshop/skills" "agent-workshop-onboard"
+Assert-OnlyAllowedPluginSkillFiles
 Assert-OnlyAllowedPluginAgents
+Assert-ReviewersPlugin
 
 Assert-SameFile `
     "skills/agent-workshop-onboard/SKILL.md" `
     "plugins/agent-workshop/skills/agent-workshop-onboard/SKILL.md"
+Assert-SameFile `
+    ".claude-plugin/plugin.json" `
+    "plugins/agent-workshop/.claude-plugin/plugin.json"
 
 $rootReferenceRoot = "skills/agent-workshop-onboard/references"
 $codexReferenceRoot = "plugins/agent-workshop/skills/agent-workshop-onboard/references"

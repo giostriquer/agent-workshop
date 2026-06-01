@@ -115,4 +115,6 @@ Use `references/catalog.json` and bundled docs as the source model.
 ## Bundled References
 
 Bundled templates live under `references/` inside this skill. They are source
-material for repo-local adoption, not active plugin agents.
+material for repo-local adoption, not active plugin agents or skills. Reference
+skill templates use `references/skills/<skill>.md` instead of nested `SKILL.md`
+filenames so plugin hosts do not auto-discover them as active skills.

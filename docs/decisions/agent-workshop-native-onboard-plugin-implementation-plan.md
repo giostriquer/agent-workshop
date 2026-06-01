@@ -4,7 +4,12 @@
 
 **Goal:** Ship native Claude/Codex marketplace packaging for `agent-workshop` that exposes one onboarding skill, not the scaffold agents themselves.
 
-**Architecture:** Add Claude plugin metadata at the repo root and a Codex plugin payload under `plugins/agent-workshop/`. Both plugin surfaces expose only `agent-workshop-onboard`; bundled references live under that skill and are copied from the canonical scaffold files. A PowerShell validator checks payload shape, reference parity, and docs claims.
+**Architecture:** Keep marketplace metadata at the repo root and make both Claude
+Code and Codex marketplace entries point at the slim plugin payload under
+`plugins/agent-workshop/`. Both plugin surfaces expose only
+`agent-workshop-onboard`; bundled references live under that skill and are
+copied from the canonical scaffold files. A PowerShell validator checks payload
+shape, reference parity, and docs claims.
 
 **Tech Stack:** Markdown, JSON, YAML, PowerShell built-ins, Git. No new runtime or dev dependencies.
 
@@ -13,10 +18,13 @@
 ## Settled Implementation Choices
 
 - Plugin name: `agent-workshop`
-- Version: `0.1.0`
+- Version: `0.1.1`
 - Active plugin skill: `agent-workshop-onboard`
 - Native targets: Claude Code and Codex
-- Bundled references: committed payload copies in both root `skills/` and Codex `plugins/agent-workshop/skills/`
+- Bundled references: committed payload copies in both root `skills/` and slim
+  marketplace payload `plugins/agent-workshop/skills/`; skill templates use
+  non-discoverable `references/skills/<skill>.md` filenames
+- Marketplace source: `./plugins/agent-workshop`, never repo root
 - Validation: `scripts/validate-native-plugin.ps1`
 - Apply-mode commit behavior: apply mode does not commit unless the approved plan explicitly requests a commit
 
@@ -27,6 +35,7 @@ Create:
 - `.claude-plugin/plugin.json`
 - `.claude-plugin/marketplace.json`
 - `.agents/plugins/marketplace.json`
+- `plugins/agent-workshop/.claude-plugin/plugin.json`
 - `plugins/agent-workshop/.codex-plugin/plugin.json`
 - `plugins/agent-workshop/README.md`
 - `skills/agent-workshop-onboard/SKILL.md`
@@ -51,6 +60,7 @@ Modify:
 - Create: `.claude-plugin/plugin.json`
 - Create: `.claude-plugin/marketplace.json`
 - Create: `.agents/plugins/marketplace.json`
+- Create: `plugins/agent-workshop/.claude-plugin/plugin.json`
 - Create: `plugins/agent-workshop/.codex-plugin/plugin.json`
 - Create: `plugins/agent-workshop/README.md`
 - Create: `skills/agent-workshop-onboard/SKILL.md`
@@ -75,7 +85,7 @@ Create `.claude-plugin/plugin.json`:
 {
   "name": "agent-workshop",
   "description": "Onboard repo-local AI agent scaffolding from Agent Workshop.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": { "name": "Agent Workshop" },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",
@@ -84,9 +94,15 @@ Create `.claude-plugin/plugin.json`:
 }
 ```
 
-Do not add `mcpServers`, `agents`, or command entries.
+This root copy is kept in sync with the slim payload manifest. Do not add
+`mcpServers`, `agents`, or command entries.
 
-- [ ] **Step 3: Create Claude marketplace file**
+- [ ] **Step 3: Create Claude payload manifest**
+
+Create `plugins/agent-workshop/.claude-plugin/plugin.json` with the same content
+as `.claude-plugin/plugin.json`.
+
+- [ ] **Step 4: Create Claude marketplace file**
 
 Create `.claude-plugin/marketplace.json`:
 
@@ -98,8 +114,8 @@ Create `.claude-plugin/marketplace.json`:
   "plugins": [
     {
       "name": "agent-workshop",
-      "version": "0.1.0",
-      "source": "./",
+      "version": "0.1.1",
+      "source": "./plugins/agent-workshop",
       "description": "Onboard repo-local agent scaffolding with one guided skill",
       "author": { "name": "Agent Workshop" }
     }
@@ -107,7 +123,7 @@ Create `.claude-plugin/marketplace.json`:
 }
 ```
 
-- [ ] **Step 4: Create Codex marketplace file**
+- [ ] **Step 5: Create Codex marketplace file**
 
 Create `.agents/plugins/marketplace.json`:
 
@@ -134,14 +150,14 @@ Create `.agents/plugins/marketplace.json`:
 }
 ```
 
-- [ ] **Step 5: Create Codex plugin manifest**
+- [ ] **Step 6: Create Codex plugin manifest**
 
 Create `plugins/agent-workshop/.codex-plugin/plugin.json`:
 
 ```json
 {
   "name": "agent-workshop",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Onboard repo-local AI agent scaffolding from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
@@ -166,7 +182,7 @@ Create `plugins/agent-workshop/.codex-plugin/plugin.json`:
 
 Do not add `mcpServers`, `apps`, or active `agents`.
 
-- [ ] **Step 6: Create onboarding skill body**
+- [ ] **Step 7: Create onboarding skill body**
 
 Create `skills/agent-workshop-onboard/SKILL.md` and copy it byte-identically to `plugins/agent-workshop/skills/agent-workshop-onboard/SKILL.md`:
 
@@ -283,7 +299,7 @@ Answer questions about packs, profile slots, host wrappers, or agent boundaries.
 Bundled templates live under `references/` inside this skill. They are source material for repo-local adoption, not active plugin agents.
 ```
 
-- [ ] **Step 7: Create Codex skill wrapper**
+- [ ] **Step 8: Create Codex skill wrapper**
 
 Create `plugins/agent-workshop/skills/agent-workshop-onboard/agents/openai.yaml`:
 
@@ -294,7 +310,7 @@ interface:
   default_prompt: "Use $agent-workshop-onboard to inspect this target repo, recommend Agent Workshop packs and profile slots, and apply only an explicitly approved repo-local adoption plan. Default to mode: plan. Do not expose or install all scaffold agents globally."
 ```
 
-- [ ] **Step 8: Create Codex plugin README**
+- [ ] **Step 9: Create Codex plugin README**
 
 Create `plugins/agent-workshop/README.md`:
 
@@ -306,7 +322,7 @@ This plugin exposes one skill: `agent-workshop-onboard`.
 The skill plans, applies, audits, or explains repo-local adoption of Agent Workshop agents. Installing this plugin does not install the scaffold agents globally. Use `mode: plan` in a target repo first, then approve `mode: apply` only when the proposed file set is correct.
 ```
 
-- [ ] **Step 9: Verify Task 1**
+- [ ] **Step 10: Verify Task 1**
 
 Run:
 
@@ -317,12 +333,12 @@ git status --short
 
 Expected: only Task 1 files are new or modified.
 
-- [ ] **Step 10: Commit Task 1**
+- [ ] **Step 11: Commit Task 1**
 
 Run:
 
 ```powershell
-git add -- .claude-plugin .agents/plugins/marketplace.json plugins/agent-workshop/.codex-plugin plugins/agent-workshop/README.md plugins/agent-workshop/skills/agent-workshop-onboard skills/agent-workshop-onboard/SKILL.md
+git add -- .claude-plugin .agents/plugins/marketplace.json plugins/agent-workshop/.claude-plugin plugins/agent-workshop/.codex-plugin plugins/agent-workshop/README.md plugins/agent-workshop/skills/agent-workshop-onboard skills/agent-workshop-onboard/SKILL.md
 git commit -m "feat: add agent-workshop onboarding plugin shell"
 ```
 
@@ -343,7 +359,7 @@ skills/agent-workshop-onboard/references/agents/*.md
 skills/agent-workshop-onboard/references/wrappers/codex/*.toml
 skills/agent-workshop-onboard/references/wrappers/gemini/*.md
 skills/agent-workshop-onboard/references/wrappers/opencode/*.md
-skills/agent-workshop-onboard/references/skills/<skill>/SKILL.md
+skills/agent-workshop-onboard/references/skills/<skill>.md
 skills/agent-workshop-onboard/references/docs/agents/*.md
 skills/agent-workshop-onboard/references/docs/skills/*.md
 skills/agent-workshop-onboard/references/docs/conventions/*.md
@@ -363,7 +379,7 @@ Source files:
 - `docs/conventions/*`
 - `docs/marketplace/*`
 
-- [ ] **Step 2: Copy root skill references into Codex plugin skill**
+- [ ] **Step 2: Copy root skill references into marketplace plugin skill**
 
 Copy `skills/agent-workshop-onboard/references/` to `plugins/agent-workshop/skills/agent-workshop-onboard/references/`.
 
@@ -398,10 +414,13 @@ git commit -m "feat: bundle onboarding reference templates"
 
 Create `scripts/validate-native-plugin.ps1`. It must:
 
-- parse `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`, `plugins/agent-workshop/.codex-plugin/plugin.json`, and `marketplace/catalog.json`
+- parse `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `plugins/agent-workshop/.claude-plugin/plugin.json`, `.agents/plugins/marketplace.json`, `plugins/agent-workshop/.codex-plugin/plugin.json`, and `marketplace/catalog.json`
 - fail if `.claude-plugin/plugin.json` contains `mcpServers`
+- fail if the Claude marketplace source is not `./plugins/agent-workshop`
+- fail if `plugins/agent-workshop/.claude-plugin/plugin.json` contains `mcpServers` or `agents`
 - fail if `plugins/agent-workshop/.codex-plugin/plugin.json` contains `mcpServers` or `apps`
 - fail if the Codex manifest does not set `skills` to `./skills`
+- fail if the plugin payload contains any `SKILL.md` file other than `plugins/agent-workshop/skills/agent-workshop-onboard/SKILL.md`
 - fail if any plugin payload contains active `agents/` outside `plugins/agent-workshop/skills/agent-workshop-onboard/agents/openai.yaml`
 - fail if root/Codex skill `SKILL.md` files differ
 - fail if root/Codex reference file lists differ

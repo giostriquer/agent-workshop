@@ -1,5 +1,46 @@
 # Change Log
 
+## 2026-05-29
+
+### Direct-use agents plugin
+
+Added a second Claude Code marketplace plugin, `reviewers`, for
+operators who want to use agents directly without onboarding the scaffold into a
+project. It ships four curated standalone-capable agents (`spec-reviewer`,
+`test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents and
+contains no skills — the `agent-workshop-onboard` skill stays exclusive to the
+bootstrapper plugin. This narrowly reverses the "no global scaffold agents"
+non-goal for a bounded, curated subset; see
+[`docs/decisions/agent-workshop-direct-use-agents-plugin.md`](decisions/agent-workshop-direct-use-agents-plugin.md).
+
+- Enhanced canonical `pattern-reviewer` with a discovery/inference fallback: in a
+  repo with no domain layout it discovers convention docs under `docs/` or infers
+  conventions from sibling files, labelling findings lower-confidence rather than
+  emitting a blanket coverage gap. Folded into the canonical spec, its origin doc,
+  and the catalog note (kept byte-identical across the onboarding reference mirrors).
+- The Claude marketplace now lists two plugins; `scripts/validate-native-plugin.ps1`
+  validates the two-plugin marketplace and asserts the new payload has no skills and
+  exactly four agents byte-identical to `.claude/agents/`.
+- Generalized non-shipped sibling-agent references in `pattern-reviewer`,
+  `spec-reviewer`, and `vigil` to role-based language (e.g. "a separate
+  documentation-maintenance responsibility" instead of naming `wiki-maintainer`), so the
+  curated plugin never points at agents absent from it and the canonical specs read
+  portably in any context.
+- Claude Code only this slice; Codex/Gemini/OpenCode delivery deferred.
+
+## 2026-05-24
+
+### Slim native plugin payload
+
+Corrected native marketplace packaging so both Claude Code and Codex entries use
+the slim `plugins/agent-workshop/` payload instead of shipping the repository
+root. The payload exposes only `agent-workshop-onboard`; scaffold agents and
+skills remain nested onboarding references until an approved plan copies them
+into a target repo. Reference skill templates now avoid nested `SKILL.md`
+filenames so plugin hosts do not discover them as active skills. Plugin metadata
+is bumped to `0.1.1` so hosts can install a fresh payload instead of reusing the
+old `0.1.0` cache.
+
 ## 2026-05-23
 
 ### Native onboarding plugin

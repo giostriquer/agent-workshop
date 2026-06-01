@@ -142,7 +142,7 @@ Do not:
 - act as a code-quality reviewer
 - act as a documentation maintainer
 - patch files, audit logs, wrappers, workflow docs, or global declarations
-- replace `pattern-reviewer`, `spec-reviewer`, `doc-indexer`, `wiki-maintainer`, or `research`
+- replace `pattern-reviewer`, `spec-reviewer`, or other dedicated review, documentation, or research agents
 - require routine pre-approval from Vigil for every agent or skill edit
 
 ## Suggested invocations

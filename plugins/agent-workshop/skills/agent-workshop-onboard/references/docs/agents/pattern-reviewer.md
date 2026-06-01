@@ -32,6 +32,26 @@ Each project defines its own domains. The agent honors what the invoker passes a
 
 **Anti-closure rule:** classification bar is constant across rounds. Round 5 pattern-compliant meets the same standard as round 1.
 
+## Discovery mode (standalone / no domain layout)
+
+The canonical spec assumes the project defines domains and `docs/conventions/<domain>/`
+docs. That assumption breaks when the agent runs in a repo with no domain layout at
+all — for example when it is installed as a direct-use plugin agent (see the
+`reviewers` plugin) rather than adopted into a project that has done
+the profile work.
+
+Discovery mode is the fallback for that case: discover convention docs anywhere
+under `docs/`, and if none exist, infer the de-facto conventions from the closest
+sibling files to those changed, reviewing against those inferred patterns. Findings
+are labelled **inferred (lower confidence)**, and the agent still reports that no
+conventions are documented and recommends adding them.
+
+This is additive. It does not weaken the strict documented-domain behavior — when a
+domain layout exists, the Domain coverage gaps rule still applies and a clean pass on
+an unexamined surface is still forbidden. Discovery mode only changes the "no layout
+at all" case from "review nothing" to "review against inferred conventions, clearly
+labelled."
+
 ## Real workflow snippet
 
 Example `AGENTS.md` block on the SDD review loop:
@@ -71,3 +91,4 @@ Example dispatch shape:
 - The refuse-combined-review section is unusually load-bearing — adopt it verbatim. The originating project's history shows that combined-review prompts erode review-stage gating quickly.
 - The known-drift surface is a project-specific convention. If your project doesn't yet have one, the first time `pattern-reviewer` flags pre-existing code drift not introduced by the current diff, that's the moment to start one.
 - Domain-specific cheap pattern checks (e.g. greps for `\bany\b` in TypeScript live-debug UI, or convention-guard scripts for new ConfigSO files) are project-specific. Document them in your `docs/conventions/<domain>/` files; the agent will run what's documented.
+- Discovery mode lets the agent be useful in a repo with no domain layout (e.g. direct-use plugin installs). It is a labelled, lower-confidence fallback — not a substitute for documenting conventions. The moment the project documents domains and `docs/conventions/<domain>/` files, the agent uses those instead.
