@@ -4,7 +4,21 @@ A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostri
 four curated review agents you can run in any repo with **no setup**. They read your
 code, specs, and tests and report findings — they never modify your files.
 
-Agents install namespaced under the plugin, e.g. `reviewers:spec-reviewer`.
+## Install
+
+In a Claude Code session, add this repo as a marketplace, then install the plugin:
+
+```
+/plugin marketplace add giostriquer/agent-workshop
+/plugin install reviewers@agent-workshop
+```
+
+(Terminal equivalent for the first step: `claude plugin marketplace add giostriquer/agent-workshop`.)
+
+After install, the four agents are available, namespaced `reviewers:<agent>` —
+e.g. `reviewers:spec-reviewer`. The same marketplace also hosts the `agent-workshop`
+onboarding plugin (`/plugin install agent-workshop@agent-workshop`) for the full
+scaffold-adoption flow.
 
 ## Agents
 

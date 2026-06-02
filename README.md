@@ -12,7 +12,7 @@ The goal: when you start a new project that wants AI-agent infrastructure, copy 
 - `.codex/agents/`, `.gemini/agents/`, `.opencode/agents/` — thin wrappers pointing at the canonical Claude specs, in each host's native format. Worked examples of the cross-host wrapper pattern (see `docs/conventions/cross-host-wrappers.md`).
 - `.claude/skills/`, `.codex/skills/`, `.gemini/skills/` — six working skills (`agent-audit`, `change-log`, `doc-audit`, `push`, `research`, `visual-advisor`), mirrored in full across hosts. OpenCode is wrapper-only by convention and does not carry a `skills/` folder.
 - `marketplace/catalog.json` — machine-readable catalog of agent packs, maturity labels, role boundaries, host-wrapper support, and project profile slots.
-- `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` — native Claude Code and Codex marketplace metadata for the guided `agent-workshop-onboard` plugin.
+- `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` — native Claude Code and Codex marketplace metadata. The Claude Code marketplace lists two plugins (`agent-workshop` onboarding and `reviewers` direct-use); the Codex marketplace carries the onboarding plugin only.
 - `plugins/agent-workshop/` and `skills/agent-workshop-onboard/` — the slim native plugin payload and root skill copy. Marketplace installs point at `plugins/agent-workshop/`, which exposes only `agent-workshop-onboard`; scaffold agents and skills stay nested non-discoverable references until copied into a target repo by an approved plan.
 - `plugins/reviewers/` — a second Claude Code plugin that ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents for direct use, with no onboarding skill. For people who want to use the agents without adopting the scaffold into a project. See [`docs/marketplace/README.md`](docs/marketplace/README.md).
 - `docs/agents/` — origin story per agent: what pressure created it, what problem it solves, how it works in practice, real workflow snippets, observed pitfalls.
@@ -32,9 +32,16 @@ It is not for: turnkey end-user products, plug-and-play "just install it" experi
 
 ## How to use it
 
-Start with the native onboarding plugin when your host supports it. Install the Claude Code or Codex marketplace entry, invoke `agent-workshop-onboard` in the target repo, and let `mode: plan` produce a read-only adoption plan before approving `mode: apply`.
+The fastest path is the Claude Code plugin marketplace. In a Claude Code session, add this repo once:
 
-If instead you just want to *use* a few agents directly without adopting anything into a project, install the `reviewers` plugin. It exposes a curated, standalone-capable set (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) as active plugin agents and includes no onboarding skill.
+```
+/plugin marketplace add giostriquer/agent-workshop
+```
+
+Then install whichever plugin fits — both live in the `agent-workshop` marketplace:
+
+- **Use the review agents directly, no onboarding** — `/plugin install reviewers@agent-workshop`. Ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) that review specs, tests, code, and the agent/skill layer and never edit your files. See [`plugins/reviewers/README.md`](plugins/reviewers/README.md).
+- **Onboard the scaffold into a project** — `/plugin install agent-workshop@agent-workshop`, then invoke `agent-workshop-onboard` in the target repo and let `mode: plan` produce a read-only adoption plan before approving `mode: apply`. (Codex has its own marketplace for this onboarding plugin — see [`docs/marketplace/native-plugin.md`](docs/marketplace/native-plugin.md).)
 
 Manual setup remains available in [`docs/setup.md`](docs/setup.md). It describes the lift-and-shift path (copy `.claude/`, write project-specific `CLAUDE.md` and `AGENTS.md`, drop in the conventions you need) and the more involved path (read the origin docs first, decide which agents earn their keep for your project, omit or replace the rest).
 
