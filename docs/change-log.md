@@ -14,6 +14,7 @@ reported as a finding even when undocumented; it defers to project-documented co
 conventions when they exist. Folded into the spec, origin doc, and catalog note, and
 re-synced across the `reviewers` payload and the onboarding reference mirrors. See
 [`docs/decisions/pattern-reviewer-comment-noise.md`](decisions/pattern-reviewer-comment-noise.md).
+Bumped the `reviewers` plugin to `0.2.0` to ship the new capability.
 
 ## 2026-05-29
 

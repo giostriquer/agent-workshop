@@ -1,7 +1,7 @@
 {
   "name": "reviewers",
   "description": "Curated standalone review and governance agents from Agent Workshop, usable directly without onboarding.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": { "name": "Agent Workshop" },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",
