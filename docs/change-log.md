@@ -1,5 +1,20 @@
 # Change Log
 
+## 2026-06-05
+
+### pattern-reviewer comment-noise check
+
+Added a built-in comment-noise check to the canonical `pattern-reviewer`: in every
+mode and regardless of domain, it flags comments that only restate the code
+(line-by-line narration, name/signature headers, long blocks recoverable from the
+code) and recommends deletion or replacement-by-naming, while explicitly keeping
+comments that carry rationale, warnings, public-API intent, external references,
+legal headers, and `TODO`/`FIXME` markers. Unlike project-specific conventions it is
+reported as a finding even when undocumented; it defers to project-documented comment
+conventions when they exist. Folded into the spec, origin doc, and catalog note, and
+re-synced across the `reviewers` payload and the onboarding reference mirrors. See
+[`docs/decisions/pattern-reviewer-comment-noise.md`](decisions/pattern-reviewer-comment-noise.md).
+
 ## 2026-05-29
 
 ### Direct-use agents plugin

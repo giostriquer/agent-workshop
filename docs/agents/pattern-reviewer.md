@@ -52,6 +52,28 @@ an unexamined surface is still forbidden. Discovery mode only changes the "no la
 at all" case from "review nothing" to "review against inferred conventions, clearly
 labelled."
 
+## Comment noise (built-in hygiene check)
+
+Most of what `pattern-reviewer` enforces is project-specific: the convention docs
+own the rules and the agent is a runner. Comment noise is the deliberate
+exception — a universal hygiene check the agent applies by default, in every mode
+and regardless of domain.
+
+The pressure for it is concrete: code-generating models over-comment. They narrate
+the implementation line by line, repeat function names as block headers, and write
+long comment blocks whose every claim is already in the code beneath them. That
+noise inflates diffs, drifts out of sync with the code, and buries the rare comment
+that carries intent or a warning. The check flags comments that only restate the
+code and recommends deleting them or replacing them with a better name; it
+explicitly *keeps* the comments that carry what code cannot — rationale, warnings,
+public-API intent, external references, legal headers, and `TODO`/`FIXME` markers.
+
+Because it is a built-in rule rather than a documented project convention, it is
+reported as a finding even when the project documents no comment conventions; the
+"raise undocumented project-specific rules as observations" caveat does not apply
+to it. When a project *does* document its own comment conventions, the agent defers
+to those.
+
 ## Real workflow snippet
 
 Example `AGENTS.md` block on the SDD review loop:
@@ -80,7 +102,7 @@ Example dispatch shape:
 - **Combined-review dispatches.** Dispatchers occasionally try to bundle "spec + code-quality + pattern" into one prompt. The agent refuses by design. Adapt the orchestration; don't relax the refusal.
 - **Wrong mode for mixed diffs.** A diff that touches both backend and frontend, dispatched with `mode: backend`, will list the frontend files as "Not reviewed by this mode" and need a second dispatch. Use `mode: auto` for genuinely mixed work.
 - **Editing known-drift mid-loop.** Adding or removing entries during a non-terminal round creates thrash where an entry is added one round and removed the next. Apply pending updates only on the terminal pattern-compliant round.
-- **Treating pattern-reviewer as a code-quality reviewer.** It is narrower — it checks pattern conformance, not correctness or readability. If a finding sounds like "this method could be cleaner," that's code-quality territory.
+- **Treating pattern-reviewer as a code-quality reviewer.** It is narrower — it checks pattern conformance, not correctness or readability. If a finding sounds like "this method could be cleaner," that's code-quality territory. The one deliberate exception is the built-in comment-noise check, which flags redundant comments only — not broader readability, naming, or structure.
 - **Cross-task SendMessage-resume.** Each task's pattern review is a fresh dispatch. The reviewer-session-continuation rule applies to revision rounds **on the same task**, not across tasks.
 - **Silent no-op on an unrecognized surface.** A review stage produces false confidence not only by mis-judging code but by never examining it. In the originating project a whole recurring category of work lived in a repo-local automation/scripts directory the domain layout never covered — `mode: auto` classified those files into no domain, recorded them "not reviewed," and the stage emitted a non-failing verdict. Large diffs passed a mandatory review gate that had enforced nothing on them. The **Domain coverage gaps** rule in the canonical spec is the fix: files matching no defined domain are a coverage-gap *finding*, not a clean pass, and the recurring uncovered directory is the signal to extend the domain layout.
 
@@ -92,3 +114,4 @@ Example dispatch shape:
 - The known-drift surface is a project-specific convention. If your project doesn't yet have one, the first time `pattern-reviewer` flags pre-existing code drift not introduced by the current diff, that's the moment to start one.
 - Domain-specific cheap pattern checks (e.g. greps for `\bany\b` in TypeScript live-debug UI, or convention-guard scripts for new ConfigSO files) are project-specific. Document them in your `docs/conventions/<domain>/` files; the agent will run what's documented.
 - Discovery mode lets the agent be useful in a repo with no domain layout (e.g. direct-use plugin installs). It is a labelled, lower-confidence fallback — not a substitute for documenting conventions. The moment the project documents domains and `docs/conventions/<domain>/` files, the agent uses those instead.
+- The comment-noise check is built-in and universal — it fires even with no documented conventions, and unlike project-specific rules it is reported as a finding rather than an observation. If your project wants different comment rules, document them and the agent defers to yours.

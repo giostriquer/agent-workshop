@@ -204,8 +204,33 @@ Focus on implementation conventions for the active review domains, such as:
 - adapter / wrapper conventions
 - test file presence and naming
 - shared component extraction thresholds
+- comment value — flag comments that only restate the code (see Comment noise)
 
 Do not treat product behavior changes as documentation work. That is a separate documentation-maintenance responsibility. Do not own test quality, risk coverage, test design, property-test strategy, or mutation-test strategy — `test-quality-reviewer` owns that.
+
+## Comment noise
+
+Across all review modes — and independent of domain — flag comments that only restate what the code already says. Authors, and code-generating models especially, tend to over-narrate: line-by-line prose paraphrasing the next statement, block headers that repeat a function's name and signature, multi-line explanations of self-evident logic. This is not harmless verbosity. Redundant comments inflate the diff, drift out of sync with the code they describe, and bury the rare comment that carries real information.
+
+This is a deliberately narrow, single built-in exception to the agent's documented-rules discipline — not a licence to add other undocumented checks. It scopes to the changed files already under review for the active mode, regardless of those files' domain or doc-coverage status; it does not widen the reviewed-file set, and it never turns a coverage gap or a `pattern compliant; no matching files changed` result into a reviewed pass.
+
+Flag a comment as noise when it:
+
+- restates the adjacent code in prose (`// increment count` above `count++`; `// loop over each order` above `for (order of orders)`);
+- narrates obvious control flow or the literal mechanics of a well-named call;
+- repeats a function, class, or variable name or signature as a header without adding a contract, constraint, precondition, or reason;
+- is a long block whose every claim is recoverable just by reading the code beneath it; or
+- exists only because a name is poor — recommend renaming the variable or extracting a well-named function instead of keeping the comment.
+
+Do **not** flag comments that carry what the code cannot:
+
+- *why* a non-obvious choice was made, or rationale the code itself cannot show;
+- warnings of consequences, gotchas, invariants, ordering requirements, or non-local effects;
+- the intent or contract of a public or exported API;
+- pointers to an issue, spec, edge case, or external constraint that motivated the code;
+- legal or license headers, and deliberate `TODO` / `FIXME` markers.
+
+Unlike the project-specific architectural conventions elsewhere in this spec — which are findings only where the project documents them — comment noise is a **universal hygiene check the agent applies by default**. It does not rely on a documented rule, so report it as a finding even when the project documents no comment conventions; the *Anti-patterns to flag* "raise it as an observation rather than a finding" caveat governs undocumented *project-specific* rules, not this built-in check. Treat it as a low-to-medium pattern-drift finding: name the file and line range, quote the offending comment briefly, and recommend deleting it or replacing it with a better name. If the project documents its own comment conventions, defer to those. This is the one place pattern-reviewer inspects comment text, and it stays narrow: it does not broaden the agent into general code-quality or readability review — it flags only redundant, restating comments, never naming, structure, or cleanliness at large (a rename is suggested only as the fix for a comment that exists solely to compensate for a poor name). Its findings stay full-confidence even in discovery mode, since they do not depend on inferred conventions. As everywhere, pattern-reviewer reports the noise; it does not strip comments itself — the implementer trims.
 
 ## Output expectations
 
@@ -217,6 +242,7 @@ When asked to review, report:
 - any domain coverage gap — changed files that no defined domain covers
 - whether the diff follows the pattern
 - concrete findings, ordered by impact
+- any comment-noise findings — comments that only restate the code
 - whether convention docs should change
 - whether the change has cross-system implications
 
