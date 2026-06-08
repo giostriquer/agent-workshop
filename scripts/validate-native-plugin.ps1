@@ -154,8 +154,15 @@ function Assert-ReviewersPlugin {
     if (Has-Property $manifest "mcpServers") {
         Fail "reviewers manifest must not contain mcpServers"
     }
-    if (Test-Path -LiteralPath "$root/skills" -PathType Container) {
-        Fail "reviewers must not contain a skills directory"
+    $skillsDir = "$root/skills"
+    if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
+        Fail "reviewers must contain a skills directory"
+    }
+    $expectedSkills = @("handoff-pr", "handoff-review")
+    $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
+    Assert-SameFileList $expectedSkills $actualSkills "reviewers skills"
+    foreach ($skillName in $expectedSkills) {
+        Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
     }
 
     $agentDir = "$root/agents"
