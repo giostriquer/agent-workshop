@@ -1,5 +1,27 @@
 # Change Log
 
+## 2026-06-08
+
+### Handoff skills in the reviewers plugin
+
+Added two direct-use prompt-artifact skills and shipped them through the `reviewers`
+plugin (now `0.3.0`, broadened from agents-only to agents + skills). `handoff-review`
+produces a self-contained, unbiased review brief (task-vs-code, rules conformance,
+information leak, correctness) for a separate agent or session to run before a PR.
+`handoff-pr` produces a structured PR handoff artifact with confirmed ticket links and
+review status for a separately-authorized session to open, and never runs
+`gh pr create` itself. Both are tool-agnostic and stand alone — each re-derives the
+task from the ticket + diff, not from the implementing session's context. See
+[`docs/decisions/handoff-skills.md`](decisions/handoff-skills.md) and its
+[implementation plan](decisions/handoff-skills-implementation-plan.md).
+
+- `scripts/validate-native-plugin.ps1` now requires the `reviewers` payload to expose
+  exactly `handoff-pr` and `handoff-review`, each byte-identical to canonical —
+  reversing the earlier "reviewers ships no skills" assertion.
+- Canonical skills live in `.claude/skills/`, mirrored byte-identical to `.codex/`,
+  `.gemini/`, the `reviewers` payload, and the onboarding reference trees; origin docs
+  added to `docs/skills/` and listed in the skills roster (now eight skills).
+
 ## 2026-06-05
 
 ### pattern-reviewer comment-noise check
