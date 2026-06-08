@@ -11,7 +11,7 @@ Package a finished branch into a **structured PR artifact** that a separately-au
 
 The work is ready for a PR, but the current session does not hold PR-write authorization (or you deliberately want a clean, authorized session to open it). Hand it off instead of opening it here.
 
-## The rule that makes this work
+## The one rule that makes this work
 
 The artifact must **stand alone**. A separately-authorized session opens the PR with no access to this session, so every field — summary, ticket, status — is re-derived from the **branch diff and the ticket**, never from "what we discussed this session."
 
