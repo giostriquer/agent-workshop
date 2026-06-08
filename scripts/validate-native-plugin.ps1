@@ -147,12 +147,35 @@ function Assert-OnlyAllowedPluginAgents {
 function Assert-ReviewersPlugin {
     $root = "plugins/reviewers"
     $manifest = Read-JsonFile "$root/.claude-plugin/plugin.json"
+    $codexManifest = Read-JsonFile "$root/.codex-plugin/plugin.json"
 
     if ($manifest.name -ne "reviewers") {
         Fail "reviewers plugin name must be reviewers"
     }
+    if ($codexManifest.name -ne "reviewers") {
+        Fail "Codex reviewers plugin name must be reviewers"
+    }
+    if ($codexManifest.version -ne $manifest.version) {
+        Fail "Codex reviewers manifest version must match Claude reviewers manifest"
+    }
     if (Has-Property $manifest "mcpServers") {
         Fail "reviewers manifest must not contain mcpServers"
+    }
+    if (Has-Property $codexManifest "mcpServers") {
+        Fail "Codex reviewers manifest must not contain mcpServers"
+    }
+    if (Has-Property $codexManifest "apps") {
+        Fail "Codex reviewers manifest must not contain apps"
+    }
+    if ($codexManifest.skills -ne "./skills") {
+        Fail "Codex reviewers plugin manifest must set skills to ./skills"
+    }
+    if (-not (Has-Property $codexManifest "interface") -or -not (Has-Property $codexManifest.interface "capabilities")) {
+        Fail "Codex reviewers manifest must declare interface.capabilities"
+    }
+    $capabilities = @($codexManifest.interface.capabilities)
+    if ($capabilities.Count -ne 1 -or $capabilities[0] -ne "Skills") {
+        Fail "Codex reviewers capabilities must be exactly Skills"
     }
     $skillsDir = "$root/skills"
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
@@ -176,6 +199,21 @@ function Assert-ReviewersPlugin {
 
     foreach ($name in $expected) {
         Assert-SameFile ".claude/agents/$name" "$agentDir/$name"
+    }
+}
+
+function Assert-CodexReviewersPlugin {
+    $root = "plugins/reviewers"
+    $skillsDir = "$root/skills"
+    if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
+        Fail "Codex reviewers must contain a skills directory"
+    }
+    $expectedSkills = @("handoff-pr", "handoff-review")
+    $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
+    Assert-SameFileList $expectedSkills $actualSkills "Codex reviewers skills"
+
+    foreach ($skillName in "handoff-pr", "handoff-review") {
+        Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
     }
 }
 
@@ -265,20 +303,41 @@ if (Has-Property $claudePayloadManifest "agents") {
     Fail "Claude plugin payload manifest must not expose agents"
 }
 
-if ($codexMarketplace.plugins.Count -ne 1 -or $codexMarketplace.plugins[0].name -ne "agent-workshop") {
-    Fail "Codex marketplace must contain only the agent-workshop plugin"
+$codexPlugins = @($codexMarketplace.plugins)
+if ($codexPlugins.Count -ne 2) {
+    Fail "Codex marketplace must contain exactly two plugins (agent-workshop, reviewers)"
 }
-if ($codexMarketplace.plugins[0].source.path -ne "./plugins/agent-workshop") {
+$codexOnboardEntry = $codexPlugins | Where-Object { $_.name -eq "agent-workshop" }
+$codexReviewersEntry = $codexPlugins | Where-Object { $_.name -eq "reviewers" }
+if (-not $codexOnboardEntry) {
+    Fail "Codex marketplace must contain the agent-workshop plugin"
+}
+if (-not $codexReviewersEntry) {
+    Fail "Codex marketplace must contain the reviewers plugin"
+}
+if ($codexOnboardEntry.source.path -ne "./plugins/agent-workshop") {
     Fail "Codex marketplace source path must be ./plugins/agent-workshop"
 }
-if ($codexMarketplace.plugins[0].policy.installation -ne "AVAILABLE") {
+if ($codexOnboardEntry.policy.installation -ne "AVAILABLE") {
     Fail "Codex marketplace installation policy must be AVAILABLE"
 }
-if ($codexMarketplace.plugins[0].policy.authentication -ne "ON_INSTALL") {
+if ($codexOnboardEntry.policy.authentication -ne "ON_INSTALL") {
     Fail "Codex marketplace authentication policy must be ON_INSTALL"
 }
-if (-not (Has-Property $codexMarketplace.plugins[0] "category")) {
+if (-not (Has-Property $codexOnboardEntry "category")) {
     Fail "Codex marketplace entry must include category"
+}
+if ($codexReviewersEntry.source.path -ne "./plugins/reviewers") {
+    Fail "Codex reviewers marketplace source path must be ./plugins/reviewers"
+}
+if ($codexReviewersEntry.policy.installation -ne "AVAILABLE") {
+    Fail "Codex reviewers marketplace installation policy must be AVAILABLE"
+}
+if ($codexReviewersEntry.policy.authentication -ne "ON_INSTALL") {
+    Fail "Codex reviewers marketplace authentication policy must be ON_INSTALL"
+}
+if (-not (Has-Property $codexReviewersEntry "category")) {
+    Fail "Codex reviewers marketplace entry must include category"
 }
 
 if ($codexManifest.name -ne "agent-workshop") {
@@ -309,6 +368,7 @@ Assert-SingleSkill "plugins/agent-workshop/skills" "agent-workshop-onboard"
 Assert-OnlyAllowedPluginSkillFiles
 Assert-OnlyAllowedPluginAgents
 Assert-ReviewersPlugin
+Assert-CodexReviewersPlugin
 
 Assert-SameFile `
     "skills/agent-workshop-onboard/SKILL.md" `

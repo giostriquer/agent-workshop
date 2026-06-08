@@ -25,6 +25,16 @@ The marketplace ships two Claude Code plugins for two different intents:
 The onboarding skill is exclusive to the bootstrapper; the curated agents are
 exclusive to the direct-use plugin. They do not overlap.
 
+The Codex marketplace ships the same onboarding plugin plus a Codex-native
+review package:
+
+- **`agent-workshop`** — exposes only `agent-workshop-onboard`.
+- **`reviewers`** — exposes `handoff-review` and `handoff-pr` as Codex skills.
+  The reviewer agent files are bundled in the plugin payload, but Codex plugins
+  do not register standalone custom agents from top-level plugin agent files. For
+  true Codex subagent files, use onboarding to copy `.codex/agents/*.toml` into
+  the target repo.
+
 ## Start here
 
 1. Use the native plugin when Claude Code or Codex is available, or use this

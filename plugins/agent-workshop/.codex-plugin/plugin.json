@@ -1,6 +1,6 @@
 {
   "name": "agent-workshop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Onboard repo-local AI agent scaffolding from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
@@ -18,6 +18,11 @@
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
-    "websiteURL": "https://github.com/giostriquer/agent-workshop"
+    "websiteURL": "https://github.com/giostriquer/agent-workshop",
+    "defaultPrompt": [
+      "Plan Agent Workshop adoption for this repo.",
+      "Audit this repo's Agent Workshop setup.",
+      "Explain which agent packs fit this project."
+    ]
   }
 }

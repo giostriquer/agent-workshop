@@ -2,6 +2,21 @@
 
 ## 2026-06-08
 
+### Codex marketplace install path
+
+Hardened the Codex onboarding plugin metadata and documented the separate-machine
+install flow. The `agent-workshop` onboarding plugin is now `0.1.2`, its Codex
+manifest includes starter prompts for Codex plugin presentation, and the README,
+native plugin doc, and plugin README show the Codex marketplace commands:
+`codex plugin marketplace add giostriquer/agent-workshop --ref main` followed by
+`codex plugin add agent-workshop@agent-workshop`.
+
+Added `reviewers` to the Codex marketplace with a Codex manifest on the existing
+Claude Code reviewers payload. It installs from the same marketplace and exposes
+`handoff-review` / `handoff-pr` as Codex skills; the reviewer agent files remain
+bundled for Claude Code and reference rather than active Codex plugin agents. See
+[`docs/decisions/codex-reviewers-plugin.md`](decisions/codex-reviewers-plugin.md).
+
 ### Handoff skills in the reviewers plugin
 
 Added two direct-use prompt-artifact skills and shipped them through the `reviewers`

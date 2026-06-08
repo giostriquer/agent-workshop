@@ -23,6 +23,40 @@ repo, not the marketplace source. Marketplace installs must not point at repo
 root, because repo root also contains the scaffold's canonical `.claude/skills/`
 tree.
 
+## Install From A Separate Machine
+
+For Claude Code:
+
+```text
+/plugin marketplace add giostriquer/agent-workshop
+/plugin install agent-workshop@agent-workshop
+```
+
+For Codex:
+
+```powershell
+codex plugin marketplace add giostriquer/agent-workshop --ref main
+codex plugin add agent-workshop@agent-workshop
+codex plugin add reviewers@agent-workshop
+```
+
+Codex can also install from a local checkout while developing the marketplace:
+
+```powershell
+codex plugin marketplace add E:\dev\agent-workshop
+codex plugin add agent-workshop@agent-workshop
+```
+
+Use a new Codex thread after installing or updating the plugin so the newly
+installed `agent-workshop-onboard` skill is available to the session.
+
+`reviewers` is the Codex-native counterpart to the Claude Code
+`reviewers` plugin. Codex plugins distribute skills, apps, and MCP servers, so
+the active Codex surface is the `handoff-review` and `handoff-pr` skills. The
+reviewer agent files are bundled in the plugin payload for Claude Code and
+reference, but Codex custom agents still need repo-local `.codex/agents/`
+wrappers from onboarding.
+
 ## Skill Modes
 
 - `mode: plan` is the default. It is read-only and returns selected packs,

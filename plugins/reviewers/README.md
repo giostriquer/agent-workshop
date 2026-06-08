@@ -16,6 +16,19 @@ In a Claude Code session, add this repo as a marketplace, then install the plugi
 
 (Terminal equivalent for the first step: `claude plugin marketplace add giostriquer/agent-workshop`.)
 
+For Codex, use the skill-based counterpart:
+
+```powershell
+codex plugin marketplace add giostriquer/agent-workshop --ref main
+codex plugin add reviewers@agent-workshop
+```
+
+Codex plugins do not currently expose standalone custom agents from plugin
+manifests. The Codex `reviewers` package exposes `handoff-review` and
+`handoff-pr` as skills and bundles the reviewer agent files inertly; use the
+`agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
+wrappers into a target repo.
+
 After install, the four agents are available, namespaced `reviewers:<agent>` —
 e.g. `reviewers:spec-reviewer`. The two skills are available as `handoff-review` and
 `handoff-pr` (skills are invoked by name, not namespaced). The same marketplace also

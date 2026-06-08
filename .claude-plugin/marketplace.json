@@ -5,7 +5,7 @@
   "plugins": [
     {
       "name": "agent-workshop",
-      "version": "0.1.1",
+      "version": "0.1.2",
       "source": "./plugins/agent-workshop",
       "description": "Onboard repo-local agent scaffolding with one guided skill",
       "author": { "name": "Agent Workshop" }
