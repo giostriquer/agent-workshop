@@ -12,6 +12,7 @@ desktop.ini
 
 # Local scratch
 .temp/
+tmp/
 .worktrees/
 *.log
 
