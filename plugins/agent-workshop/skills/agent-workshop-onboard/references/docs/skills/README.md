@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the six skills shipped in `.claude/skills/`. Each doc covers:
+Origin docs for the eight skills shipped in `.claude/skills/`. Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -21,6 +21,8 @@ The skill files in `.claude/skills/<name>/SKILL.md` are the canonical contracts.
 | [`push`](push.md) | Branch-aware commit and push; pulls before staging; uses `change-log` as message source when relevant. |
 | [`research`](research.md) | Forward-looking research orchestration; thin skill, heavy `research` agent. |
 | [`visual-advisor`](visual-advisor.md) | Visual taste advisor; mode-aware (refinement / exploration / rebaseline) prompt shaping. |
+| [`handoff-review`](handoff-review.md) | Produces a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session; spawns a reviewer or writes a scratch file. |
+| [`handoff-pr`](handoff-pr.md) | Produces a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session; never opens the PR. |
 
 ## Composition
 
@@ -32,6 +34,7 @@ Skills here pair naturally with agents:
 - `research` (skill) orchestrates `research` (agent).
 - `visual-advisor` is the advisor counterpart to `visual-implementer`.
 - `push` stands alone — it's a workflow primitive, not a multi-stage orchestration.
+- `handoff-review` and `handoff-pr` are end-of-branch handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills.
 
 ## Adoption
 
