@@ -4,7 +4,7 @@
 
 ## Status
 
-Draft for operator review.
+Implemented.
 
 ## Context
 
