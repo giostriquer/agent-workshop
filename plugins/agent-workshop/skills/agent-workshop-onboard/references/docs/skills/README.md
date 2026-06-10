@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the eight skills shipped in `.claude/skills/`. Each doc covers:
+Origin docs for the nine skills shipped in `.claude/skills/`. Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -23,6 +23,7 @@ The skill files in `.claude/skills/<name>/SKILL.md` are the canonical contracts.
 | [`visual-advisor`](visual-advisor.md) | Visual taste advisor; mode-aware (refinement / exploration / rebaseline) prompt shaping. |
 | [`handoff-review`](handoff-review.md) | Produces a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session; spawns a reviewer or writes a scratch file. |
 | [`handoff-pr`](handoff-pr.md) | Produces a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session; never opens the PR. |
+| [`handoff-goal`](handoff-goal.md) | Produces a self-contained goal document (goal + definition of done, state, concrete operating rules) for a new session to pursue autonomously across compactions; never pursues the goal itself. |
 
 ## Composition
 
@@ -34,7 +35,7 @@ Skills here pair naturally with agents:
 - `research` (skill) orchestrates `research` (agent).
 - `visual-advisor` is the advisor counterpart to `visual-implementer`.
 - `push` stands alone — it's a workflow primitive, not a multi-stage orchestration.
-- `handoff-review` and `handoff-pr` are end-of-branch handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills.
+- `handoff-review`, `handoff-pr`, and `handoff-goal` are handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills. The first two hand a finished branch backward (review, PR); `handoff-goal` hands work forward (a goal to pursue).
 
 ## Adoption
 

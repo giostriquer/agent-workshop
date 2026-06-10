@@ -1,5 +1,33 @@
 # Change Log
 
+## 2026-06-10
+
+### handoff-goal skill — forward handoff in the reviewers plugin
+
+Added `handoff-goal`, the third handoff skill, shipped through the `reviewers`
+plugin (now `0.4.0`). Where `handoff-review` / `handoff-pr` hand a finished
+branch backward, `handoff-goal` hands work *forward*: it writes a self-contained
+goal document (`tmp/<YYYY-MM-DD>-<goal-slug>.md`) that a new session picks up
+and pursues autonomously. The document carries the goal as an outcome with a
+definition of done, current state re-derived from the repo, and operating rules
+with concrete values (branch / worktree, commits, push / PR, validation,
+stop-and-ask boundaries), and instructs the pursuing session to re-read the
+rules after every compaction and append to a progress log — the file, not
+session memory, is the durable contract. Goal resolution is three-way: inferred
+from session context (then confirmed), scoped to referenced existing work, or
+shaped from a brand-new description. The skill never pursues the goal itself.
+See [`docs/decisions/handoff-goal.md`](decisions/handoff-goal.md).
+
+- Validator now requires the `reviewers` payload to expose exactly
+  `handoff-goal`, `handoff-pr`, and `handoff-review`, each byte-identical to
+  canonical; mirrors landed in `.codex/`, `.gemini/`, the plugin payload, and
+  both onboarding reference roots; origin doc added and the skills roster is
+  now nine skills.
+- Authored test-first per the writing-skills discipline: a baseline (no-skill)
+  run produced a doc with no compaction-survival mechanics and an invented
+  user-mandated rule; with the skill, producer and zero-context consumer runs
+  passed both checks.
+
 ## 2026-06-08
 
 ### Codex marketplace install path

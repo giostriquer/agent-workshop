@@ -57,9 +57,9 @@ codex plugin add reviewers@agent-workshop
 The Codex marketplace has two installable entries:
 
 - `agent-workshop` — exposes only `agent-workshop-onboard` for scaffold adoption.
-- `reviewers` — exposes the `handoff-review` and `handoff-pr` skills. The
-  reviewer agent files are bundled in the payload, but Codex custom agents still
-  need repo-local `.codex/agents/` wrappers from onboarding.
+- `reviewers` — exposes the `handoff-review`, `handoff-pr`, and `handoff-goal`
+  skills. The reviewer agent files are bundled in the payload, but Codex custom
+  agents still need repo-local `.codex/agents/` wrappers from onboarding.
 
 Manual setup remains available in [`docs/setup.md`](docs/setup.md). It describes the lift-and-shift path (copy `.claude/`, write project-specific `CLAUDE.md` and `AGENTS.md`, drop in the conventions you need) and the more involved path (read the origin docs first, decide which agents earn their keep for your project, omit or replace the rest).
 

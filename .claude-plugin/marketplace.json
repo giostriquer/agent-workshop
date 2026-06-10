@@ -12,7 +12,7 @@
     },
     {
       "name": "reviewers",
-      "version": "0.3.0",
+      "version": "0.4.0",
       "source": "./plugins/reviewers",
       "description": "Use a curated set of standalone review and governance agents plus PR/review handoff skills directly, without onboarding.",
       "author": { "name": "Agent Workshop" }

@@ -1,6 +1,6 @@
 {
   "name": "reviewers",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Codex-ready handoff skills and bundled reviewer files from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Reviewers",
     "shortDescription": "Review and PR handoff skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop reviewers plugin. Codex exposes the handoff-review and handoff-pr skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "longDescription": "A Codex manifest for the Agent Workshop reviewers plugin. Codex exposes the handoff-review, handoff-pr, and handoff-goal skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
@@ -22,6 +22,7 @@
     "defaultPrompt": [
       "Prepare a review handoff brief.",
       "Prepare a PR handoff artifact.",
+      "Prepare a goal handoff document.",
       "Explain how to install reviewer agents for Codex."
     ]
   }

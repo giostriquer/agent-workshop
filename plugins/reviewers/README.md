@@ -1,9 +1,10 @@
 # reviewers
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-four curated review agents plus two PR/review handoff skills you can run in any repo with **no setup**.
+four curated review agents plus three handoff skills you can run in any repo with **no setup**.
 The agents read your code, specs, and tests and report findings — they never modify your files.
-The skills produce structured handoff artifacts for review briefs and PR opens.
+The skills produce structured handoff artifacts: review briefs, PR opens, and goal documents
+for a new session to pursue.
 
 ## Install
 
@@ -24,14 +25,14 @@ codex plugin add reviewers@agent-workshop
 ```
 
 Codex plugins do not currently expose standalone custom agents from plugin
-manifests. The Codex `reviewers` package exposes `handoff-review` and
-`handoff-pr` as skills and bundles the reviewer agent files inertly; use the
+manifests. The Codex `reviewers` package exposes `handoff-review`, `handoff-pr`,
+and `handoff-goal` as skills and bundles the reviewer agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
 After install, the four agents are available, namespaced `reviewers:<agent>` —
-e.g. `reviewers:spec-reviewer`. The two skills are available as `handoff-review` and
-`handoff-pr` (skills are invoked by name, not namespaced). The same marketplace also
+e.g. `reviewers:spec-reviewer`. The three skills are available as `handoff-review`,
+`handoff-pr`, and `handoff-goal` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -52,6 +53,7 @@ All four are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Wr
 | --- | --- |
 | `handoff-review` | a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session to run before a PR |
 | `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
+| `handoff-goal` | a self-contained goal document (goal + definition of done, current state, concrete operating rules) for a new session to pursue autonomously across compactions — never pursues the goal itself |
 
 ## Not included
 
