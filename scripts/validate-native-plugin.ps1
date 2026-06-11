@@ -181,7 +181,7 @@ function Assert-ReviewersPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "reviewers must contain a skills directory"
     }
-    $expectedSkills = @("handoff-goal", "handoff-pr", "handoff-review")
+    $expectedSkills = @("doc-to-html", "handoff-goal", "handoff-pr", "handoff-review")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "reviewers skills"
     foreach ($skillName in $expectedSkills) {
@@ -208,7 +208,7 @@ function Assert-CodexReviewersPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "Codex reviewers must contain a skills directory"
     }
-    $expectedSkills = @("handoff-goal", "handoff-pr", "handoff-review")
+    $expectedSkills = @("doc-to-html", "handoff-goal", "handoff-pr", "handoff-review")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "Codex reviewers skills"
 

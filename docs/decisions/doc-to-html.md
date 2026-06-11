@@ -54,8 +54,8 @@ appendix that keeps raw proof out of the body without dropping it.
 
 ## Packaging
 
-A scaffold skill, not a plugin skill (it ships through onboarding, not through
-`reviewers`):
+At first landing, a scaffold skill only (shipping through onboarding, not
+through `reviewers`) — superseded the same day; see the amendment below:
 
 - Canonical at `.claude/skills/doc-to-html/SKILL.md`; byte-identical mirrors
   at `.codex/` and `.gemini/` per the skill-parity convention (`.opencode/`
@@ -73,10 +73,27 @@ A scaffold skill, not a plugin skill (it ships through onboarding, not through
   fields.) This supersedes the handoff-goal precedent of leaving the
   onboarding version untouched on reference-only additions — a changed
   payload should carry a changed version so installs refresh.
-- Distribution to Codex is via onboarding only — `doc-to-html` is a scaffold
-  skill like the other seven, not an active skill in the `reviewers` plugin;
-  Codex sessions get it repo-locally after `agent-workshop-onboard` applies
-  it to a target repo.
+- Distribution to Codex was initially via onboarding only — superseded the
+  same day by the amendment below.
+
+## Amendment (2026-06-11, same day): direct-use via `reviewers` 0.5.0
+
+The operator has `reviewers` installed on a machine and wanted `doc-to-html`
+available there without running onboarding. Onboarding-only distribution
+cannot reach an already-installed plugin, so the skill is now also an active
+`reviewers` plugin skill:
+
+- Byte-identical payload copy at `plugins/reviewers/skills/doc-to-html/SKILL.md`;
+  `scripts/validate-native-plugin.ps1` `$expectedSkills` widens to exactly
+  {`doc-to-html`, `handoff-goal`, `handoff-pr`, `handoff-review`} in both the
+  Claude and Codex assertions.
+- `reviewers` `0.4.0` → `0.5.0` in both plugin manifests and the Claude
+  marketplace entry; Codex manifest prose, default prompts, plugin README,
+  root README, and marketplace docs now name the fourth skill.
+- Identity note: `reviewers` is now described as review agents plus
+  direct-use skills, rather than strictly handoff-themed — accepted
+  deliberately over a separate single-skill plugin, because the point was
+  updating an existing install in place.
 
 ## Non-goals
 

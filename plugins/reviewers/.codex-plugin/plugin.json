@@ -1,7 +1,7 @@
 {
   "name": "reviewers",
-  "version": "0.4.0",
-  "description": "Codex-ready handoff skills and bundled reviewer files from Agent Workshop.",
+  "version": "0.5.0",
+  "description": "Codex-ready handoff and doc-to-html skills and bundled reviewer files from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -13,8 +13,8 @@
   "skills": "./skills",
   "interface": {
     "displayName": "Reviewers",
-    "shortDescription": "Review and PR handoff skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop reviewers plugin. Codex exposes the handoff-review, handoff-pr, and handoff-goal skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "shortDescription": "Review handoff and doc-to-html skills for Codex.",
+    "longDescription": "A Codex manifest for the Agent Workshop reviewers plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, and doc-to-html skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
@@ -23,6 +23,7 @@
       "Prepare a review handoff brief.",
       "Prepare a PR handoff artifact.",
       "Prepare a goal handoff document.",
+      "Turn a markdown report into a standalone HTML page.",
       "Explain how to install reviewer agents for Codex."
     ]
   }

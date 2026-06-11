@@ -42,7 +42,7 @@ In a Claude Code session, add this repo once:
 
 Then install whichever plugin fits — both live in the `agent-workshop` marketplace:
 
-- **Use the review agents directly, no onboarding** — `/plugin install reviewers@agent-workshop`. Ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) that review specs, tests, code, and the agent/skill layer and never edit your files. See [`plugins/reviewers/README.md`](plugins/reviewers/README.md).
+- **Use the review agents directly, no onboarding** — `/plugin install reviewers@agent-workshop`. Ships four standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`, `pattern-reviewer`, `vigil`) that review specs, tests, code, and the agent/skill layer and never edit your files, plus four direct-use skills (`handoff-review`, `handoff-pr`, `handoff-goal`, `doc-to-html`). See [`plugins/reviewers/README.md`](plugins/reviewers/README.md).
 - **Onboard the scaffold into a project** — `/plugin install agent-workshop@agent-workshop`, then invoke `agent-workshop-onboard` in the target repo and let `mode: plan` produce a read-only adoption plan before approving `mode: apply`. (Codex has its own marketplace for this onboarding plugin — see [`docs/marketplace/native-plugin.md`](docs/marketplace/native-plugin.md).)
 
 In Codex on a separate machine, add the same repository as a Codex marketplace
@@ -57,9 +57,10 @@ codex plugin add reviewers@agent-workshop
 The Codex marketplace has two installable entries:
 
 - `agent-workshop` — exposes only `agent-workshop-onboard` for scaffold adoption.
-- `reviewers` — exposes the `handoff-review`, `handoff-pr`, and `handoff-goal`
-  skills. The reviewer agent files are bundled in the payload, but Codex custom
-  agents still need repo-local `.codex/agents/` wrappers from onboarding.
+- `reviewers` — exposes the `handoff-review`, `handoff-pr`, `handoff-goal`, and
+  `doc-to-html` skills. The reviewer agent files are bundled in the payload, but
+  Codex custom agents still need repo-local `.codex/agents/` wrappers from
+  onboarding.
 
 Manual setup remains available in [`docs/setup.md`](docs/setup.md). It describes the lift-and-shift path (copy `.claude/`, write project-specific `CLAUDE.md` and `AGENTS.md`, drop in the conventions you need) and the more involved path (read the origin docs first, decide which agents earn their keep for your project, omit or replace the rest).
 

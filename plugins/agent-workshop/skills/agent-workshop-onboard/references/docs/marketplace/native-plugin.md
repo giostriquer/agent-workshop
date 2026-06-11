@@ -52,8 +52,8 @@ installed `agent-workshop-onboard` skill is available to the session.
 
 `reviewers` is the Codex-native counterpart to the Claude Code
 `reviewers` plugin. Codex plugins distribute skills, apps, and MCP servers, so
-the active Codex surface is the `handoff-review`, `handoff-pr`, and
-`handoff-goal` skills. The
+the active Codex surface is the `handoff-review`, `handoff-pr`,
+`handoff-goal`, and `doc-to-html` skills. The
 reviewer agent files are bundled in the plugin payload for Claude Code and
 reference, but Codex custom agents still need repo-local `.codex/agents/`
 wrappers from onboarding.

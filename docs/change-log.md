@@ -22,8 +22,14 @@ structures is embedded in the skill. See
   line names it. The reference files change the onboarding plugin payload
   served by both the Claude and Codex marketplaces, so `agent-workshop` bumps
   `0.1.2` → `0.1.3` (both payload manifests, root manifest, Claude marketplace
-  entry). `scripts/validate-native-plugin.ps1` passes. Distribution stays
-  onboarding-only — the skill is not an active `reviewers` plugin skill.
+  entry). `scripts/validate-native-plugin.ps1` passes.
+- Shipped the same day as an active `reviewers` plugin skill (`0.4.0` →
+  `0.5.0`) so already-installed instances update in place: payload copy,
+  validator pin widened to the four skills, both reviewers manifests, the
+  Claude marketplace entry, plugin README, root README, and marketplace docs
+  updated (the onboarding payload's mirrored marketplace docs changed too, so
+  `agent-workshop` is `0.1.4`). See the amendment in
+  [`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md).
 - GREEN-tested per the writing-skills discipline: a fresh agent given only the
   skill applied the one-knob rule, the renumbering procedure (ids,
   cross-references, TOC, keyboard array, grep verification), the
