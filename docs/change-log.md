@@ -1,5 +1,34 @@
 # Change Log
 
+## 2026-06-11
+
+### doc-to-html skill — markdown to standalone dark HTML page
+
+Added `doc-to-html`, a scaffold skill that renders a markdown report / audit /
+findings document as a single self-contained dark-themed HTML page (sticky TOC,
+keyboard nav, verified-links-only, evidence appendix, print stylesheet) and
+governs how the page is edited afterward. The design system ships as
+battle-tested defaults (bright sans-serif on a dark blue-gray canvas, subtle
+card panels, one sparing accent family); the process rules are rigid:
+one-pass generation, full clean rewrite on any design-direction change,
+one-knob-at-a-time feedback handling, a collision-safe renumbering procedure,
+and a pre-finish checklist. Reference markup for the card and vertical-stepper
+structures is embedded in the skill. See
+[`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) and the origin doc
+[`docs/skills/doc-to-html.md`](skills/doc-to-html.md).
+
+- Byte-identical mirrors in `.codex/` and `.gemini/` plus both onboarding
+  reference roots; the skills roster is now ten skills and the README skills
+  line names it. The reference files change the onboarding plugin payload
+  served by both the Claude and Codex marketplaces, so `agent-workshop` bumps
+  `0.1.2` → `0.1.3` (both payload manifests, root manifest, Claude marketplace
+  entry). `scripts/validate-native-plugin.ps1` passes. Distribution stays
+  onboarding-only — the skill is not an active `reviewers` plugin skill.
+- GREEN-tested per the writing-skills discipline: a fresh agent given only the
+  skill applied the one-knob rule, the renumbering procedure (ids,
+  cross-references, TOC, keyboard array, grep verification), the
+  rewrite-on-direction-change rule, and the full pre-finish checklist.
+
 ## 2026-06-10
 
 ### handoff-goal skill — forward handoff in the reviewers plugin
