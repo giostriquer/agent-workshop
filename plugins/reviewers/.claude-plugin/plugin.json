@@ -1,7 +1,7 @@
 {
   "name": "reviewers",
-  "description": "Curated standalone review and governance agents plus direct-use skills (PR/review/goal handoffs, doc-to-html report pages) from Agent Workshop, usable directly without onboarding.",
-  "version": "0.5.0",
+  "description": "Curated standalone review and governance agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages) from Agent Workshop, usable directly without onboarding.",
+  "version": "0.6.0",
   "author": { "name": "Agent Workshop" },
   "homepage": "https://github.com/giostriquer/agent-workshop",
   "repository": "https://github.com/giostriquer/agent-workshop",

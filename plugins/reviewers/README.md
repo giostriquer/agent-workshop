@@ -1,10 +1,11 @@
 # reviewers
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-four curated review agents plus four direct-use skills you can run in any repo with **no setup**.
+four curated review agents plus five direct-use skills you can run in any repo with **no setup**.
 The agents read your code, specs, and tests and report findings — they never modify your files.
 Three skills produce structured handoff artifacts (review briefs, PR opens, and goal documents
-for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page.
+for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page;
+`claim-check` runs an unbiased, evidence-grounded investigation of a premise and returns a verdict plus a readiness dossier.
 
 ## Install
 
@@ -26,13 +27,13 @@ codex plugin add reviewers@agent-workshop
 
 Codex plugins do not currently expose standalone custom agents from plugin
 manifests. The Codex `reviewers` package exposes `handoff-review`, `handoff-pr`,
-`handoff-goal`, and `doc-to-html` as skills and bundles the reviewer agent files inertly; use the
+`handoff-goal`, `doc-to-html`, and `claim-check` as skills and bundles the reviewer agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
 After install, the four agents are available, namespaced `reviewers:<agent>` —
-e.g. `reviewers:spec-reviewer`. The four skills are available as `handoff-review`,
-`handoff-pr`, `handoff-goal`, and `doc-to-html` (skills are invoked by name, not namespaced). The same marketplace also
+e.g. `reviewers:spec-reviewer`. The five skills are available as `handoff-review`,
+`handoff-pr`, `handoff-goal`, `doc-to-html`, and `claim-check` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -55,6 +56,7 @@ All four are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Wr
 | `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
 | `handoff-goal` | a self-contained goal document (goal + definition of done, current state, concrete operating rules) for a new session to pursue autonomously across compactions — never pursues the goal itself |
 | `doc-to-html` | a standalone dark-themed HTML page rendered from a markdown report / audit / findings doc (TOC, keyboard nav, evidence appendix, print stylesheet), with a rigid editing discipline for later revisions |
+| `claim-check` | an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo — a validity verdict with evidence plus a readiness dossier (or exactly what's missing); never implements the work |
 
 ## Not included
 

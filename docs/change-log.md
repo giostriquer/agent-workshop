@@ -1,5 +1,32 @@
 # Change Log
 
+## 2026-06-15
+
+### claim-check skill — unbiased premise investigation
+
+Added `claim-check`, a skill that runs an unbiased, evidence-grounded
+investigation of a premise — a tracker ticket (the primary case), a hunch, or a
+bare question — against the current repo, then stops at a verdict without
+implementing. Every claim is treated as a hypothesis checked against evidence,
+never assumed in either direction, so "the premise still holds" is a first-class
+outcome alongside "already handled." A fuzzy input is first articulated into
+atomic claims and confirmed with the operator; fan-out to subagents is the
+recommended (not mandated) tool for code/doc scanning, with neutral,
+evidence-returning briefs. Output is two-axis: a validity verdict (`confirmed` ·
+`partially-confirmed` · `refuted/obsolete` · `mis-scoped` · `confirmed-but-blocked`)
+with evidence, plus a readiness dossier or exactly what is missing. See
+[`docs/decisions/claim-check.md`](decisions/claim-check.md) and the origin doc
+[`docs/skills/claim-check.md`](skills/claim-check.md).
+
+- Byte-identical mirrors in `.codex/` and `.gemini/` plus both onboarding
+  reference roots; the skills roster is now eleven skills and both READMEs name
+  it. Shipped as an active `reviewers` plugin skill (`0.5.0` → `0.6.0`): payload
+  copy, validator pin widened to the five skills, both reviewers manifests, the
+  Claude marketplace entry, plugin README, root README, and the marketplace docs
+  updated. The onboarding payload's mirrored references changed too, so
+  `agent-workshop` bumps `0.1.4` → `0.1.5`. `scripts/validate-native-plugin.ps1`
+  passes.
+
 ## 2026-06-11
 
 ### doc-to-html skill — markdown to standalone dark HTML page
