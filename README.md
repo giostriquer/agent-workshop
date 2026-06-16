@@ -40,7 +40,7 @@ Details in [`plugins/reviewers/README.md`](plugins/reviewers/README.md).
 
 ### `agent-workshop` — adopt the full scaffold
 
-One guided skill, `agent-workshop-onboard`, for when you want the whole working setup in your own project — eight agents, seven skills, and the conventions that tie them together. Run it in the target repo: it first produces a read-only adoption plan, and only copies files after you approve.
+One guided skill, `agent-workshop-onboard`, for when you want the whole working setup in your own project — eight agents, eleven skills, and the conventions that tie them together. Run it in the target repo: it first produces a read-only adoption plan, and only copies files after you approve.
 
 ## Going deeper
 
