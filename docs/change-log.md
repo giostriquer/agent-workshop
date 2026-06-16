@@ -1,5 +1,48 @@
 # Change Log
 
+## 2026-06-16
+
+### claim-check — depth gate and inconclusive verdict
+
+Addressed the central failure mode reported from real runs: two sessions
+concluded too early with confident verdicts that only got corrected after the
+operator pushed back. Since depth is the skill's whole purpose, `claim-check`
+gains a grounding gate (`reviewers` `0.6.1` → `0.6.2`, `agent-workshop` `0.1.6` →
+`0.1.7`). A new *Grounding a verdict* section defines an **evidence ladder** (ran
+a repro / read the source at the top; subagent summary and inference at the
+bottom): a `confirmed`/`refuted` verdict is earned only from the top rungs, a
+verdict is only as strong as its weakest load-bearing claim, and a **contest
+test** ("would this survive the operator pushing back once?") runs before any
+verdict ships. A new sixth verdict, **`inconclusive`** (needs more information),
+makes "I genuinely hit a wall" a first-class honest outcome — earned only after a
+deep search, required to name the wall and the breaching input, and explicitly
+gated so it cannot become a lazy escape from digging. See the amendment in
+[`docs/decisions/claim-check.md`](decisions/claim-check.md).
+
+- Skill body propagated to all six mirrors (single shared hash); origin doc
+  updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
+
+### claim-check — refinements from first runs
+
+Revised `claim-check` from two independent model runs on real tickets plus
+operator review (`reviewers` `0.6.0` → `0.6.1`, `agent-workshop` `0.1.5` →
+`0.1.6`). The output is now **verdict-first** (verdict + how-verified and
+readiness lead; `Source` moves to the bottom) and reports per-claim evidence
+**lopsidedly** — settled claims collapse, only contested ones get space, and a
+uniform verdict needs no claim list. Two new investigation moves are explicit: a
+**provenance** step (check where the premise's evidence came from vs. the repo's
+actual source of truth) and **conflict reconciliation** (read disputed lines
+yourself when subagents disagree; never average). Depth is right-sized to the
+claim's blast radius, and `mis-scoped` gets a corrected-framing slot.
+
+- The terminal boundary moved from "never run anything" to "never implement the
+  fix": a repro / falsification test for a falsifiable code claim is now part of
+  the search, not implementation. This revises the original terminal-state
+  decision for code claims specifically — see the amendment in
+  [`docs/decisions/claim-check.md`](decisions/claim-check.md).
+- Skill body propagated to all six mirrors (single shared hash); origin doc
+  updated and re-mirrored; `scripts/validate-native-plugin.ps1` passes.
+
 ## 2026-06-15
 
 ### claim-check skill — unbiased premise investigation

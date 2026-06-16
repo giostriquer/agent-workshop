@@ -180,6 +180,56 @@ changed, so installs should refresh:**
   `@("claim-check", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review")`.
 - `docs/change-log.md` — entry via the `change-log` skill when this lands.
 
+## Amendment (2026-06-16): refinements from first runs
+
+Two independent model runs on real tickets plus operator review converged on a
+handful of changes, landed as `reviewers` `0.6.0` → `0.6.1` and `agent-workshop`
+`0.1.5` → `0.1.6` (skill body + six mirrors, origin doc, this doc):
+
+- **Verdict-first output.** Both runs flagged that the template buried the lede.
+  The report now leads with the verdict and its how-verified, then readiness;
+  `Source` drops to the bottom.
+- **Lopsided per-claim reporting.** Investigate every claim atomically, but report
+  only contested/divergent claims; settled ones collapse, and a uniform verdict
+  needs no claim list. (Operator: the readiness section already carries what a
+  flat per-claim list would.)
+- **Provenance step.** Check where the premise's evidence came from vs. the repo's
+  actual source of truth — the decisive move in one run, previously only implicit.
+- **Verification harness ≠ fix.** The terminal boundary moved from "never run
+  anything" to "never implement the fix": a repro / falsification test for a code
+  claim is now explicitly part of the search. This revises the original
+  "stop at the dossier, never implement" decision for code claims specifically.
+- **Conflict reconciliation.** When subagents disagree, read the disputed lines
+  yourself; never average — the disagreement is the signal.
+- **Depth calibration.** Right-size the investigation to the claim's blast radius.
+- **`mis-scoped` gets a "corrected framing" slot** in the output, which previously
+  overloaded the readiness section.
+
+## Amendment (2026-06-16): depth gate + `inconclusive` verdict
+
+Operator reported that two separate sessions concluded too early — confident
+verdicts that were only corrected after the operator contested them. Since depth
+is the skill's whole purpose, this is the central failure mode, addressed as
+`reviewers` `0.6.1` → `0.6.2` and `agent-workshop` `0.1.6` → `0.1.7`:
+
+- **Evidence ladder + grounding gate** (new *Grounding a verdict* section): a
+  claim earns `confirmed`/`refuted` only from direct evidence the session
+  examined itself (ran a repro / read the source / read the generating artifact);
+  a subagent's summary or an inference is `unverified` and the search continues. A
+  headline verdict is only as strong as its weakest load-bearing claim.
+- **Contest test:** before emitting any verdict, each load-bearing claim must be
+  defensible by a specific artifact that would survive the operator pushing back;
+  "I found something plausible" is not a stopping condition.
+- **New `inconclusive` verdict** (sixth bucket): needs-more-information as a
+  first-class honest outcome — but *earned*, gated behind a genuine deep search
+  hitting a real wall, and required to name the wall and the breaching input. It
+  is distinct from `confirmed-but-blocked` (work blocked vs. investigation
+  incomplete) and explicitly not a lazy escape from digging.
+
+This deepens, but does not contradict, the original "never conclude from
+assumption" rule — it makes "assumption" concrete (anything below the top of the
+evidence ladder) and gives the unreachable case an honest home.
+
 ## Non-goals
 
 - Not a research / deep-research skill. Those face outward and forward (what's

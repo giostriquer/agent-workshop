@@ -1,14 +1,15 @@
 ---
 name: claim-check
-description: Use when you have a premise to verify before acting on it — most often a tracker ticket, but also a hunch you are carrying or a bare question — and you want an unbiased, evidence-grounded investigation rather than a guess. Checks each claim against the current repo (the premise still holding is a fine outcome, not a failure), scans for work that already addressed it, and returns a validity verdict with evidence plus, if it is actionable, a readiness dossier (where to start, gotchas, dependencies) — or exactly what is missing. Never implements the work; stops at the verdict + dossier.
+description: Use when you have a premise to verify before acting on it — most often a tracker ticket, but also a hunch you are carrying or a bare question — and you want a deep, unbiased, evidence-grounded investigation rather than a guess. Treats each claim as a hypothesis checked against the current repo and the provenance of its own evidence; a confident verdict requires direct evidence the session examined itself, so "needs more information" is a legitimate honest outcome rather than a forced answer. Scans for work that already addressed it, and returns a verdict-first report: the validity verdict with how it was verified, the readiness dossier (or what is missing), and evidence for the contested claims. Builds a repro to prove or break a code claim, but does not implement the fix.
 ---
 
 # Claim Check
 
-Investigate a **premise** — a ticket, a hunch, a question — against the current
-state of the repo, and report whether it still holds and whether it can be acted
-on. This skill **runs the investigation** and stops at a verdict; it does **not**
-implement the work the premise describes.
+Investigate a **premise** — a ticket, a hunch, a question — deeply against the
+current state of the repo, and report whether it still holds and whether it can
+be acted on. This skill **runs the investigation** — including any repro needed
+to prove or break a claim — and stops at a verdict; it does **not** implement the
+fix the premise calls for.
 
 ## When to use
 
@@ -29,6 +30,41 @@ evidence you went and found. Anything you cannot show is unknown, and unknown
 means *go search* — never "probably." Do not under-search; an unverified claim is
 not a finding.
 
+## Grounding a verdict
+
+This is deliberately a *deep* investigation. The failure mode to beat is
+**satisficing** — taking the first plausible evidence and emitting a confident
+verdict. Two guards against it.
+
+**The evidence ladder.** Rank what a claim rests on, strongest first:
+
+1. a repro that ran, or the exact source lines you read yourself
+2. the generating artifact the code conforms against (spec, config, codegen input)
+3. a subagent's *quoted* snippet you can see and check
+4. a subagent's summary, or a doc that merely looks consistent
+5. inference / "it would make sense if"
+
+A claim earns `confirmed` or `refuted` **only from rungs 1–2** (a quoted snippet
+on rung 3 can support it when you can see and trust the quote). Anything resting
+on rungs 4–5 is **unverified** — keep digging; do not promote it to a verdict. A
+headline verdict is only as strong as its **weakest load-bearing claim**: if one
+load-bearing claim is still unverified, the verdict cannot be `confirmed` or
+`refuted`.
+
+**The contest test.** Before you emit any verdict, for each load-bearing claim
+ask: *what exact artifact did I examine that settles this, and would it survive
+the operator pushing back once?* If the honest answer is "I inferred it" or "a
+subagent said so," you are not done — go read the source. "I found something
+plausible" is never a stopping condition; the stopping condition is "every
+load-bearing claim sits at the top of the ladder, or I have hit a real wall."
+
+**`inconclusive` is earned, not an escape.** When a genuine deep search hits a
+real wall — an artifact you cannot access, an ambiguity the repo does not
+resolve, context only the operator holds — the honest verdict is `inconclusive`:
+name the specific wall and the one input that would breach it. This is legitimate
+**only after** rungs 1–2 are genuinely exhausted; reaching for it to avoid
+digging is the same premature-conclusion failure in a different coat.
+
 ## Resolving the premise
 
 Where the claims come from depends on the input:
@@ -46,67 +82,110 @@ Where the claims come from depends on the input:
 
 ## Steps
 
+**Right-size the depth to the claim's blast radius** before you start — a
+load-bearing or architectural claim earns a deep sweep; a trivial one does not.
+Over-investigating a typo and under-investigating a foundation are the same
+mistake. Then:
+
 1. **Resolve the premise** (above) and state the atomic claims you are about to
    check. For a hunch or question, get the operator's nod on the claim list
    first.
 2. **Check each claim against the current repo.** Fan-out is the recommended
    tool — especially for code and doc *scanning* — but you orchestrate it and may
-   search directly when that is tighter. When you dispatch a subagent, its brief
-   must be **neutral and specific** ("what does the handler at `X` currently
-   do?", not "confirm `X` is missing") and must return **evidence, not a
-   judgment** (`file:line`, a snippet, a commit). Keep briefs scoped to one claim
-   or one scan so the context stays tight.
-3. **Scan for prior or parallel work** — the case the premise itself cannot see.
+   search directly when that is tighter. A subagent brief must be **neutral and
+   specific** ("what does the handler at `X` currently do?", not "confirm `X` is
+   missing") and must return **evidence, not a judgment** (`file:line`, a
+   snippet, a commit). Keep each brief scoped to one claim or one scan. **When
+   subagents disagree, do not average them — read the disputed lines yourself and
+   settle it on the evidence. The disagreement is usually the signal.**
+3. **Check the provenance of the premise's evidence, not just the claim.** Ask
+   where the premise's own evidence came from — a doc, a spec, a table, a repro —
+   and whether that is the *same artifact the repo actually conforms against*. A
+   claim can be internally tidy yet rest on the wrong source of truth (a vendor
+   doc instead of the cached spec the code is generated from). The real finding
+   often lives in the basis, not the assertion.
+4. **For a falsifiable code claim, build the repro.** Writing and running a
+   throwaway repro or falsification test *is* the search — "unknown means go
+   search," and a failing-then-passing probe is the strongest evidence there is.
+   This is not implementing the work: the **fix** stays out of scope, the
+   **harness that proves or breaks the claim** does not.
+5. **Scan for prior or parallel work** — the case the premise itself cannot see.
    Always search the repo's git history for commits and merged PRs that already
    address it in full or in part. If the tracker is queryable (the same
    integration or web access used to fetch the premise), also search it for
    sibling or duplicate tickets; if it is not reachable, say the backlog was not
    swept rather than implying it was. Record what you searched, so "none found"
    means something.
-4. **Adversarially re-check your conclusions.** For anything that came back
+6. **Adversarially re-check your conclusions.** For anything that came back
    *confirmed* and anything that came back *obsolete*, take a second pass that
    tries to falsify it. This guards equally against a wrong "it's already handled"
    and a lazy rubber-stamp.
-5. **Synthesize the two-axis output** below.
+7. **Ground the verdict, then synthesize.** Run the contest test (see *Grounding
+   a verdict*): confirm every load-bearing claim sits at the top of the evidence
+   ladder. If one does not, keep digging; if a real wall blocks it, the verdict is
+   `inconclusive`. Only then write the output below.
 
 ## Output
 
-Default to a structured in-chat report in this shape. You *may* also persist it —
-to a documentation home if the repo has one that fits the pattern, or to
+Default to a structured in-chat report, and **lead with the verdict** — the
+reader must be able to stop at the top when the answer is "don't build this."
+Investigate every claim atomically, but do **not** report them all at equal
+weight: omit the per-claim breakdown entirely for a uniform verdict, and when
+claims diverge (a mixed premise), surface only the contested ones with their
+evidence and collapse the settled ones to a single line. The readiness dossier
+usually carries more than a flat claim list would. You *may* also persist the
+report — to a documentation home if the repo has one that fits the pattern, or to
 `tmp/<YYYY-MM-DD>-<slug>-claim-check.md` when durability or a handoff is wanted —
 but that is a judgment call, not a requirement.
 
 > **Claim-check — `<premise in one line>`**
 >
-> **Source:** `<ticket id / url · operator's hunch · question>`
+> **Verdict:** `<confirmed · partially-confirmed · refuted/obsolete · mis-scoped · confirmed-but-blocked · inconclusive>` — `<the single most important sentence>`
+> `<why this verdict, and how it was verified — the evidence that decided it and its rung on the ladder, including any repro; for inconclusive, the specific wall and the one input that would breach it>`
 >
-> **Claims checked:**
-> 1. `<atomic claim>` — **`<holds / partial / refuted / mis-scoped / unknown>`** — `<evidence: file:line, snippet, commit, PR, ticket>`
-> 2. `<…>`
->
-> **Prior / parallel work:** `<commits, merged PRs, sibling tickets that already address this in full or part — or "none found", with what was searched>`
->
-> **Verdict:** `<confirmed · partially-confirmed · refuted/obsolete · mis-scoped · confirmed-but-blocked>` — `<one-line synthesis>`
+> **Corrected framing** *(when `mis-scoped`):* `<what the premise should have said — the actual shape of the situation>`
 >
 > **Readiness:**
 > - *If actionable:* `<where to start, the relevant code / docs, gotchas, dependencies, open unknowns>`
 > - *If not:* `<exactly what is missing, or what decision is needed, to make it workable>`
+>
+> **Prior / parallel work:** `<commits, merged PRs, sibling tickets that already address this in full or part — or "none found", with what was searched>`
+>
+> **Contested claims** *(only when claims diverge from the headline verdict; omit otherwise):* `<a row per divergent claim with its own verdict and evidence (file:line, snippet, commit); settled claims collapse to one summary line>`
+>
+> **Source:** `<ticket id / url · operator's hunch · question>`
 
-The two axes are independent: a `confirmed` premise can still be
+The two axes stay independent: a `confirmed` premise can still be
 `confirmed-but-blocked` on readiness, and that is the most important thing to
 surface when it is true.
 
 ## Rules
 
-- Never conclude from assumption. Every verdict cites evidence you found; unknown
-  resolves to *search*, not to a guess.
-- Stay unbiased. You are not out to refute the premise or to bless it — confirming
-  it and refuting it are equally good outcomes, decided by the evidence.
+- Never conclude from assumption. A claim earns `confirmed`/`refuted` only from
+  direct evidence you examined yourself — the top of the evidence ladder — never
+  a subagent's summary or an inference; unknown resolves to *search*, and for a
+  falsifiable code claim the search includes building the repro.
+- Do not satisfice. The verdict is only as strong as its weakest load-bearing
+  claim; run the contest test before emitting one, and treat "I found something
+  plausible" as a cue to dig, not to stop.
+- `inconclusive` (needs more information) is a first-class, honest outcome —
+  earned only after a genuine deep search hits a real wall, never used to dodge
+  digging. Name the wall and the one input that would breach it.
+- Stay unbiased. Confirming the premise and refuting it are equally good
+  outcomes, decided by the evidence — including the **provenance** of that
+  evidence, not just the claim itself.
 - Articulate before investigating. A fuzzy input becomes confirmed atomic claims
   *before* the search starts; a ticket that already states its claims skips this.
 - Subagent briefs are neutral, specific, and return evidence — never a leading
-  question, never a verdict handed to the subagent to confirm.
+  question. When subagents disagree, settle it by reading the disputed lines
+  yourself; never average conflicting reports.
 - Re-check both "confirmed" and "obsolete" conclusions adversarially before
   reporting them.
-- Stop at the verdict + dossier. This skill does not implement the work — acting
-  on the findings is a separate step the operator owns.
+- Right-size depth to the claim's blast radius — neither over-investigate trivia
+  nor under-investigate a load-bearing claim.
+- Lead with the verdict and weight the report toward the contested claims;
+  settled claims collapse to a line, and a uniform verdict needs no claim list at
+  all.
+- Stop at the fix, not at the search. Build the harness that proves or breaks a
+  claim; do not implement the fix — acting on the findings is the separate step
+  the operator owns.
