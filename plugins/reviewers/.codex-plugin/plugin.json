@@ -1,6 +1,6 @@
 {
   "name": "reviewers",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "Codex-ready handoff, claim-check, and doc-to-html skills and bundled reviewer files from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",

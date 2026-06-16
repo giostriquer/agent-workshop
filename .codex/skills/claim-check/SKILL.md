@@ -1,6 +1,6 @@
 ---
 name: claim-check
-description: Use when you have a premise to verify before acting on it — most often a tracker ticket, but also a hunch you are carrying or a bare question — and you want a deep, unbiased, evidence-grounded investigation rather than a guess. Treats each claim as a hypothesis checked against the current repo and the provenance of its own evidence; a confident verdict requires direct evidence the session examined itself, so "needs more information" is a legitimate honest outcome rather than a forced answer. Scans for work that already addressed it, and returns a verdict-first report: the validity verdict with how it was verified, the readiness dossier (or what is missing), and evidence for the contested claims. Builds a repro to prove or break a code claim, but does not implement the fix.
+description: Use when you have a premise to verify before acting on it — most often a tracker ticket, but also a hunch you are carrying or a bare question — and you want a deep, unbiased, evidence-grounded investigation rather than a guess. Treats each claim as a hypothesis checked against the current repo and the provenance of its own evidence; a confident verdict requires direct evidence the session examined itself, so "needs more information" is a legitimate honest outcome rather than a forced answer. Scans for work that already addressed it, and returns a concise verdict-first report — the validity verdict with how it was verified, the prior/parallel work that bears on it, and the readiness dossier (or what is missing). Builds a repro to prove or break a code claim, but does not implement the fix.
 ---
 
 # Claim Check
@@ -127,37 +127,35 @@ mistake. Then:
 
 ## Output
 
-Default to a structured in-chat report, and **lead with the verdict** — the
-reader must be able to stop at the top when the answer is "don't build this."
-Investigate every claim atomically, but do **not** report them all at equal
-weight: omit the per-claim breakdown entirely for a uniform verdict, and when
-claims diverge (a mixed premise), surface only the contested ones with their
-evidence and collapse the settled ones to a single line. The readiness dossier
-usually carries more than a flat claim list would. You *may* also persist the
-report — to a documentation home if the repo has one that fits the pattern, or to
-`tmp/<YYYY-MM-DD>-<slug>-claim-check.md` when durability or a handoff is wanted —
-but that is a judgment call, not a requirement.
+Keep the report **concise and verdict-first**, written as **plain structured text
+— never wrapped in a `>` blockquote** (that renders as an annotation block that
+buries the verdict). It has three parts and nothing else:
 
-> **Claim-check — `<premise in one line>`**
->
-> **Verdict:** `<confirmed · partially-confirmed · refuted/obsolete · mis-scoped · confirmed-but-blocked · inconclusive>` — `<the single most important sentence>`
-> `<why this verdict, and how it was verified — the evidence that decided it and its rung on the ladder, including any repro; for inconclusive, the specific wall and the one input that would breach it>`
->
-> **Corrected framing** *(when `mis-scoped`):* `<what the premise should have said — the actual shape of the situation>`
->
-> **Readiness:**
-> - *If actionable:* `<where to start, the relevant code / docs, gotchas, dependencies, open unknowns>`
-> - *If not:* `<exactly what is missing, or what decision is needed, to make it workable>`
->
-> **Prior / parallel work:** `<commits, merged PRs, sibling tickets that already address this in full or part — or "none found", with what was searched>`
->
-> **Contested claims** *(only when claims diverge from the headline verdict; omit otherwise):* `<a row per divergent claim with its own verdict and evidence (file:line, snippet, commit); settled claims collapse to one summary line>`
->
-> **Source:** `<ticket id / url · operator's hunch · question>`
+1. **Verdict — `<bucket>`:** the single most important sentence, then a tight
+   rationale — why this verdict and how it was verified (the decisive evidence
+   and its rung on the ladder). For `mis-scoped`, add a one-line **corrected
+   framing**; for `inconclusive`, name the wall and the one input that would
+   breach it.
+2. **Prior / parallel work:** only what *bears on the verdict* — the commits or
+   PRs that already closed part of it, and the sibling tickets that need
+   coordination or that a fix here could regress — plus one line on what was
+   searched (so "none found" means something). Not a catalogue of every related
+   ticket and branch.
+3. **Readiness:** if actionable, where to start, the relevant code / docs,
+   gotchas, dependencies, open unknowns; if not, exactly what is missing or what
+   decision unblocks it.
 
-The two axes stay independent: a `confirmed` premise can still be
-`confirmed-but-blocked` on readiness, and that is the most important thing to
-surface when it is true.
+A `confirmed` premise can still be `confirmed-but-blocked` on readiness — surface
+that when it is true.
+
+**Do not:** give a verdict per claim (investigate every claim atomically, but
+report the *conclusion* — the rationale and the readiness dossier already carry
+which parts are real or stale, so a claim-by-claim table only repeats them); echo
+the premise's source back (the operator handed it to you); pad prior/parallel
+work with non-load-bearing tickets or branches; wrap the report in a blockquote.
+
+Persist the report only when durability or a handoff is wanted (a repo docs home,
+or `tmp/<YYYY-MM-DD>-<slug>-claim-check.md`); otherwise in-chat.
 
 ## Rules
 
@@ -183,9 +181,9 @@ surface when it is true.
   reporting them.
 - Right-size depth to the claim's blast radius — neither over-investigate trivia
   nor under-investigate a load-bearing claim.
-- Lead with the verdict and weight the report toward the contested claims;
-  settled claims collapse to a line, and a uniform verdict needs no claim list at
-  all.
+- Lead with the verdict; the report is verdict + prior/parallel work + readiness
+  and nothing else — no per-claim table, no echoed source, no blockquote wrapper.
+  Keep prior/parallel work to what bears on the verdict.
 - Stop at the fix, not at the search. Build the harness that proves or breaks a
   claim; do not implement the fix — acting on the findings is the separate step
   the operator owns.

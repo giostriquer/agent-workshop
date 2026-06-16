@@ -41,11 +41,11 @@ lines itself rather than averaging them. It interrogates the *provenance* of the
 premise's evidence (is the basis the same artifact the repo conforms against?),
 not only the claim. It scans for prior or parallel work the premise can't see,
 adversarially re-checks both "confirmed" and "obsolete" conclusions, and returns
-a **verdict-first, two-axis output**: the validity verdict (with how it was
-verified) leads, then the readiness dossier (or exactly what's missing), with
-per-claim evidence reported lopsidedly — settled claims collapse, contested ones
-get the space. For a falsifiable code claim it will build a repro to prove or
-break it (that is the search, not the fix), but it stops short of implementing
+a concise, **verdict-first** report in three parts — the validity verdict (with
+how it was verified), the prior/parallel work that bears on it, and the readiness
+dossier (or exactly what's missing) — reporting the *conclusion*, not a
+claim-by-claim table. For a falsifiable code claim it will build a repro to prove
+or break it (that is the search, not the fix), but it stops short of implementing
 the fix.
 
 The load-bearing constraint: every claim is a hypothesis checked against
@@ -105,10 +105,14 @@ Surfaced by early lived-in use on real tickets:
 - **Conflicting subagents are the signal.** In multiple runs, two code-mapping
   agents disagreeing was the cue to read the disputed lines directly. The skill
   now says: never average conflicting reports; settle them yourself.
-- **Lead with the verdict; report lopsidedly.** Reviewers had to scroll past a
-  claim table to reach "don't build this." The output now leads with the verdict
-  and its how-verified, and reports per-claim evidence only for contested claims —
-  settled ones collapse, and a uniform verdict needs no claim list at all.
+- **Lead with the verdict; report only the conclusion.** Reviewers had to scroll
+  past a claim-by-claim table (and an echoed Source line) to reach "don't build
+  this," and the verdict itself was buried in a blockquote annotation. The output
+  is now three plain-text parts — verdict + how-verified, the prior/parallel work
+  that bears on the verdict (trimmed to what matters, not a catalogue), and the
+  readiness dossier — with no per-claim table, no echoed source, and no blockquote
+  wrapper. Investigate every claim atomically; report the conclusion, not the
+  table.
 - **Right-size to blast radius.** An XS ticket does not warrant five agents; a
   load-bearing architectural claim does. Depth is now explicitly a function of
   what the claim would cost if wrong.

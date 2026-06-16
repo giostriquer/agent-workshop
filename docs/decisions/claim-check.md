@@ -230,6 +230,28 @@ This deepens, but does not contradict, the original "never conclude from
 assumption" rule — it makes "assumption" concrete (anything below the top of the
 evidence ladder) and gives the unreachable case an honest home.
 
+## Amendment (2026-06-16): output trimmed to three parts
+
+A real-run output was hard to read despite the verdict-first reordering: the
+report was wrapped in a `>` blockquote (rendered as a dense annotation block that
+buried the verdict), still enumerated a verdict per claim (which the operator had
+twice said the readiness dossier already covers), echoed back a `Source` the
+operator supplied, and pushed an over-long prior/parallel-work dump to the
+bottom. The template's slots were the cause — the model dutifully filled each
+one — so the fix deletes slots rather than reweighting them
+(`reviewers` `0.6.2` → `0.6.3`, `agent-workshop` `0.1.7` → `0.1.8`):
+
+- The report is now **three parts and nothing else** — Verdict (+ how-verified),
+  Prior/parallel work, Readiness — written as **plain text, never a blockquote**.
+- **No per-claim table.** Claims are still investigated atomically; only the
+  conclusion is reported. The verdict synthesis and the readiness dossier carry
+  which parts are real or stale.
+- **Prior/parallel work stays a section but is trimmed** to what bears on the
+  verdict (stale-closing commits, tickets to coordinate or not regress) and lifts
+  back up above readiness; the exhaustive related-ticket/branch catalogue is cut.
+- **No echoed `Source`.** An explicit **Do not** list in the skill pins all four
+  cuts so the model cannot drift back.
+
 ## Non-goals
 
 - Not a research / deep-research skill. Those face outward and forward (what's

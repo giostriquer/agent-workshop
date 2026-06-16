@@ -2,6 +2,20 @@
 
 ## 2026-06-16
 
+### claim-check — output trimmed to three parts
+
+Restructured the report after a real run was hard to read (`reviewers` `0.6.2` →
+`0.6.3`, `agent-workshop` `0.1.7` → `0.1.8`). The cause was template slots the
+model dutifully filled, so the fix deletes them: the report is now **three parts
+and nothing else** — Verdict (+ how-verified), Prior/parallel work, Readiness —
+written as **plain text, not a blockquote**. The per-claim verdict table is gone
+(claims are still investigated atomically; only the conclusion is reported, since
+the verdict synthesis and readiness already carry which parts are real or stale);
+the echoed `Source` line is gone; and prior/parallel work stays its own section
+but is trimmed to what bears on the verdict and lifted back above readiness. An
+explicit "Do not" list in the skill pins the four cuts. See the amendment in
+[`docs/decisions/claim-check.md`](decisions/claim-check.md).
+
 ### claim-check — depth gate and inconclusive verdict
 
 Addressed the central failure mode reported from real runs: two sessions
