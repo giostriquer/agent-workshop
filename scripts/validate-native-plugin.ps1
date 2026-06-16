@@ -144,73 +144,73 @@ function Assert-OnlyAllowedPluginAgents {
     }
 }
 
-function Assert-ReviewersPlugin {
-    $root = "plugins/reviewers"
+function Assert-ToolkitPlugin {
+    $root = "plugins/toolkit"
     $manifest = Read-JsonFile "$root/.claude-plugin/plugin.json"
     $codexManifest = Read-JsonFile "$root/.codex-plugin/plugin.json"
 
-    if ($manifest.name -ne "reviewers") {
-        Fail "reviewers plugin name must be reviewers"
+    if ($manifest.name -ne "toolkit") {
+        Fail "toolkit plugin name must be toolkit"
     }
-    if ($codexManifest.name -ne "reviewers") {
-        Fail "Codex reviewers plugin name must be reviewers"
+    if ($codexManifest.name -ne "toolkit") {
+        Fail "Codex toolkit plugin name must be toolkit"
     }
     if ($codexManifest.version -ne $manifest.version) {
-        Fail "Codex reviewers manifest version must match Claude reviewers manifest"
+        Fail "Codex toolkit manifest version must match Claude toolkit manifest"
     }
     if (Has-Property $manifest "mcpServers") {
-        Fail "reviewers manifest must not contain mcpServers"
+        Fail "toolkit manifest must not contain mcpServers"
     }
     if (Has-Property $codexManifest "mcpServers") {
-        Fail "Codex reviewers manifest must not contain mcpServers"
+        Fail "Codex toolkit manifest must not contain mcpServers"
     }
     if (Has-Property $codexManifest "apps") {
-        Fail "Codex reviewers manifest must not contain apps"
+        Fail "Codex toolkit manifest must not contain apps"
     }
     if ($codexManifest.skills -ne "./skills") {
-        Fail "Codex reviewers plugin manifest must set skills to ./skills"
+        Fail "Codex toolkit plugin manifest must set skills to ./skills"
     }
     if (-not (Has-Property $codexManifest "interface") -or -not (Has-Property $codexManifest.interface "capabilities")) {
-        Fail "Codex reviewers manifest must declare interface.capabilities"
+        Fail "Codex toolkit manifest must declare interface.capabilities"
     }
     $capabilities = @($codexManifest.interface.capabilities)
     if ($capabilities.Count -ne 1 -or $capabilities[0] -ne "Skills") {
-        Fail "Codex reviewers capabilities must be exactly Skills"
+        Fail "Codex toolkit capabilities must be exactly Skills"
     }
     $skillsDir = "$root/skills"
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
-        Fail "reviewers must contain a skills directory"
+        Fail "toolkit must contain a skills directory"
     }
     $expectedSkills = @("claim-check", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
-    Assert-SameFileList $expectedSkills $actualSkills "reviewers skills"
+    Assert-SameFileList $expectedSkills $actualSkills "toolkit skills"
     foreach ($skillName in $expectedSkills) {
         Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
     }
 
     $agentDir = "$root/agents"
     if (-not (Test-Path -LiteralPath $agentDir -PathType Container)) {
-        Fail "reviewers must contain an agents directory"
+        Fail "toolkit must contain an agents directory"
     }
 
     $expected = @("pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
     $actual = @(Get-ChildItem -LiteralPath $agentDir -File | Select-Object -ExpandProperty Name | Sort-Object)
-    Assert-SameFileList $expected $actual "reviewers agents"
+    Assert-SameFileList $expected $actual "toolkit agents"
 
     foreach ($name in $expected) {
         Assert-SameFile ".claude/agents/$name" "$agentDir/$name"
     }
 }
 
-function Assert-CodexReviewersPlugin {
-    $root = "plugins/reviewers"
+function Assert-CodexToolkitPlugin {
+    $root = "plugins/toolkit"
     $skillsDir = "$root/skills"
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
-        Fail "Codex reviewers must contain a skills directory"
+        Fail "Codex toolkit must contain a skills directory"
     }
     $expectedSkills = @("claim-check", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
-    Assert-SameFileList $expectedSkills $actualSkills "Codex reviewers skills"
+    Assert-SameFileList $expectedSkills $actualSkills "Codex toolkit skills"
 
     foreach ($skillName in $expectedSkills) {
         Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
@@ -253,7 +253,7 @@ $claudePayloadManifest = Read-JsonFile "plugins/agent-workshop/.claude-plugin/pl
 $codexMarketplace = Read-JsonFile ".agents/plugins/marketplace.json"
 $codexManifest = Read-JsonFile "plugins/agent-workshop/.codex-plugin/plugin.json"
 $catalog = Read-JsonFile "marketplace/catalog.json"
-$reviewersManifest = Read-JsonFile "plugins/reviewers/.claude-plugin/plugin.json"
+$toolkitManifest = Read-JsonFile "plugins/toolkit/.claude-plugin/plugin.json"
 
 if ($claudeManifest.name -ne "agent-workshop") {
     Fail "Claude plugin name must be agent-workshop"
@@ -267,15 +267,15 @@ if (Has-Property $claudeManifest "agents") {
 
 $claudePlugins = @($claudeMarketplace.plugins)
 if ($claudePlugins.Count -ne 2) {
-    Fail "Claude marketplace must contain exactly two plugins (agent-workshop, reviewers)"
+    Fail "Claude marketplace must contain exactly two plugins (agent-workshop, toolkit)"
 }
 $onboardEntry = $claudePlugins | Where-Object { $_.name -eq "agent-workshop" }
-$reviewersEntry = $claudePlugins | Where-Object { $_.name -eq "reviewers" }
+$toolkitEntry = $claudePlugins | Where-Object { $_.name -eq "toolkit" }
 if (-not $onboardEntry) {
     Fail "Claude marketplace must contain the agent-workshop plugin"
 }
-if (-not $reviewersEntry) {
-    Fail "Claude marketplace must contain the reviewers plugin"
+if (-not $toolkitEntry) {
+    Fail "Claude marketplace must contain the toolkit plugin"
 }
 if ($onboardEntry.source -ne "./plugins/agent-workshop") {
     Fail "agent-workshop marketplace source must be ./plugins/agent-workshop"
@@ -283,11 +283,11 @@ if ($onboardEntry.source -ne "./plugins/agent-workshop") {
 if ($onboardEntry.version -ne $claudeManifest.version) {
     Fail "agent-workshop marketplace version must match the plugin manifest"
 }
-if ($reviewersEntry.source -ne "./plugins/reviewers") {
-    Fail "reviewers marketplace source must be ./plugins/reviewers"
+if ($toolkitEntry.source -ne "./plugins/toolkit") {
+    Fail "toolkit marketplace source must be ./plugins/toolkit"
 }
-if ($reviewersEntry.version -ne $reviewersManifest.version) {
-    Fail "reviewers marketplace version must match its plugin manifest"
+if ($toolkitEntry.version -ne $toolkitManifest.version) {
+    Fail "toolkit marketplace version must match its plugin manifest"
 }
 
 if ($claudePayloadManifest.name -ne "agent-workshop") {
@@ -305,15 +305,15 @@ if (Has-Property $claudePayloadManifest "agents") {
 
 $codexPlugins = @($codexMarketplace.plugins)
 if ($codexPlugins.Count -ne 2) {
-    Fail "Codex marketplace must contain exactly two plugins (agent-workshop, reviewers)"
+    Fail "Codex marketplace must contain exactly two plugins (agent-workshop, toolkit)"
 }
 $codexOnboardEntry = $codexPlugins | Where-Object { $_.name -eq "agent-workshop" }
-$codexReviewersEntry = $codexPlugins | Where-Object { $_.name -eq "reviewers" }
+$codexToolkitEntry = $codexPlugins | Where-Object { $_.name -eq "toolkit" }
 if (-not $codexOnboardEntry) {
     Fail "Codex marketplace must contain the agent-workshop plugin"
 }
-if (-not $codexReviewersEntry) {
-    Fail "Codex marketplace must contain the reviewers plugin"
+if (-not $codexToolkitEntry) {
+    Fail "Codex marketplace must contain the toolkit plugin"
 }
 if ($codexOnboardEntry.source.path -ne "./plugins/agent-workshop") {
     Fail "Codex marketplace source path must be ./plugins/agent-workshop"
@@ -327,17 +327,17 @@ if ($codexOnboardEntry.policy.authentication -ne "ON_INSTALL") {
 if (-not (Has-Property $codexOnboardEntry "category")) {
     Fail "Codex marketplace entry must include category"
 }
-if ($codexReviewersEntry.source.path -ne "./plugins/reviewers") {
-    Fail "Codex reviewers marketplace source path must be ./plugins/reviewers"
+if ($codexToolkitEntry.source.path -ne "./plugins/toolkit") {
+    Fail "Codex toolkit marketplace source path must be ./plugins/toolkit"
 }
-if ($codexReviewersEntry.policy.installation -ne "AVAILABLE") {
-    Fail "Codex reviewers marketplace installation policy must be AVAILABLE"
+if ($codexToolkitEntry.policy.installation -ne "AVAILABLE") {
+    Fail "Codex toolkit marketplace installation policy must be AVAILABLE"
 }
-if ($codexReviewersEntry.policy.authentication -ne "ON_INSTALL") {
-    Fail "Codex reviewers marketplace authentication policy must be ON_INSTALL"
+if ($codexToolkitEntry.policy.authentication -ne "ON_INSTALL") {
+    Fail "Codex toolkit marketplace authentication policy must be ON_INSTALL"
 }
-if (-not (Has-Property $codexReviewersEntry "category")) {
-    Fail "Codex reviewers marketplace entry must include category"
+if (-not (Has-Property $codexToolkitEntry "category")) {
+    Fail "Codex toolkit marketplace entry must include category"
 }
 
 if ($codexManifest.name -ne "agent-workshop") {
@@ -367,8 +367,8 @@ Assert-SingleSkill "skills" "agent-workshop-onboard"
 Assert-SingleSkill "plugins/agent-workshop/skills" "agent-workshop-onboard"
 Assert-OnlyAllowedPluginSkillFiles
 Assert-OnlyAllowedPluginAgents
-Assert-ReviewersPlugin
-Assert-CodexReviewersPlugin
+Assert-ToolkitPlugin
+Assert-CodexToolkitPlugin
 
 Assert-SameFile `
     "skills/agent-workshop-onboard/SKILL.md" `

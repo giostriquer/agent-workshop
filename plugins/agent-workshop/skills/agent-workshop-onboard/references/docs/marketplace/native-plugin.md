@@ -37,7 +37,7 @@ For Codex:
 ```powershell
 codex plugin marketplace add giostriquer/agent-workshop --ref main
 codex plugin add agent-workshop@agent-workshop
-codex plugin add reviewers@agent-workshop
+codex plugin add toolkit@agent-workshop
 ```
 
 Codex can also install from a local checkout while developing the marketplace:
@@ -50,8 +50,8 @@ codex plugin add agent-workshop@agent-workshop
 Use a new Codex thread after installing or updating the plugin so the newly
 installed `agent-workshop-onboard` skill is available to the session.
 
-`reviewers` is the Codex-native counterpart to the Claude Code
-`reviewers` plugin. Codex plugins distribute skills, apps, and MCP servers, so
+`toolkit` is the Codex-native counterpart to the Claude Code
+`toolkit` plugin. Codex plugins distribute skills, apps, and MCP servers, so
 the active Codex surface is the `handoff-review`, `handoff-pr`,
 `handoff-goal`, `doc-to-html`, and `claim-check` skills. The
 reviewer agent files are bundled in the plugin payload for Claude Code and

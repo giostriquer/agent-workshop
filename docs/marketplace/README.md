@@ -17,7 +17,7 @@ The marketplace ships two Claude Code plugins for two different intents:
 - **`agent-workshop`** (bootstrapper) — exposes only `agent-workshop-onboard`, a
   skill that plans and applies repo-local agent adoption. Use this to adopt the
   scaffold into a project.
-- **`reviewers`** (direct use) — ships a curated set of
+- **`toolkit`** (direct use) — ships a curated set of
   standalone-capable agents (`spec-reviewer`, `test-quality-reviewer`,
   `pattern-reviewer`, `vigil`) as active plugin agents, with no onboarding skill.
   Use this to run those agents directly in any repo without adopting anything.
@@ -29,7 +29,7 @@ The Codex marketplace ships the same onboarding plugin plus a Codex-native
 review package:
 
 - **`agent-workshop`** — exposes only `agent-workshop-onboard`.
-- **`reviewers`** — exposes `handoff-review`, `handoff-pr`, `handoff-goal`, `doc-to-html`, and `claim-check` as Codex skills.
+- **`toolkit`** — exposes `handoff-review`, `handoff-pr`, `handoff-goal`, `doc-to-html`, and `claim-check` as Codex skills.
   The reviewer agent files are bundled in the plugin payload, but Codex plugins
   do not register standalone custom agents from top-level plugin agent files. For
   true Codex subagent files, use onboarding to copy `.codex/agents/*.toml` into

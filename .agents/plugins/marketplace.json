@@ -17,10 +17,10 @@
       "category": "Productivity"
     },
     {
-      "name": "reviewers",
+      "name": "toolkit",
       "source": {
         "source": "local",
-        "path": "./plugins/reviewers"
+        "path": "./plugins/toolkit"
       },
       "policy": {
         "installation": "AVAILABLE",

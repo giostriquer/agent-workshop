@@ -1,6 +1,6 @@
 {
-  "name": "reviewers",
-  "version": "0.6.3",
+  "name": "toolkit",
+  "version": "0.7.0",
   "description": "Codex-ready handoff, claim-check, and doc-to-html skills and bundled reviewer files from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
@@ -12,9 +12,9 @@
   "keywords": ["agents", "skills", "code-review", "governance", "handoff"],
   "skills": "./skills",
   "interface": {
-    "displayName": "Reviewers",
+    "displayName": "Toolkit",
     "shortDescription": "Review handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop reviewers plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, and claim-check skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, and claim-check skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],

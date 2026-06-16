@@ -1,4 +1,4 @@
-# reviewers
+# toolkit
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
 four curated review agents plus five direct-use skills you can run in any repo with **no setup**.
@@ -13,7 +13,7 @@ In a Claude Code session, add this repo as a marketplace, then install the plugi
 
 ```
 /plugin marketplace add giostriquer/agent-workshop
-/plugin install reviewers@agent-workshop
+/plugin install toolkit@agent-workshop
 ```
 
 (Terminal equivalent for the first step: `claude plugin marketplace add giostriquer/agent-workshop`.)
@@ -22,17 +22,17 @@ For Codex, use the skill-based counterpart:
 
 ```powershell
 codex plugin marketplace add giostriquer/agent-workshop --ref main
-codex plugin add reviewers@agent-workshop
+codex plugin add toolkit@agent-workshop
 ```
 
 Codex plugins do not currently expose standalone custom agents from plugin
-manifests. The Codex `reviewers` package exposes `handoff-review`, `handoff-pr`,
+manifests. The Codex `toolkit` package exposes `handoff-review`, `handoff-pr`,
 `handoff-goal`, `doc-to-html`, and `claim-check` as skills and bundles the reviewer agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
-After install, the four agents are available, namespaced `reviewers:<agent>` —
-e.g. `reviewers:spec-reviewer`. The five skills are available as `handoff-review`,
+After install, the four agents are available, namespaced `toolkit:<agent>` —
+e.g. `toolkit:spec-reviewer`. The five skills are available as `handoff-review`,
 `handoff-pr`, `handoff-goal`, `doc-to-html`, and `claim-check` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.

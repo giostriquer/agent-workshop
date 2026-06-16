@@ -2,6 +2,27 @@
 
 ## 2026-06-16
 
+### Renamed the `reviewers` plugin to `toolkit`
+
+The direct-use plugin began as four review/governance agents but has since
+accumulated five direct-use skills (only `handoff-review` is review-adjacent), so
+the name had outgrown its contents. Renamed `reviewers` → `toolkit` to match its
+real identity — direct-use, no-setup, runs in any repo — the contrast to the
+`agent-workshop` onboarding plugin that adopts the whole scaffold. Scope is
+unchanged: same four agents, same five skills. Agents now resolve as
+`toolkit:<agent>`; install via `toolkit@agent-workshop`. Version `0.6.3` →
+`0.7.0`; `agent-workshop` `0.1.8` → `0.1.9` (its onboarding payload mirrors the
+updated marketplace docs). The switching cost was ~zero (operator's own machines
+only). See [`docs/decisions/rename-reviewers-to-toolkit.md`](decisions/rename-reviewers-to-toolkit.md).
+
+- `git mv plugins/reviewers plugins/toolkit` (history preserved); both manifests,
+  both marketplaces, the validator, the root and plugin READMEs, and the
+  marketplace docs (+ reference mirrors) updated. The validator's `*-reviewer.md`
+  agent assertions are untouched — singular `-reviewer` is the agent, plural
+  `reviewers` was the plugin. `scripts/validate-native-plugin.ps1` passes.
+
+## 2026-06-16
+
 ### claim-check — output trimmed to three parts
 
 Restructured the report after a real run was hard to read (`reviewers` `0.6.2` →

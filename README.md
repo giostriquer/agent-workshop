@@ -13,7 +13,7 @@ This repo doubles as a **plugin marketplace** — a catalog Claude Code can inst
 Then install one (or both) of the plugins:
 
 ```
-/plugin install reviewers@agent-workshop
+/plugin install toolkit@agent-workshop
 /plugin install agent-workshop@agent-workshop
 ```
 
@@ -21,22 +21,22 @@ Using Codex instead:
 
 ```powershell
 codex plugin marketplace add giostriquer/agent-workshop --ref main
-codex plugin add reviewers@agent-workshop
+codex plugin add toolkit@agent-workshop
 codex plugin add agent-workshop@agent-workshop
 ```
 
-(On Codex, the `reviewers` plugin exposes the five skills; its reviewer agents need the repo-local wrappers that onboarding sets up.)
+(On Codex, the `toolkit` plugin exposes the five skills; its reviewer agents need the repo-local wrappers that onboarding sets up.)
 
 ## The plugins
 
-### `reviewers` — use right away
+### `toolkit` — use right away
 
 Review agents and direct-use skills, ready immediately after install with nothing to configure:
 
 - **Agents:** `spec-reviewer` (design specs and plans), `test-quality-reviewer` (test code), `pattern-reviewer` (code-pattern conformance), and `vigil` (your agent/skill setup itself). All read-only — they review and report, never edit your files.
 - **Skills:** `handoff-review`, `handoff-pr`, and `handoff-goal` hand in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier.
 
-Details in [`plugins/reviewers/README.md`](plugins/reviewers/README.md).
+Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
 ### `agent-workshop` — adopt the full scaffold
 
