@@ -26,6 +26,10 @@ with evidence, plus a readiness dossier or exactly what is missing. See
   updated. The onboarding payload's mirrored references changed too, so
   `agent-workshop` bumps `0.1.4` → `0.1.5`. `scripts/validate-native-plugin.ps1`
   passes.
+- Refined the prior-work scan (step 3): git history (commits, merged PRs) is
+  always searched; sibling/duplicate tickets are searched only when the tracker
+  is queryable, and the skill must say the backlog was not swept when it is not
+  reachable — rather than implying it was. Propagated to all six mirrors.
 
 ## 2026-06-11
 

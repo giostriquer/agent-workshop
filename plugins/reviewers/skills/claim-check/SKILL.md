@@ -56,9 +56,13 @@ Where the claims come from depends on the input:
    do?", not "confirm `X` is missing") and must return **evidence, not a
    judgment** (`file:line`, a snippet, a commit). Keep briefs scoped to one claim
    or one scan so the context stays tight.
-3. **Scan for prior or parallel work.** Commits, merged PRs, and sibling tickets
-   that already address the premise in full or in part — the case the premise
-   itself cannot see. Record what you searched, so "none found" means something.
+3. **Scan for prior or parallel work** — the case the premise itself cannot see.
+   Always search the repo's git history for commits and merged PRs that already
+   address it in full or in part. If the tracker is queryable (the same
+   integration or web access used to fetch the premise), also search it for
+   sibling or duplicate tickets; if it is not reachable, say the backlog was not
+   swept rather than implying it was. Record what you searched, so "none found"
+   means something.
 4. **Adversarially re-check your conclusions.** For anything that came back
    *confirmed* and anything that came back *obsolete*, take a second pass that
    tries to falsify it. This guards equally against a wrong "it's already handled"
