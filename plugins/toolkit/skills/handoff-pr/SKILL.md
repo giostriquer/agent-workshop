@@ -1,6 +1,6 @@
 ---
 name: handoff-pr
-description: Use when a branch is ready for a PR but the current session is not authorized to open one. Produces a structured PR handoff artifact (title, body, ticket links, validation and review status) for a separately-authorized session or agent to open. Auto-detects the ClickUp / Linear / Jira ticket and asks to confirm. Never opens the PR itself.
+description: Use when a branch is ready for a PR but the current session is not authorized to open one. Produces a structured PR handoff artifact (title, body, ticket links, validation and review status) for a separately-authorized session or agent to open. Derives the PR body from the repo's own PR template when one exists. Auto-detects the ClickUp / Linear / Jira ticket and asks to confirm. Never opens the PR itself.
 ---
 
 # Handoff PR
@@ -11,48 +11,67 @@ Package a finished branch into a **structured PR artifact** that a separately-au
 
 The work is ready for a PR, but the current session does not hold PR-write authorization (or you deliberately want a clean, authorized session to open it). Hand it off instead of opening it here.
 
-## The one rule that makes this work
+## The two rules that make this work
 
-The artifact must **stand alone**. A separately-authorized session opens the PR with no access to this session, so every field — summary, ticket, status — is re-derived from the **branch diff and the ticket**, never from "what we discussed this session."
+1. **The artifact must stand alone.** A separately-authorized session opens the PR with no access to this session, so every field — summary, ticket, status — is re-derived from the **branch diff and the ticket**, never from "what we discussed this session."
+2. **The PR body belongs to the repo, not to this skill.** If the repo ships a PR template, the body *is* that template, filled in. Don't invent sections a repo already decided it doesn't want.
 
 ## Steps
 
 1. **Detect branch and base.** Run `git branch --show-current` and determine the base branch (default `main` unless the repo says otherwise). Summarize the change from `git diff <base>...HEAD` and the commit list — do not rely on session memory.
 2. **Identify the ticket.** Scan the branch name, commit messages, and any existing PR description for a ClickUp / Linear / Jira id or URL. Present what you found and ask the operator to confirm or supply the right one. If none is found, ask. Capture the full ticket **link**, not just the id; if only an id is available, ask the operator for the full URL — do not synthesize one.
-3. **Capture status fields:**
+3. **Find the repo's PR template.** Before assembling anything, look for a PR template GitHub would honor (match the filenames **case-insensitively**):
+   - `.github/pull_request_template.md` and `.github/PULL_REQUEST_TEMPLATE.md`
+   - any file under `.github/PULL_REQUEST_TEMPLATE/` (a directory of named variants)
+   - the same names in the repo **root** and under **docs/** — `pull_request_template.md`, `docs/pull_request_template.md`, and their `PULL_REQUEST_TEMPLATE/` directory forms
+
+   If **multiple** templates exist (e.g. a default plus `hotfix` / `release` variants), pick the one that matches the branch name / change intent, and record which one you chose and why.
+4. **Capture status fields** (these feed the opener-only handoff notes, not necessarily the public body):
    - **Validation / tests:** what was run and the result (or "not run").
    - **Review:** whether a `handoff-review` pass ran and its outcome; link the findings if available. Do not block on it — record honestly if no review ran.
-4. **Assemble the artifact** using the template below.
-5. **Deliver:** print the artifact inline. Also write it to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path, so the authorized session can read it.
-6. **Stop.** State plainly that opening the PR is the authorized session's job: it runs `gh pr create` with the title and body below. Do not run it.
+5. **Build the PR body.**
+   - **Template found:** fill that template's actual sections **verbatim** — preserve its headings, their order, every checkbox item, and any `<!-- comment markers -->`. Do **not** add, drop, or rename sections. Map our content into the fields the template already has: summary text into its summary/description field, the ticket link into its issue/ticket field, validation evidence into its testing/QA field *if it has one*. For a checklist, tick `[x]` **only** for items actually verified; leave the rest `[ ]`. If a field has no content to fill, leave it blank (or keep its placeholder) rather than fabricating one.
+   - **No template:** fall back to the built-in structure below.
+6. **Assemble the artifact** using the layout below — the paste-ready **PR body** first, then the **handoff notes** that stay with the opener.
+7. **Deliver:** print the artifact inline. Also write it to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path, so the authorized session can read it.
+8. **Stop.** State plainly that opening the PR is the authorized session's job: it pastes the PR body and runs the `gh pr create` command from the handoff notes. Do not run it.
 
-## The PR artifact template
+## The artifact
 
-> **PR handoff — `<branch>` → `<base>`**
->
-> **Title:** `<conventional-style subject, e.g. feat: ...>`
->
-> **Body:**
->
+Two clearly separated blocks. The **PR body** is the only part that goes into the public PR description; the **handoff notes** are for the opener and must not be pasted into the PR.
+
+### PR body — paste-ready (this block, and nothing else, goes in the PR description)
+
+When a template was found, this block is that template filled in verbatim. When none was found, use:
+
 > ## Summary
 > `<what changed and why, grounded in the diff>`
 >
 > ## Ticket
 > `<ClickUp / Linear / Jira link(s)>`
 >
-> ## Validation
-> `<tests / checks run and results, or "not run">`
->
-> ## Review
-> `<handoff-review outcome + link, or "no review run">`
->
 > ## Caveats / follow-ups
 > `<anything the reviewer / merger should know; "none" if none>`
+
+### Handoff notes — opener-only (do NOT paste into the PR)
+
+> **PR handoff — `<branch>` → `<base>`**
 >
-> **To open:** an authorized session runs `gh pr create --base <base> --head <branch>` with the title and body above.
+> **Title:** `<conventional-style subject, e.g. feat: ...>`
+>
+> **Template used:** `<path to the chosen template + why it was picked, or "none — built-in fallback">`
+>
+> **Validation provenance:** `<commands run and their results, or "not run">`
+>
+> **Review status:** `<handoff-review outcome + link, or "no review run">`
+>
+> **To open:** an authorized session pastes the PR body above, then runs `gh pr create --base <base> --head <branch>` with that body and the title above.
 
 ## Rules
 
 - Never run `gh pr create` (or any PR-opening command) — produce the artifact only.
+- When the repo ships a PR template, the body **is** that template: same headings, order, checkboxes, and comment markers. Fill its fields; never add, drop, or rename sections.
+- Keep the PR body and the handoff notes visibly separate. Validation provenance, review status, and the `gh` command are opener-only — they must never land in the public PR description.
+- Keep the PR body tooling-agnostic: no named editors, bots, or AI assistants, and no "generated by" footers. Describe the change, not how it was produced.
 - Always carry a real ticket link; if you cannot find or confirm one, ask rather than omit it.
 - Ground the summary in the actual diff, not session memory — the artifact may be opened by a session with no shared context.

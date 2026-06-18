@@ -22,7 +22,7 @@ The skill files in `.claude/skills/<name>/SKILL.md` are the canonical contracts.
 | [`research`](research.md) | Forward-looking research orchestration; thin skill, heavy `research` agent. |
 | [`visual-advisor`](visual-advisor.md) | Visual taste advisor; mode-aware (refinement / exploration / rebaseline) prompt shaping. |
 | [`handoff-review`](handoff-review.md) | Produces a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session; spawns a reviewer or writes a scratch file. |
-| [`handoff-pr`](handoff-pr.md) | Produces a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session; never opens the PR. |
+| [`handoff-pr`](handoff-pr.md) | Produces a structured PR handoff artifact for a separately-authorized session; derives the body from the repo's own PR template when one exists, keeping opener-only fields (validation, review, the `gh` command) out of the public body; never opens the PR. |
 | [`handoff-goal`](handoff-goal.md) | Produces a self-contained goal document (goal + definition of done, state, concrete operating rules) for a new session to pursue autonomously across compactions; never pursues the goal itself. |
 | [`doc-to-html`](doc-to-html.md) | Renders a markdown report as a standalone dark HTML page; design defaults are adaptable, editing process rules (rewrite-on-direction-change, renumbering, pre-finish checks) are rigid. |
 | [`claim-check`](claim-check.md) | Runs an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo; returns a validity verdict with evidence plus a readiness dossier, and never implements the work. |
