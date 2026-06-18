@@ -25,7 +25,7 @@ codex plugin add toolkit@agent-workshop
 codex plugin add agent-workshop@agent-workshop
 ```
 
-(On Codex, the `toolkit` plugin exposes the five skills; its reviewer agents need the repo-local wrappers that onboarding sets up.)
+(On Codex, the `toolkit` plugin exposes the six skills; its reviewer agents need the repo-local wrappers that onboarding sets up.)
 
 ## The plugins
 
@@ -34,13 +34,13 @@ codex plugin add agent-workshop@agent-workshop
 Review agents and direct-use skills, ready immediately after install with nothing to configure:
 
 - **Agents:** `spec-reviewer` (design specs and plans), `test-quality-reviewer` (test code), `pattern-reviewer` (code-pattern conformance), and `vigil` (your agent/skill setup itself). All read-only — they review and report, never edit your files.
-- **Skills:** `handoff-review`, `handoff-pr`, and `handoff-goal` hand in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier.
+- **Skills:** `handoff-review`, `handoff-pr`, and `handoff-goal` hand in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier; `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts.
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
 ### `agent-workshop` — adopt the full scaffold
 
-One guided skill, `agent-workshop-onboard`, for when you want the whole working setup in your own project — eight agents, eleven skills, and the conventions that tie them together. Run it in the target repo: it first produces a read-only adoption plan, and only copies files after you approve.
+One guided skill, `agent-workshop-onboard`, for when you want the whole working setup in your own project — eight agents, twelve skills, and the conventions that tie them together. Run it in the target repo: it first produces a read-only adoption plan, and only copies files after you approve.
 
 ## Going deeper
 

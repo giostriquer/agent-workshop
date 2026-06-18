@@ -2,6 +2,32 @@
 
 ## 2026-06-17
 
+### qa-sweep — new team-scale, corroborated QA skill
+
+Added `qa-sweep`, a direct-use skill that runs a broad QA / verification pass over
+a decomposable surface (release, branch, feature, app) by fanning a QA team over
+independent slices, then **reproducing every verdict-moving finding firsthand at
+the running surface before it counts** — dropping what won't reproduce, separating
+regressions from pre-existing bugs against a baseline, and synthesizing a
+verdict-first, confidence-tagged report. Extracted from a lived-in QA session: the
+durable lesson was the corroboration loop, not the fan-out, so the skill is rigid
+about Phase 0 (decomposition gate) and Phase 3 (firsthand corroboration) and
+flexible about slicing / harness / team size. It deliberately composes rather than
+duplicates the scaffold's other tools — the team-scale, runtime sibling of
+single-change verification and of `claim-check`'s single-premise investigation —
+and ships with an optional deterministic-workflow appendix (fan-out → independent
+per-finding corroboration → synthesize, with inline `SLICE_SCHEMA` /
+`VERDICT_SCHEMA`). System-agnostic: no product, ticket, path, or harness names in
+the skill body. See [`docs/decisions/qa-sweep.md`](decisions/qa-sweep.md).
+
+- Canonical `.claude/skills/qa-sweep/SKILL.md` propagated byte-identical to all
+  five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots);
+  origin doc `docs/skills/qa-sweep.md` written and mirrored; roster, root README,
+  toolkit README, and the marketplace-doc Codex skill enumerations updated.
+  `toolkit` `0.7.1` → `0.8.0` (new skill = minor), `agent-workshop` `0.1.10` →
+  `0.1.11` (onboarding payload mirrors grew). Both `$expectedSkills` arrays in
+  `scripts/validate-native-plugin.ps1` widened; the validator passes.
+
 ### doc-to-html — house-style-first, deeper findings cards, render-bug fixes
 
 Reworked `doc-to-html` from a second round of lived-in feedback (`toolkit` `0.7.0`

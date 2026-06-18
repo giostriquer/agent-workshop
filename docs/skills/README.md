@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the eleven skills shipped in `.claude/skills/`. Each doc covers:
+Origin docs for the twelve skills shipped in `.claude/skills/`. Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -26,6 +26,7 @@ The skill files in `.claude/skills/<name>/SKILL.md` are the canonical contracts.
 | [`handoff-goal`](handoff-goal.md) | Produces a self-contained goal document (goal + definition of done, state, concrete operating rules) for a new session to pursue autonomously across compactions; never pursues the goal itself. |
 | [`doc-to-html`](doc-to-html.md) | Renders a markdown report as a standalone dark HTML page; design defaults are adaptable, editing process rules (rewrite-on-direction-change, renumbering, pre-finish checks) are rigid. |
 | [`claim-check`](claim-check.md) | Runs an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo; returns a validity verdict with evidence plus a readiness dossier, and never implements the work. |
+| [`qa-sweep`](qa-sweep.md) | Runs a team-scale QA pass over a decomposable surface; fans out one agent per slice against the real running artifact, reproduces every verdict-moving finding firsthand before it counts, separates regressions from pre-existing bugs, and returns a verdict-first, confidence-tagged report. Never fixes what it finds. |
 
 ## Composition
 
@@ -40,6 +41,7 @@ Skills here pair naturally with agents:
 - `doc-to-html` stands alone — a rendering and page-maintenance primitive; it pairs with `visual-advisor` only when the page needs art direction beyond its defaults.
 - `handoff-review`, `handoff-pr`, and `handoff-goal` are handoff primitives — each emits a self-contained artifact a *different* session consumes; they stand alone, not orchestrating other skills. The first two hand a finished branch backward (review, PR); `handoff-goal` hands work forward (a goal to pursue).
 - `claim-check` is an investigation primitive — it runs the search itself, fanning out to subagents rather than orchestrating other skills. It pairs forward with `handoff-goal`: a `confirmed`, ready-to-work verdict feeds its dossier straight into a goal handoff.
+- `qa-sweep` is a verification primitive — it runs the sweep itself, fanning a QA team over a decomposable surface and corroborating their findings firsthand rather than orchestrating other skills. It is the team-scale, runtime sibling of `claim-check`'s single-premise investigation; it pairs forward with `handoff-pr` / `handoff-goal` (a ship verdict or a blocker list feeds the next session's work).
 
 ## Adoption
 
