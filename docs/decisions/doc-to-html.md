@@ -95,6 +95,57 @@ cannot reach an already-installed plugin, so the skill is now also an active
   deliberately over a separate single-skill plugin, because the point was
   updating an existing install in place.
 
+## Amendment (2026-06-17): house-style-first + findings-card depth from lived-in feedback
+
+After the skill shipped, an operator used it to render several real reports
+(a multi-section QA-findings deck among them) and fed back what failed. Three
+families of problem, all addressed here:
+
+**The defaults were the wrong starting point.** The skill applied its own
+calm-flat "design-system defaults" with no step to detect and match a report
+already living in the repo. That produced a full wrong-aesthetic first pass
+that had to be thrown away and rewritten against a sibling artifact. Fix: a new
+**Step 0 — match the repo's house style first** (glob `tmp/`/`docs/` for an
+existing standalone `.html` report; read its `<style>` + component vocabulary
+and match it). The design system is relabelled **fallback only**, and its
+default vocabulary is upgraded from the calm-flat look to the richer
+card-and-chip vocabulary adopters actually expect (progress bar, ~288px
+sidebar, `.sec-num` badges, `.hero` + `.stat-grid`, `.card`/`.pid`/colored
+`.chip`s, `.claim` quote box, `.term` block, `.why` caveat, `.fix` + `.cost`
+pill, cite-chips, footer-of-artifacts; `--bg:#0e1117` family, ~16px body).
+
+**Findings cards were under-specified** — "fancy but say nothing." A new
+*Findings & audit reports* section makes the card carry, by structure, an
+**Evidence** line (concrete: live result, `file:line`, or appendix cite) and a
+**Fix** line with a cost pill — never a claim without its evidence. It also
+adds: order findings **by severity, descending** (most severe first, then
+renumber); a recognised **grouping** variation (prefixed ids per
+product/area); and an optional **Method** section for audit/QA/research output.
+
+**Concrete render bugs**, fixed in the reference markup and the checklist:
+styled scrollbars on every scroll container (not the raw OS bar);
+section-number badges aligned to their heading (`align-items:center`, not
+`baseline`, when sizes differ); and one consistent cost-pill placement across
+all cards (a pill in the Fix header). The verified-links rule is clarified —
+"don't ship unverified links; enrichment links are optional" — with a note
+that some canonical-looking doc URLs are JS-rendered and 404 to a server-side
+fetch.
+
+What the feedback said to **keep** (and this amendment strengthens, not
+touches): the renumbering procedure, the evidence-appendix architecture, the
+pre-finish checklist, and "design-direction change ⇒ full clean rewrite."
+
+System-agnostic guard held: the operator's source reports name real systems;
+none of those names enter the skill — all reference markup uses generic
+placeholders (`F-1`, `AUTH-1`, neutral finding text).
+
+Packaging: skill body change, so the same propagation as before —
+canonical at `.claude/skills/doc-to-html/SKILL.md`, byte-identical to the
+`.codex`/`.gemini`/`toolkit` mirrors and both onboarding reference roots; origin
+doc re-mirrored. `toolkit` `0.7.0` → `0.7.1`, `agent-workshop` `0.1.9` →
+`0.1.10` (its onboarding payload carries the changed reference copies).
+`scripts/validate-native-plugin.ps1` passes.
+
 ## Non-goals
 
 - Not a general frontend-design skill — scope is the report/document page

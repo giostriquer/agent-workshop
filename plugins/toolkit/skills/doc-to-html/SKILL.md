@@ -1,6 +1,6 @@
 ---
 name: doc-to-html
-description: Use when turning a markdown report, audit, review, or research/findings document into a polished standalone dark-themed HTML page, or when revising such a page — content tweaks, inserting/moving numbered sections, design-direction changes, or "this looks noisy / unreadable / ugly" feedback.
+description: Use when turning a markdown report, audit, review, or research/findings document into a polished standalone dark-themed HTML page, or when revising such a page — content tweaks, inserting/moving/renumbering sections, ordering findings by severity, matching the repo's existing report style, or "this looks noisy / unreadable / ugly / off" feedback.
 ---
 
 # Doc to HTML
@@ -9,60 +9,143 @@ description: Use when turning a markdown report, audit, review, or research/find
 
 Render a markdown document (report, audit, review, research findings) as a single self-contained HTML page that reads calmly on a dark screen, navigates well, and prints clean — then govern how that page is edited afterward.
 
-Two stances, deliberately different: the **design system is a set of battle-tested defaults** — adapt the mood when the document calls for it. The **process rules are rigid** — each one exists because its absence failed in real use.
+Two stances, deliberately different: the **visual design is adaptable** — first match whatever house style the repo already uses, and fall back to the defaults here only when there is none. The **process rules are rigid** — each exists because its absence failed in real use.
+
+## Step 0 — match the repo's house style first
+
+Before applying any default in this skill, glob the repo (especially `tmp/` and `docs/`) for an existing standalone `.html` report. **If one exists, it is the house style:** read its `<style>` block and component vocabulary and match it — palette, type scale, class system, card/chip/table shapes. Consistency with a sibling artifact beats this skill's defaults every time; a wrong-aesthetic first pass gets thrown away whole, so detect before you generate.
+
+The design system below is the **fallback for when no sibling report exists** — not the first choice.
 
 ## Page architecture
 
 Every page gets:
 
 - **Single self-contained file.** Inline CSS and JS, no external assets, no build step. The page must open from disk.
-- **Sticky TOC sidebar** with an active-item highlight, plus keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order.
-- **Tables over walls.** Short enumerable facts go in tables; explanation lives in the surrounding prose, not in the cells. Never a wall of paragraphs doing a table's job.
-- **Verified links only.** Every external link on the page was actually fetched and checked before shipping. Annotate the result inline (small green/red run next to the link). An unverified link does not ship.
-- **Evidence appendix.** Raw quotes, terminal output, and source excerpts live in an appendix at the end; the body cites them. The body stays readable without dropping the proof.
+- **Sticky TOC sidebar** (~288px) with an active-item highlight (scroll-spy) and keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order. A thin top progress bar is a nice touch.
+- **Tables over walls.** Short enumerable facts go in tables; explanation lives in the surrounding prose, not in the cells.
+- **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Note: some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch (e.g. client-side error-code decoders) — confirm a URL actually serves content before relying on it.
+- **Evidence appendix.** Raw quotes, terminal output, and source excerpts live in an appendix at the end; the body cites them with a small `→ A1` cite-chip. The body stays readable without dropping the proof. A footer listing the artifacts the work produced is high-value for audit/research output.
+- **Styled scrollbars.** Every scroll container — the page, the sidebar, and especially overflowing `.term`/code blocks and wide tables — gets themed scrollbars, never the raw OS default (CSS below).
 - **Print media query.** White background, dark text, hide the nav and keyboard hints.
 
-## Design system defaults (dark, calm, structured)
+## Design system — defaults (fallback only)
 
-- Dark blue-gray canvas; **sans-serif** body (serif reads muddy on dark screens) at ≥15px with generous line-height. Text must be bright (#d0d8e0-ish) — gray-on-dark is the #1 readability killer; when in doubt, brighten.
-- Cards as subtle panels (1px border, radius, slightly lighter than canvas). NO colored left-border stripes, NO colored sub-boxes per block — section labels are quiet small-caps mono runs; metadata is a plain line with at most TWO small badges.
-- One accent color family used sparingly (headline callout rule, active TOC item) plus semantic green/red ONLY inside terminal blocks and link-result annotations.
-- Inline code chips must be readable: ~0.9em, near-white text on a clearly lighter chip.
-- Differentiate special sections (caveats, "maybe" items) with a subtle background or dashed border — not louder colors.
+Use these only when Step 0 finds no house style. They reproduce a rich, card-and-chip dark report; keep the readability floors even if you change the mood.
+
+- **Canvas + type.** Dark blue-gray canvas (`--bg:#0e1117` family); **sans-serif** body (serif reads muddy on dark) at ~16px with generous line-height. Body text must be bright (`#d0d8e0`+) — gray-on-dark is the #1 readability killer; when in doubt, brighten.
+- **Readable chips/code.** Inline code and chips ~0.9em, near-white text on a clearly lighter chip.
+- **One accent family** used sparingly (active TOC item, headline callout, section-number badge) plus semantic green/red/amber ONLY inside terminal blocks, link-result runs, and cost/severity pills.
+- **Component vocabulary** (the look adopters actually expect):
+  - `.sec-num` — mono section-number badge, aligned with its heading (see alignment rule).
+  - `.hero` + a 4-up `.stat-grid` for the verdict / TL;DR.
+  - `.card` + `.pid` (mono id badge) + colored `.chip`s (severity, evidence tier, disposition).
+  - `.claim` — a quote box (❝) carrying the one-line finding.
+  - `.term` — terminal/code block with `ok`/`bad`/`dim`/`warn` spans, horizontal scroll, styled scrollbar.
+  - `.why` — dashed caveat box for "might not be a problem" / nuance.
+  - `.fix` + a `.cost` pill for the action and its cost class.
+  - cite-chips (`→ A1`) linking body to appendix; a footer-of-artifacts.
+- Differentiate caveat / "maybe" sections with a subtle background or dashed border — not louder colors.
+
+## Findings & audit reports
+
+For reports that carry findings (audit, QA, review):
+
+- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order (e.g. medium, high, low, critical) ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure** so ids, cross-refs, TOC, and the nav array all match.
+- **Every finding card carries evidence and an action.** Not just label → headline → body. Required shape: id + chip header (severity + evidence tier) → one-line **claim** (quote box) → an **Evidence** line that is concrete (a live result, `file:line`, or an appendix cite) → a **Fix** line with a cost pill. The headline states the finding; the body proves it and says what to do. Concise beats extensive — but never a claim without its evidence.
+- **Group when items partition.** When findings naturally split (by product, area, severity, owner), group them into sub-sections with prefixed ids (`AUTH-1`, `API-1`, …), each its own TOC group, then run the Renumbering procedure. A recognised variation, not an afterthought.
+- **Optional Method section.** For audit/QA/research output, a short "how this was produced" section — a few numbered practices + a one-line phase chain — helps the reader trust the claims.
 
 ## Process rules (rigid)
 
 - **One pass.** Generate the full HTML in one pass from the markdown.
-- **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION is always a full clean rewrite — incrementally restyling markup built for a different aesthetic compounds into a mess.
+- **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION — including switching to match a house style found late — is always a full clean rewrite; incrementally restyling markup built for a different aesthetic compounds into a mess.
 - **One knob at a time.** If the user dislikes the result, ask which specific element fails (contrast, density, hierarchy) and turn that one knob; don't swing the whole design.
-- **Renumbering procedure.** If sections/cards are numbered and an insertion or move forces renumbering: renumber via descending replace-all or a temp placeholder (avoid collisions), then update every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verify with a grep that ids are sequential and references resolve.
+- **Renumbering procedure.** When an insert, move, drop, sort, or re-group forces renumbering: renumber via descending replace-all or a temp placeholder (avoid collisions), then update every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verify with a grep that ids are sequential and references resolve.
 
 ## Pre-finish checklist
 
-1. Parse-check the HTML (balanced tags).
-2. Verify every TOC target id exists.
-3. Verify the keyboard-nav order array matches document order.
-4. Confirm no markdown content was dropped — spot-check section count and headline statements.
+1. Parse-check the HTML (balanced tags); no garbage/stray CSS tokens.
+2. Every TOC target id exists; the keyboard-nav order array matches document order.
+3. Findings are ordered most-severe-first; ids run top-down.
+4. Every scroll container has a styled scrollbar (no raw OS bars).
+5. Section-number badges align with their headings; cost pills sit in one consistent place across all cards.
+6. No markdown content dropped — spot-check section count and headline statements.
+7. Every shipped link was fetched and annotated.
 
 ## Reference markup
 
-Card (label → headline → metadata → body). Headlines state the finding, not the topic:
+Tokens and the cross-browser styled scrollbar (applies to the page and every scroll container):
+
+```css
+:root{
+  --bg:#0e1117; --panel:#151b24; --line:#28313f;
+  --text:#dee4ec; --muted:#9ba6b4; --faint:#6b7585;
+  --accent:#5aa7ff; --green:#46c061; --amber:#e3a93c; --red:#f0635a;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+}
+*{scrollbar-width:thin;scrollbar-color:#33415c transparent}          /* Firefox */
+::-webkit-scrollbar{width:10px;height:10px}                          /* Chromium/WebKit */
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2c3a52;border-radius:6px;border:2px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:#3a4d6b}
+```
+
+Section / card header row — the number badge and its heading must share a centerline. Use `align-items:center` (NOT `baseline`) whenever the badge and heading font sizes differ, or the number floats high/low:
+
+```css
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.sec-num{font:700 13px/1 var(--mono);color:var(--accent);background:#15233a;
+         border:1px solid #2c4366;border-radius:6px;padding:3px 9px;flex:0 0 auto}
+.sec-head h2{font-size:24px;line-height:1.2;letter-spacing:-.01em}
+```
+
+Finding card — id/chip header → claim quote box → Evidence → Fix with a cost pill. The cost pill lives in the **Fix header**, the same place on every card (don't let it float at the end of whichever sentence happens to be last):
 
 ```html
-<section class="card" id="s04">
-  <p class="label">04 · FINDINGS</p>
-  <h2>Headline statement of what was found</h2>
-  <p class="meta">source-name · 2026-06-11 <span class="badge ok">verified</span></p>
-  <p>Body…</p>
+<section class="card" id="f01">
+  <div class="card-top">
+    <span class="pid">F-1</span>
+    <span class="chip critical">critical</span>
+    <span class="chip repro">reproduced</span>
+    <h3>Headline states the finding, not the topic</h3>
+  </div>
+  <div class="claim"><span class="tag">Claim</span>One-line statement of what was found.</div>
+  <div class="lbl">Evidence</div>
+  <p>Concrete proof: a live result, <code>path/to/file.ts:42</code>, or an appendix cite <a class="cite" href="#a1">→ A1</a>.</p>
+  <div class="lbl">Fix <span class="cost c-s">S</span></div>
+  <p>The action to take.</p>
 </section>
 ```
 
 ```css
-.card  { background:#161d29; border:1px solid #28344a; border-radius:10px; padding:20px 24px; }
-.card.maybe { border-style:dashed; background:#141a24; }   /* caveat / "maybe" variant */
-.label { font:600 12px/1 ui-monospace,monospace; letter-spacing:.14em; color:#7d8fa8; }
-.meta  { color:#94a3b8; font-size:14px; }
-.badge { font-size:12px; padding:1px 8px; border:1px solid #3b4a63; border-radius:999px; }
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;margin-bottom:30px;scroll-margin-top:24px}
+.card.maybe{background:#171a26;border-style:dashed}            /* caveat / "might not be a problem" */
+.card-top{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.pid{font:700 13px/1 var(--mono);color:#fff;background:#293549;border-radius:6px;padding:3px 10px}
+.card h3{font-size:19.5px;line-height:1.35;flex:1 1 100%;margin-top:2px}   /* headline drops to its own line */
+.chip{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:99px;padding:3px 11px;border:1px solid}
+.chip.critical{color:#ff9d96;border-color:#6e3631;background:#2d1a18}
+.chip.high{color:#ffce6e;border-color:#6e5520;background:#2b2210}
+.chip.medium{color:#9ad97e;border-color:#3f5a2a;background:#1b2614}
+.chip.low{color:#9aa6b6;border-color:#37425a;background:#1a2230}
+.chip.repro{color:#7ee29a;border-color:#2c5e3b;background:#13261a}      /* evidence tier */
+.claim{background:#101820;border:1px solid #2a3c55;border-radius:10px;padding:17px 20px 17px 52px;margin:4px 0 20px;position:relative;font-size:16.5px;line-height:1.62;color:#e6edf6}
+.claim::before{content:"❝";position:absolute;left:18px;top:13px;font-size:24px;color:var(--accent)}
+.claim .tag{display:block;font-size:10.5px;font-weight:800;letter-spacing:.14em;color:var(--accent);text-transform:uppercase;margin-bottom:5px}
+.lbl{font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#8e9aab;margin:20px 0 7px}
+.cite{font:700 12px/1 var(--mono);color:var(--accent)}
+.cost{font:700 11px/1 var(--mono);border-radius:5px;padding:2px 8px;vertical-align:1px}
+.c-xs{color:#7ee29a;background:#13261a} .c-s{color:#9ad97e;background:#1b2614}
+.c-m{color:#ecc06a;background:#272012} .c-l{color:#d4b3ff;background:#221a33}
+```
+
+Terminal / code block — semantic spans, horizontal scroll, themed scrollbar from the rule above:
+
+```css
+.term{background:#0a0e14;border:1px solid #232c3a;border-radius:9px;font-family:var(--mono);
+      font-size:12.8px;line-height:1.75;padding:13px 17px;margin:10px 0;overflow-x:auto;color:#c1cddb;white-space:pre}
+.term .ok{color:var(--green)} .term .bad{color:var(--red)} .term .dim{color:#5d6878} .term .warn{color:var(--amber)}
 ```
 
 Vertical stepper (ordered process; connector line through the dots):
@@ -75,16 +158,17 @@ Vertical stepper (ordered process; connector line through the dots):
 ```
 
 ```css
-.stepper { list-style:none; margin:0; padding:0; }
-.stepper li { position:relative; display:flex; gap:16px; padding-bottom:24px; }
-.stepper li::before { content:""; position:absolute; left:7px; top:18px; bottom:0; width:2px; background:#28344a; }
-.stepper li:last-child::before { display:none; }
-.dot { flex:none; width:16px; height:16px; margin-top:4px; border-radius:50%; border:2px solid #5b8dd6; background:#0f1520; }
+.stepper{list-style:none;margin:0;padding:0}
+.stepper li{position:relative;display:flex;gap:16px;padding-bottom:24px}
+.stepper li::before{content:"";position:absolute;left:7px;top:18px;bottom:0;width:2px;background:var(--line)}
+.stepper li:last-child::before{display:none}
+.dot{flex:none;width:16px;height:16px;margin-top:4px;border-radius:50%;border:2px solid var(--accent);background:#0f1520}
 ```
 
 ## Suggested invocation
 
-- Turn `report.md` into a standalone HTML page.
+- Turn `report.md` into a standalone HTML page. (→ Step 0 first: match any sibling `.html` report)
 - The page feels noisy / unreadable — fix it. (→ ask which knob fails: contrast, density, or hierarchy)
 - Insert a new section between 4 and 5. (→ renumbering procedure, then the checklist)
+- Order the findings by severity. (→ sort descending, then the renumbering procedure)
 - Make it feel like a printed zine instead. (→ design-direction change: full clean rewrite)

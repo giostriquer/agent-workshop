@@ -1,5 +1,32 @@
 # Change Log
 
+## 2026-06-17
+
+### doc-to-html — house-style-first, deeper findings cards, render-bug fixes
+
+Reworked `doc-to-html` from a second round of lived-in feedback (`toolkit` `0.7.0`
+→ `0.7.1`, `agent-workshop` `0.1.9` → `0.1.10`). The biggest change is a new
+**Step 0 — match the repo's house style first**: glob `tmp/`/`docs/` for an
+existing standalone `.html` report and match its `<style>` and component
+vocabulary; the skill's own design system is relabelled **fallback-only** and its
+default vocabulary upgraded from the calm-flat look to the richer card-and-chip
+one adopters expect. A new *Findings & audit reports* section makes each card
+carry, by structure, a concrete **Evidence** line and a **Fix** line with a cost
+pill (never a claim without evidence), orders findings **by severity descending**,
+and adds prefixed-id grouping plus an optional Method section. Concrete render
+bugs are pinned in the reference markup and checklist: styled scrollbars on every
+scroll container, section-number badges aligned to their heading
+(`align-items:center`), and one consistent cost-pill placement. The
+verified-links rule is clarified (enrichment links optional; some doc URLs 404 to
+a server-side fetch). The skill stays system-agnostic — all examples use generic
+placeholders, no real product/ticket/path names. See the amendment in
+[`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md).
+
+- Skill body propagated byte-identical to all five mirrors
+  (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots); origin doc
+  `docs/skills/doc-to-html.md` updated and re-mirrored.
+  `scripts/validate-native-plugin.ps1` passes.
+
 ## 2026-06-16
 
 ### Renamed the `reviewers` plugin to `toolkit`
