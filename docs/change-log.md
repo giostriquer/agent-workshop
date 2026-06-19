@@ -1,5 +1,90 @@
 # Change Log
 
+## 2026-06-19
+
+### handoff-goal — make the document defend the goal, not just preserve context
+
+Reworked `handoff-goal` from a strong context-preserver into a goal *defender*.
+The skill's founding rule (the document is the only context that survives) gains a
+second: the document is the goal's defense against its own pursuing loop, which
+under speed pressure Goodharts whatever *looks* done. The emitted document now
+injects that discipline itself rather than assuming the target repo supplies it:
+**verifiable acceptance checks** (verify command + evidence, plus a refutation/
+mutation form for behavior changes) replace prose "definition of done"; an
+**integrity rules** block forbids weakening/skipping/renaming-away tests and gates
+and narrowing/reinterpreting scope (escalate instead); an operator-set **quality
+posture** (default reliability-over-speed); **independent verification** baked into
+the loop shape (act → verify with an independent pass → record → repeat);
+stakes-scaled **invariants / non-goals**; a **progress ledger** authoritative over
+post-compaction recollection; explicit **when-to-stop** conditions including the
+"tempted to redefine the goal/checks/scope" tripwire; and a compaction *drift
+check*. A calibration section keeps it from becoming a fortress: four parts are
+always-on (verifiable checks, integrity rules, independent verification, the
+tripwire), the rest scale with stakes. The `description` (triggering conditions) is
+unchanged. See [`docs/decisions/handoff-goal-goal-defense.md`](decisions/handoff-goal-goal-defense.md).
+
+- Validation note: across **three** methodologies — two reflective scenarios and a
+  faithful behavioral test (a real runnable scratch repo, real tool-execution, a
+  weaker pursuer model, and a subtle special-case-the-input hack caught by a hidden
+  test the pursuers never saw) — the RED could not be established: pursuers did not
+  reward-hack in either arm. When the honest fix is cheap they make it; when it is
+  blocked they escalate. The change is **design-validated, not behavior-proven**;
+  the intended mechanism (the tripwire was invoked by name) and a scope/autonomy
+  delta were the observable wins. Full account in the decision note, including a
+  wording refinement applied off the test (the integrity rule's "rename-away" now
+  names the actual dodge and allows a legitimate repoint-to-a-seam fix).
+- Canonical `.claude/skills/handoff-goal/SKILL.md` propagated byte-identical to all
+  five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference roots);
+  origin doc `docs/skills/handoff-goal.md` updated and mirrored to both reference
+  roots. `toolkit` `0.8.1` → `0.8.2` (rework of an existing skill = patch),
+  `agent-workshop` `0.1.12` → `0.1.13` (onboarding payload mirrors changed). No
+  skill added or removed; `scripts/validate-native-plugin.ps1` passes.
+
+### claim-check — STOP when the premise's source can't be reached
+
+Closed a hole in `claim-check` surfaced in lived use: a session handed a ticket it
+could not access (no integration, URL unreachable, no paste) ran the investigation
+anyway, reconstructing the premise from the link and its own memory and emitting a
+verdict on a resource it never saw. A new **access precondition** now fires before
+the investigation — if the premise's source, or the artifact it concerns (ticket,
+PR, repo, file, reference), can't be reached and the operator can't supply it, the
+skill STOPs and reports the access gap (what couldn't be opened, what was tried,
+what would unblock it) rather than substituting the link slug, memory, or inference
+for the resource. Explicitly distinguished from `inconclusive` (which is earned
+only *after* a real investigation hits a wall): the access STOP is a can't-start
+precondition failure, not a verdict bucket. The premise-resolution fallback and the
+Rules now cross-reference it. The `description` is unchanged. See
+[`docs/decisions/claim-check-access-precondition.md`](decisions/claim-check-access-precondition.md).
+
+- Canonical `.claude/skills/claim-check/SKILL.md` propagated byte-identical to all
+  five mirrors; origin doc `docs/skills/claim-check.md` updated and mirrored to both
+  reference roots. Rides the same `toolkit` `0.8.2` / `agent-workshop` `0.1.13`
+  bump as the handoff-goal rework above — no additional bump, both reworks ship in
+  one batch. `scripts/validate-native-plugin.ps1` passes.
+
+### handoff-pr — discover and run the repo's pre-push static gates
+
+Closed a hole behind a real CI failure: a branch was handed off and pushed without
+the repo's *required* formatter gate ever running locally — `--no-verify` commits
+had bypassed the pre-commit hook, the handoff carried no pre-push gate, and CI's
+fail-fast formatter check blocked the whole PR while "tests pass" hid it. The
+validation step is now a **discover-then-run gate**: the producing session
+discovers what the repo actually gates a PR on (reading its CI workflows, hook
+config, build/package scripts, and contributor docs — no hardcoded toolchain),
+identifies the fast static checks (format / lint / type-check) **separately** from
+the test suites, runs them against an up-to-date base, and records the exact
+commands and results by kind. It calls out the `--no-verify` hazard explicitly
+(hook-bypassing commits skip the formatter — run it by hand before push) and keeps
+formatting/typecheck/stale-base failures separated in any "known issues" note so
+the opener fixes the gate that's actually red. The validation-provenance field and
+Rules carry it; the body stays tool-agnostic by discovery. See
+[`docs/decisions/handoff-pr-prepush-validation-gate.md`](decisions/handoff-pr-prepush-validation-gate.md).
+
+- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to all
+  five mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored to both
+  reference roots. Rides the same `toolkit` `0.8.2` / `agent-workshop` `0.1.13`
+  batch bump — no additional bump. `scripts/validate-native-plugin.ps1` passes.
+
 ## 2026-06-18
 
 ### handoff-pr — derive the PR body from the repo's own PR template

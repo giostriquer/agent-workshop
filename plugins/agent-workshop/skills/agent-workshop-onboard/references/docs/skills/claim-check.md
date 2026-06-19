@@ -116,6 +116,19 @@ Surfaced by early lived-in use on real tickets:
 - **Right-size to blast radius.** An XS ticket does not warrant five agents; a
   load-bearing architectural claim does. Depth is now explicitly a function of
   what the claim would cost if wrong.
+- **No source, no check — STOP before investigating.** A session handed a ticket it
+  could not access (no integration, URL unreachable, no paste) ran the claim-check
+  anyway, reconstructing the premise from the link and its own memory and producing
+  a verdict on a resource it never saw. The substance-fetch fallback ("otherwise
+  ask the operator to paste") read as a soft suggestion under momentum, and
+  `inconclusive` didn't cover it — that outcome is *earned after* a real
+  investigation hits a wall, whereas here the premise's substance never arrived. An
+  explicit **access precondition** now fires first: if the premise's source, or the
+  artifact it concerns (ticket, PR, repo, file, reference), can't be reached and
+  the operator can't supply it, STOP and report the access gap — never substitute
+  the slug, memory, or inference for the resource. Distinct from `inconclusive` by
+  construction (can't-start vs hit-a-wall). See
+  [`docs/decisions/claim-check-access-precondition.md`](../decisions/claim-check-access-precondition.md).
 - **Depth over speed — and "needs more information" is honest.** Two separate
   sessions returned confident verdicts too early and only found the real evidence
   after the operator contested them. The fix is a grounding gate, not a nudge: an

@@ -30,6 +30,30 @@ evidence you went and found. Anything you cannot show is unknown, and unknown
 means *go search* — never "probably." Do not under-search; an unverified claim is
 not a finding.
 
+## Access precondition — STOP if you can't reach the source
+
+A claim-check is only as real as the evidence you can examine firsthand, and that
+starts with the premise's own source. **Before investigating, confirm you can
+actually reach what the premise rests on** — the ticket or PR that *states* it, and
+the repo, file, doc, or reference it is *about*. If you cannot — no tracker
+integration and the URL won't load, the PR or repo isn't accessible to this
+session, the reference is missing or paywalled, and the operator hasn't pasted the
+substance — then you do **not** have a premise to check. **STOP and say so.**
+
+Report the gap plainly: which resource you could not access, what you tried, and
+the one thing that would unblock you (paste the ticket body, grant repo access,
+share the doc). Do **not** reconstruct the premise from the link's slug, the ticket
+ID, your own memory of it, or inference, and do **not** run an investigation
+against a guessed version of the claim — a confident report built on a resource you
+never saw is exactly the failure this skill exists to prevent.
+
+This STOP is distinct from `inconclusive`. `inconclusive` is *earned* after a
+genuine investigation hits a wall on a load-bearing claim; the access STOP fires
+*before* you start, because the premise's substance never arrived — it is a
+precondition failure, not one of the verdict buckets. The partial case still
+proceeds: when only the *prior-work backlog* is unreachable (the tracker won't take
+a query) you investigate anyway and record that the backlog wasn't swept.
+
 ## Grounding a verdict
 
 This is deliberately a *deep* investigation. The failure mode to beat is
@@ -71,8 +95,9 @@ Where the claims come from depends on the input:
 
 - **A ticket or doc (link or pasted).** Get its *substance, not just its link* —
   fetch the body and acceptance criteria via a tracker integration or the URL if
-  reachable; otherwise ask the operator to paste them. Its claims arrive
-  pre-articulated; read them as written rather than recalling them.
+  reachable; otherwise ask the operator to paste them. If neither lands, **STOP**
+  (see *Access precondition*) rather than checking a premise you never read. Its
+  claims arrive pre-articulated; read them as written rather than recalling them.
 - **A hunch you are carrying, or a bare question.** No claims are stated yet.
   **Articulate the premise into atomic, checkable claims and confirm them with
   the operator before investigating.** This step is what keeps a fuzzy input from
@@ -159,6 +184,12 @@ or `tmp/<YYYY-MM-DD>-<slug>-claim-check.md`); otherwise in-chat.
 
 ## Rules
 
+- A claim-check requires firsthand access to the premise's source and the artifact
+  it concerns. If either is unreachable and the operator can't supply it, **STOP**
+  and report the access gap — never substitute the link slug, the ticket ID,
+  memory, or inference for the resource you could not open, and never investigate a
+  guessed premise. This precondition STOP is not `inconclusive` (which is earned
+  only after a real investigation hits a wall).
 - Never conclude from assumption. A claim earns `confirmed`/`refuted` only from
   direct evidence you examined yourself — the top of the evidence ladder — never
   a subagent's summary or an inference; unknown resolves to *search*, and for a

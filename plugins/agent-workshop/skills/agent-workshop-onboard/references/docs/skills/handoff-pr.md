@@ -8,12 +8,13 @@ The other half of the end-of-branch prompt: "open a PR on our behalf with the ri
 
 ## Problem
 
-Four failure modes in the ad-hoc flow:
+Five failure modes in the ad-hoc flow:
 
 1. **Unauthorized opener.** The session that wrote the code cannot open the PR; the context has to travel to one that can.
 2. **Missing ticket link.** Hand-written PR bodies dropped the ClickUp / Linear / Jira link, breaking traceability.
 3. **Session-memory drift.** The summary described what the author remembered doing, not what the diff actually changed.
 4. **Reinvented body.** Hand-written bodies ignored the repo's `pull_request_template.md`, so the PR was missing the checklist the team asked for and carried sections the team never wanted — and handoff bookkeeping (validation provenance, review status) leaked into the public description.
+5. **The static gate slipped through.** A branch was handed off and pushed without the repo's *required* fast static checks (a formatter / lint gate) ever running locally — commits made with `--no-verify` had bypassed the pre-commit hook, the handoff had no pre-push gate, and CI's formatter check failed fast and blocked the whole PR. "Tests pass" hid it because the failure was formatting, not logic.
 
 ## Solution shape
 
@@ -32,10 +33,12 @@ Finds the repo's PR template, builds the PR body to its shape (or the built-in f
 - **Leaking process fields.** Validation provenance and review status are handoff bookkeeping; pasted into the public PR body they read as noise and can expose internal scratch paths. They live in the opener-only notes.
 - **Summarizing from memory.** The artifact may be opened by a session with no shared context, so the summary must come from the diff.
 - **Omitting the ticket when none is auto-detected.** Ask for it rather than shipping a PR with no traceability.
+- **Trusting "tests pass" over the static gate.** Formatting / lint / type-check are usually the *required*, fail-fast CI gates and the cheapest to trip. Discover them from the repo and run them locally — and remember a `--no-verify` commit skipped the pre-commit formatter, so it must be run by hand before push. Record format / lint / type-check / tests separately so a later "known issue" note points at the gate that's actually red.
 
 ## Adaptation notes
 
 - The body shape is no longer hardcoded — it follows the repo's PR template when one exists (root / `.github/` / `docs/`, including a `PULL_REQUEST_TEMPLATE/` directory of named variants, matched case-insensitively). The built-in Summary / Ticket / Caveats structure is only the fallback. Adjust template detection if your host honors other locations.
 - When multiple templates exist (default vs `hotfix` / `release`), selection is by branch name / change intent; tune that heuristic to your branching model.
 - Ticket detection scans branch / commits / PR description; adjust the patterns to your tracker's id format.
+- The validation gate is **discovered, not hardcoded**: the skill names no formatter, linter, task runner, or hook tool — the producing session reads the repo's CI workflows, hook config, build/package scripts, and contributor docs to find the actual required checks, then runs them. A project on any toolchain gets the same behavior; nothing about a specific setup leaks into the skill. See [`docs/decisions/handoff-pr-prepush-validation-gate.md`](../decisions/handoff-pr-prepush-validation-gate.md).
 - Pairs with `handoff-review`: the **Review status** field (in the opener-only notes, not the public body) records that outcome. The coupling is light — `handoff-pr` does not enforce that a review ran.
