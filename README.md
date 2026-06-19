@@ -20,7 +20,7 @@ Then install one (or both) of the plugins:
 Using Codex instead:
 
 ```powershell
-codex plugin marketplace add giostriquer/agent-workshop --ref main
+codex plugin marketplace add giostriquer/agent-workshop
 codex plugin add toolkit@agent-workshop
 codex plugin add agent-workshop@agent-workshop
 ```
