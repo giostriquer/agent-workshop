@@ -2,6 +2,34 @@
 
 ## 2026-06-19
 
+### handoff-pr — follow the repo PR template instead of replacing it
+
+Fixed a real defect (caught via a weaker model's review of actual PRs): although
+`handoff-pr` already says the body **is** the repo's PR template filled in, PRs
+were going out carrying the skill's *built-in fallback* headings (`Summary` /
+`Ticket` / `Caveats`) even when the repo shipped a template. Root cause was a
+skill-design attractor — the fallback skeleton was the only concrete, copy-ready
+block in "The artifact," so the model pattern-matched to it over the prose
+"follow the template" instruction, with no forcing function on detection and no
+conformance check. The fix is structural, not another prohibition: template
+detection is now a **recorded gate** (the fallback is allowed only after an actual
+search came up empty), the fallback is **demoted** to an explicit no-template
+branch so it stops reading as the default, and Step 5 requires a
+**heading-conformance check** before finalizing. Two adjacent generalizable nuggets
+were folded in tool-agnostically — validation evidence in a template's test field
+is commands+results (not bare file names), and the title/branch conform to the
+repo's enforced linter pattern (discovered, not guessed). The rest of the source
+review was heavily over-fitted to one repo (named formatter, package manager,
+ticket scheme, review bot, branch scopes, colleague names) and was deliberately
+**not** absorbed; rejected items are listed in the decision note. See
+[`docs/decisions/handoff-pr-follow-not-replace-template.md`](decisions/handoff-pr-follow-not-replace-template.md).
+
+- Canonical `.claude/skills/handoff-pr/SKILL.md` propagated byte-identical to all
+  five mirrors; origin doc `docs/skills/handoff-pr.md` updated and mirrored to both
+  reference roots. `toolkit` `0.8.2` → `0.8.3`, `agent-workshop` `0.1.13` →
+  `0.1.14` (patch; a new release step after the earlier batch already shipped).
+  `scripts/validate-native-plugin.ps1` passes.
+
 ### handoff-goal — make the document defend the goal, not just preserve context
 
 Reworked `handoff-goal` from a strong context-preserver into a goal *defender*.

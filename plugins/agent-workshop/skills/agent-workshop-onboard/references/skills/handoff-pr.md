@@ -14,7 +14,7 @@ The work is ready for a PR, but the current session does not hold PR-write autho
 ## The two rules that make this work
 
 1. **The artifact must stand alone.** A separately-authorized session opens the PR with no access to this session, so every field — summary, ticket, status — is re-derived from the **branch diff and the ticket**, never from "what we discussed this session."
-2. **The PR body belongs to the repo, not to this skill.** If the repo ships a PR template, the body *is* that template, filled in. Don't invent sections a repo already decided it doesn't want.
+2. **The PR body belongs to the repo, not to this skill — follow its template, never replace it.** If the repo ships a PR template, the body **is** that template filled in — its exact headings, order, checkboxes, and hidden `<!-- markers -->`, nothing added or dropped. The built-in skeleton in *The artifact* is a **last resort for repos that have no template**; never emit it, or its `Summary` / `Ticket` / `Caveats` headings, when a template exists. Swapping the repo's template for this skill's outline is the failure this rule exists to prevent.
 
 ## Steps
 
@@ -26,12 +26,14 @@ The work is ready for a PR, but the current session does not hold PR-write autho
    - the same names in the repo **root** and under **docs/** — `pull_request_template.md`, `docs/pull_request_template.md`, and their `PULL_REQUEST_TEMPLATE/` directory forms
 
    If **multiple** templates exist (e.g. a default plus `hotfix` / `release` variants), pick the one that matches the branch name / change intent, and record which one you chose and why.
+
+   **Record the search outcome before building the body:** either **found** (the path — the body is then built *from that file*) or **none found after searching the locations above**. The built-in fallback is allowed *only* after you have recorded that search and come up empty; a fallback body produced without an actual search is the bug, not a shortcut.
 4. **Capture status fields** (these feed the opener-only handoff notes, not necessarily the public body):
    - **Validation — discover the repo's gates, run them, record concretely.** Don't assume "tests pass" is enough. *Discover* what this repo actually gates a PR on rather than hardcoding a toolchain — read its CI workflow definitions (which checks block merge, which fail fast), its commit/push hook config, its build/package manifest's script targets, and any contributor docs. Identify the **fast static checks** (formatting, lint, type-check) **separately** from the test suites: they are usually the *required* CI gates and the cheapest to fail, so run them locally, not just the tests. Run everything against an **up-to-date base** (fetch the latest base first) and record the **exact commands and each result**, kept separate by kind (format / lint / type-check / tests). **If any commit used `--no-verify` or otherwise bypassed the pre-commit/pre-push hooks, the repo's formatter and linter never ran on it — run them manually before the branch is pushed**, or CI's static gate fails on code that looked clean locally. If a gate genuinely can't be run here, name which and why rather than implying it passed.
    - **Review:** whether a `handoff-review` pass ran and its outcome; link the findings if available. Do not block on it — record honestly if no review ran.
 5. **Build the PR body.**
-   - **Template found:** fill that template's actual sections **verbatim** — preserve its headings, their order, every checkbox item, and any `<!-- comment markers -->`. Do **not** add, drop, or rename sections. Map our content into the fields the template already has: summary text into its summary/description field, the ticket link into its issue/ticket field, validation evidence into its testing/QA field *if it has one*. For a checklist, tick `[x]` **only** for items actually verified; leave the rest `[ ]`. If a field has no content to fill, leave it blank (or keep its placeholder) rather than fabricating one.
-   - **No template:** fall back to the built-in structure below.
+   - **Template found:** fill that template's actual sections **verbatim** — preserve its headings, their order, every checkbox item, and any `<!-- comment markers -->`. Do **not** add, drop, or rename sections. Map our content into the fields the template already has: summary text into its summary/description field, the ticket link into its issue/ticket field, validation evidence into its testing/QA field *if it has one* (the commands run + their results, not bare test-file names). For a checklist, tick `[x]` **only** for items actually verified; leave the rest `[ ]`. If a field has no content to fill, leave it blank (or keep its placeholder) rather than fabricating one. **Before finalizing, check your body's headings against the template's: same set, same order, none added (no `Summary` / `Caveats` unless the template has them), none renamed — if they differ, you replaced the template instead of filling it; redo.**
+   - **No template (only after the Step 3 search came up empty):** fall back to the built-in structure below.
 6. **Assemble the artifact** using the layout below — the paste-ready **PR body** first, then the **handoff notes** that stay with the opener.
 7. **Deliver:** print the artifact inline. Also write it to `tmp/handoff-pr-<branch-slug>.md` (sanitize the branch name: `/` → `-`) and report the path, so the authorized session can read it.
 8. **Stop.** State plainly that opening the PR is the authorized session's job: it pastes the PR body and runs the `gh pr create` command from the handoff notes. Do not run it.
@@ -42,7 +44,9 @@ Two clearly separated blocks. The **PR body** is the only part that goes into th
 
 ### PR body — paste-ready (this block, and nothing else, goes in the PR description)
 
-When a template was found, this block is that template filled in verbatim. When none was found, use:
+**Normal case — a template was found:** this block **is** that template, filled in verbatim (its headings, order, checkboxes, and `<!-- markers -->`, our content mapped into its existing fields). Do not paste the skeleton below, and do not add headings the template doesn't have.
+
+**Fallback — only when Step 3 found no template:** use this minimal built-in structure.
 
 > ## Summary
 > `<what changed and why, grounded in the diff>`
@@ -71,6 +75,8 @@ When a template was found, this block is that template filled in verbatim. When 
 
 - Never run `gh pr create` (or any PR-opening command) — produce the artifact only.
 - When the repo ships a PR template, the body **is** that template: same headings, order, checkboxes, and comment markers. Fill its fields; never add, drop, or rename sections.
+- **Never replace a found template with the built-in skeleton.** The fallback's `Summary` / `Ticket` / `Caveats` headings appear *only* when the repo genuinely has no template. Use the fallback solely after an actual Step 3 search came up empty, and before finalizing a template-based body confirm its headings match the template's exactly.
+- If the repo enforces PR **title** or **branch-name** conventions (a PR-title linter, commit-lint, a branch-name rule), conform the title and branch to the pattern it actually enforces — discover it from the linter / CI config rather than guessing a scope or prefix that gets the PR rejected.
 - Keep the PR body and the handoff notes visibly separate. Validation provenance, review status, and the `gh` command are opener-only — they must never land in the public PR description.
 - Keep the PR body tooling-agnostic: no named editors, bots, or AI assistants, and no "generated by" footers. Describe the change, not how it was produced.
 - Always carry a real ticket link; if you cannot find or confirm one, ask rather than omit it.
