@@ -1,5 +1,32 @@
 # Change Log
 
+## 2026-06-24
+
+### handoff-review — add a verify-then-continue mode for clean restarts
+
+Broadened `handoff-review` from a pre-PR-review-only brief into one that also
+serves a clean restart: when a session's context has gone bad, a new session
+picks up the brief, *independently verifies* what the prior session did (rather
+than trusting its word), and continues the remaining work from a verified
+foundation. The unifying spine is that **verification is the precondition for
+continuing** — the review is the gate, not an add-on. A third mode, `continue`
+(alias `resume`), writes a verify-then-continue brief carrying current state
+(re-derived from the repo), the remaining work as an outcome, and concrete
+operating rules; the existing `default` (spawn) and `handoff` / `session`
+(scratch file) modes stay verify-only. The continuation extension is
+deliberately light and points at `handoff-goal` for substantial forward work
+rather than duplicating its acceptance-checks / integrity apparatus. The name
+was kept (`handoff-review`) to avoid churning ~46 references. See
+[`docs/decisions/handoff-review-verify-and-continue.md`](decisions/handoff-review-verify-and-continue.md)
+and its [implementation plan](decisions/handoff-review-verify-and-continue-implementation-plan.md).
+
+- Canonical `.claude/skills/handoff-review/SKILL.md` propagated byte-identical to
+  all five mirrors; origin doc `docs/skills/handoff-review.md` and the
+  `docs/skills/README.md` roster / composition updated and mirrored to both
+  reference roots; `plugins/toolkit/README.md` skill row updated. `toolkit`
+  `0.8.3` → `0.8.4`, `agent-workshop` `0.1.14` → `0.1.15` (patch).
+  `scripts/validate-native-plugin.ps1` passes.
+
 ## 2026-06-19
 
 ### handoff-pr — follow the repo PR template instead of replacing it
