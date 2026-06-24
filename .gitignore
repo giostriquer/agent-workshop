@@ -14,6 +14,7 @@ desktop.ini
 .temp/
 tmp/
 .worktrees/
+.superpowers/
 *.log
 
 # Tooling caches
