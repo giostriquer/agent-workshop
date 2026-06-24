@@ -53,7 +53,7 @@ All four are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Wr
 
 | Skill | Produces |
 | --- | --- |
-| `handoff-review` | a self-contained, unbiased review brief (task-vs-code, rules, info-leak, correctness) for a separate agent/session to run before a PR |
+| `handoff-review` | a self-contained brief for a separate agent/session to independently verify a branch (task-vs-code, rules, info-leak, correctness) before a PR — and, in `continue` mode, continue the work from a verified foundation |
 | `handoff-pr` | a structured PR handoff artifact (title, body, ticket links, status) for a separately-authorized session to open — never opens the PR itself |
 | `handoff-goal` | a self-contained goal document (goal + definition of done, current state, concrete operating rules) for a new session to pursue autonomously across compactions — never pursues the goal itself |
 | `doc-to-html` | a standalone dark-themed HTML page rendered from a markdown report / audit / findings doc (TOC, keyboard nav, evidence appendix, print stylesheet), with a rigid editing discipline for later revisions |
