@@ -1,4 +1,4 @@
-# Marketplace Packs
+# Adoption Packs
 
 Pack metadata is defined in the onboarding plugin's bundled catalog, `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`.
 This page explains how to choose between packs.

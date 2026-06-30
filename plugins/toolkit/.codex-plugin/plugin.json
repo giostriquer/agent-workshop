@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
-  "version": "0.9.0",
-  "description": "Codex-ready handoff, claim-check, qa-sweep, code-quality-review, and doc-to-html skills and bundled reviewer files from Agent Workshop.",
+  "version": "0.11.0",
+  "description": "Codex-ready handoff, claim-check, qa-sweep, code-quality-review, and doc-to-html skills and bundled agent files (reviewers + ci-watcher) from Agent Workshop.",
   "author": {
     "name": "Agent Workshop",
     "url": "https://github.com/giostriquer/agent-workshop"
@@ -14,7 +14,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Review handoff and doc-to-html skills for Codex.",
-    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, and code-quality-review skills from this package; the reviewer agent files are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
+    "longDescription": "A Codex manifest for the Agent Workshop toolkit plugin. Codex exposes the handoff-review, handoff-pr, handoff-goal, doc-to-html, claim-check, qa-sweep, code-quality-review, and get-pr-comments skills from this package; the agent files (the reviewers plus ci-watcher) are bundled in the payload for Claude Code and reference, but Codex standalone custom agents still need repo-local .codex/agents wrappers.",
     "developerName": "Agent Workshop",
     "category": "Productivity",
     "capabilities": ["Skills"],
@@ -27,6 +27,7 @@
       "Investigate whether a ticket or claim still holds.",
       "Run a team-scale QA sweep over a release and corroborate the findings.",
       "Run a strict code quality review on the current branch.",
+      "Summarize the active PR's review comments into a prioritized action list.",
       "Explain how to install reviewer agents for Codex."
     ]
   }

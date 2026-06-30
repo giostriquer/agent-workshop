@@ -1,8 +1,8 @@
-# Agent Marketplace
+# Adoption
 
-The marketplace is the catalog view of `agent-workshop`: it groups the canonical
-agents into adoption packs, names the profile values an adopting project must
-fill, and keeps raw copy decisions out of guesswork.
+This is the adoption catalog for `agent-workshop`: it groups the canonical agents
+into adoption packs, names the profile values an adopting project must fill, and
+keeps raw copy decisions out of guesswork.
 
 The canonical data lives in the onboarding plugin's bundled catalog, `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`.
 The docs in this directory explain how to read and apply that catalog.

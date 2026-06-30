@@ -1,6 +1,6 @@
 # Skills
 
-Origin docs for the thirteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the fourteen skills the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the skill.
 - **Problem** — what specifically it solves.
@@ -28,6 +28,7 @@ Each skill's canonical `SKILL.md` lives in the plugin that ships it — `plugins
 | [`claim-check`](claim-check.md) | Runs an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo; returns a validity verdict with evidence plus a readiness dossier, and never implements the work. |
 | [`qa-sweep`](qa-sweep.md) | Runs a team-scale QA pass over a decomposable surface; fans out one agent per slice against the real running artifact, reproduces every verdict-moving finding firsthand before it counts, separates regressions from pre-existing bugs, and returns a verdict-first, confidence-tagged report. Never fixes what it finds. |
 | [`code-quality-review`](code-quality-review.md) | Runs an unusually strict, structure-first maintainability review over a branch's diff; hunts for "code judo" reframes that delete complexity, treats file-size explosions, spaghetti-branch growth, boundary leaks, and unearned abstractions as presumptive blockers, and prefers a few high-conviction structural findings over cosmetic nits. |
+| [`get-pr-comments`](get-pr-comments.md) | Fetches conversation, review, and inline comments on the active PR via `gh` and returns a severity-grouped, prioritized action list plus the open questions; read-only — never replies to, resolves, or reacts to a comment unless explicitly asked. |
 
 ## Composition
 
@@ -44,6 +45,7 @@ Skills here pair naturally with agents:
 - `claim-check` is an investigation primitive — it runs the search itself, fanning out to subagents rather than orchestrating other skills. It pairs forward with `handoff-goal`: a `confirmed`, ready-to-work verdict feeds its dossier straight into a goal handoff.
 - `qa-sweep` is a verification primitive — it runs the sweep itself, fanning a QA team over a decomposable surface and corroborating their findings firsthand rather than orchestrating other skills. It is the team-scale, runtime sibling of `claim-check`'s single-premise investigation; it pairs forward with `handoff-pr` / `handoff-goal` (a ship verdict or a blocker list feeds the next session's work).
 - `code-quality-review` is a strict review primitive — a deep, structure-first maintainability pass the main session runs directly over a diff. It is the maintainability counterpart to `pattern-reviewer` (pattern conformance) and the correctness-focused review path: it owns structural ambition and codebase-health specifically. It pairs forward with `handoff-pr` (a clean structural verdict before a PR) and naturally precedes `qa-sweep`'s runtime pass — design first, behavior second.
+- `get-pr-comments` is a read-only PR-feedback triage primitive — it summarizes conversation, review, and inline comments into a prioritized action list and never responds to them unless asked. It stands alone (no orchestration); it pairs forward with the implementation-review and fix loop, and sits naturally alongside the `ci-watcher` agent (comments vs. CI) for working a PR.
 
 ## Adoption
 

@@ -1,0 +1,17 @@
+{
+  "name": "toolkit",
+  "displayName": "Toolkit",
+  "version": "0.11.0",
+  "description": "Curated standalone review, governance, and CI-monitoring agents plus direct-use skills (PR/review/goal handoffs, premise investigations, doc-to-html report pages, team-scale QA sweeps, strict code-quality reviews, PR comment triage) from Agent Workshop, usable directly without onboarding.",
+  "author": {
+    "name": "Agent Workshop"
+  },
+  "homepage": "https://github.com/giostriquer/agent-workshop",
+  "repository": "https://github.com/giostriquer/agent-workshop",
+  "license": "MIT",
+  "keywords": ["agents", "skills", "code-review", "governance", "handoff"],
+  "category": "developer-tools",
+  "tags": ["review", "governance", "ci", "quality", "automation"],
+  "skills": "./skills/",
+  "agents": "./agents/"
+}

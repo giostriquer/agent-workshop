@@ -1,6 +1,6 @@
 # Agents
 
-Origin docs for the nine agents the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
+Origin docs for the ten agents the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the agent.
 - **Problem** — what specifically it solves.
@@ -9,9 +9,9 @@ Origin docs for the nine agents the scaffold ships (across the `toolkit` and `ag
 - **Pitfalls** — mistakes observed in lived-in use.
 - **Adaptation notes** — how to fit it to your project.
 
-Each agent's canonical spec lives in the plugin that ships it — `plugins/toolkit/agents/<name>.md` for the direct-use reviewers, the onboarding bundle (`plugins/agent-workshop/.../references/agents/<name>.md`) for the adoptable ones. These docs explain the *why*.
+Each agent's canonical spec lives in the plugin that ships it — `plugins/toolkit/agents/<name>.md` for the direct-use agents, the onboarding bundle (`plugins/agent-workshop/.../references/agents/<name>.md`) for the adoptable ones. These docs explain the *why*. A `toolkit` value in the **Pack** column means the agent is direct-use in the `toolkit` plugin and is not part of an onboarding pack.
 
-Pack metadata lives in the onboarding plugin's bundled catalog (`plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`), with operator-facing guidance in [`../marketplace/`](../marketplace/). The roster below explains agent roles; the marketplace docs explain adoption bundles and required project profiles.
+Pack metadata lives in the onboarding plugin's bundled catalog (`plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`), with operator-facing guidance in [`../adoption/`](../adoption/). The roster below explains agent roles; the adoption docs explain adoption bundles and required project profiles.
 
 ## Roster
 
@@ -19,13 +19,14 @@ Pack metadata lives in the onboarding plugin's bundled catalog (`plugins/agent-w
 |---|---|---|
 | [`wiki-maintainer`](wiki-maintainer.md) | `docs-core` | Repo-local documentation owner; diff-driven by default, audit-mode on request. |
 | [`doc-indexer`](doc-indexer.md) | `docs-core` | Routing and audit helper; reduces context burden on `wiki-maintainer`. |
-| [`code-quality-reviewer`](code-quality-reviewer.md) | `review-core` | Strict, structure-first code-quality audit over a diff; the code-quality stage before pattern-reviewer. Loads the `code-quality-review` skill's rubric. |
+| [`code-quality-reviewer`](code-quality-reviewer.md) | `toolkit` | Strict, structure-first code-quality audit over a diff; the code-quality stage before pattern-reviewer. Loads the `code-quality-review` skill's rubric. |
 | [`pattern-reviewer`](pattern-reviewer.md) | `review-core` | Diff-driven implementation-pattern compliance check after code-quality review. |
 | [`spec-reviewer`](spec-reviewer.md) | `review-core` | Pre-implementation gate for design specs and implementation plans. |
 | [`test-quality-reviewer`](test-quality-reviewer.md) | `review-core` | Test-code trustworthiness, risk coverage, and test-strategy review; diff, audit, and strategy modes. |
 | [`research`](research.md) | `specialized` | Forward-looking research notes with structured scoring; dispatched by the `research` skill. |
 | [`vigil`](vigil.md) | `governance` | Advisory review of the agent / skill / workflow-instruction layer itself. |
 | [`visual-implementer`](visual-implementer.md) | `specialized` | Execution agent for approved AI-generated visual assets. |
+| [`ci-watcher`](ci-watcher.md) | `toolkit` | Watches the current branch's PR CI and reports pass/fail with the failing-log excerpt or check link; read-only, background-friendly. |
 
 ## Roles that compose
 
@@ -37,6 +38,7 @@ These agents are designed to compose, not duplicate:
 - **Forward-looking research:** `research` (skill) → `research` (agent).
 - **Visual execution:** `visual-advisor` (skill, taste) → `visual-implementer` (agent, execution).
 - **Governance:** `vigil` audits the agent layer itself.
+- **CI monitoring:** `ci-watcher` watches a branch's PR checks (standalone, background-friendly).
 
 ## Adoption
 

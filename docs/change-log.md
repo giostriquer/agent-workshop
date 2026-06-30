@@ -1,5 +1,48 @@
 # Change Log
 
+## 2026-06-30
+
+### Add a Cursor plugin marketplace surface + per-plugin LICENSEs
+
+Published the two plugins (`agent-workshop`, `toolkit`) through Cursor's
+plugin-marketplace convention, a third parallel host surface alongside Claude Code
+(`.claude-plugin/marketplace.json`) and Codex (`.agents/plugins/marketplace.json`).
+Added `.cursor-plugin/marketplace.json` (root, lists the two plugins by `source`
+folder) and per-plugin `plugins/<name>/.cursor-plugin/plugin.json` manifests
+(versions mirroring the existing ones — `agent-workshop` `0.1.18`, `toolkit`
+`0.11.0` — with `skills`/`agents` directory pointers), following the
+[`cursor/plugins`](https://github.com/cursor/plugins) format. Also added
+`plugins/agent-workshop/LICENSE` and `plugins/toolkit/LICENSE` (MIT). The
+`scripts/validate-native-plugin.ps1` validator gained Cursor checks — the marketplace
+must list exactly the two plugins with the right sources, and each Cursor manifest's
+version is held in lockstep with its Claude/Codex manifest (the same drift guard the
+other surfaces get). `docs/adoption/native-plugin.md` lists the new surface, and
+Cursor install instructions (the Team-Marketplace "Import from Repo" flow for
+custom repos, Teams/Enterprise admin) were added to the root, `toolkit`, and
+`agent-workshop` READMEs and `native-plugin.md`. No version bump — additive
+packaging at the versions already in flight. See
+[`docs/decisions/cursor-plugin-surface.md`](decisions/cursor-plugin-surface.md).
+
+### get-pr-comments — new toolkit skill for PR-comment triage
+
+Added `get-pr-comments`, a small, self-contained skill that pulls the active PR's
+feedback from all three GitHub surfaces (conversation, review verdicts, inline diff
+comments) via `gh`, groups it by severity and actionability, and returns a
+prioritized action list plus the open questions. Its load-bearing design choice is a
+**read, never reply** boundary: it must not reply to, resolve, react to, or comment
+on the PR unless the operator explicitly asks for that specific action — summarizing
+feedback and answering it are different acts with different stakes. Self-contained
+(`gh` only, no profile), so it ships **direct-use in the `toolkit` plugin**, not the
+onboarding set; it sits alongside `ci-watcher` as the two read-only "state of my PR"
+tools. See [`docs/decisions/get-pr-comments.md`](decisions/get-pr-comments.md).
+
+- Canonical `plugins/toolkit/skills/get-pr-comments/SKILL.md` (the only copy); origin
+  doc `docs/skills/get-pr-comments.md`. Both toolkit-skills lists in
+  `scripts/validate-native-plugin.ps1` widened to eight. `plugins/toolkit/README.md`,
+  root `README.md`, the Codex toolkit manifest, the `docs/adoption/native-plugin.md`
+  Codex enumeration, and the skills roster updated. `toolkit` `0.10.0` → `0.11.0`,
+  `agent-workshop` `0.1.17` → `0.1.18`. The validator passes.
+
 ## 2026-06-29
 
 ### code-quality-review — new strict, structure-first maintainability skill
@@ -153,6 +196,40 @@ the catalog-mirror check and now reads the cataloged-agent list from the bundle 
 `CLAUDE.md`, the rosters, and `docs/marketplace/{README,packs}.md` re-point at the
 bundle path. The top-level `marketplace/` folder is gone. No version change; the
 validator passes.
+
+### Rename `docs/marketplace/` → `docs/adoption/`
+
+The `docs/marketplace/` doc folder collided with the *host* plugin marketplaces
+(`.claude-plugin/marketplace.json`, `.agents/plugins/marketplace.json`) — it
+actually holds the operator-facing **adoption** docs (pack selection, profile
+slots, native onboarding plugin, host support). Renamed it (and its
+onboarding-bundle mirror) to `docs/adoption/`, retitled the index
+(`# Agent Marketplace` → `# Adoption`) and `packs.md` (`# Marketplace Packs` →
+`# Adoption Packs`), and re-pointed the `README.md` / `docs/agents/README.md`
+links. The validator's bundled-doc check now iterates `adoption`. The host
+marketplaces keep their (correct) names. No version change; the validator passes.
+
+### ci-watcher — new toolkit agent for PR CI monitoring
+
+Added `ci-watcher`, a small, self-contained agent that watches the current branch's
+PR checks via `gh` and reports a pass/fail verdict with the failing-log excerpt or
+check link — dispatch it (ideally in the background) instead of babysitting the
+checks tab. It's the toolkit's first **utility** agent (neither review nor
+governance), so the plugin's identity broadened to "review, governance, and
+CI-monitoring agents." Because it's self-contained (works in any repo with a GitHub
+PR + authenticated `gh`, no profile), it ships **direct-use in the `toolkit` plugin**
+and is not part of the onboarding adoption set. The spec was operator-provided in
+another host's format and adapted: dropped `is_background` (moved to prose), mapped
+dropped `model: fast` for `model: inherit` (the scaffold never names models), and added `tools: Bash, Read` (read-only). See
+[`docs/decisions/ci-watcher.md`](decisions/ci-watcher.md).
+
+- Canonical `plugins/toolkit/agents/ci-watcher.md` (the only copy); origin doc
+  `docs/agents/ci-watcher.md`. `scripts/validate-native-plugin.ps1` toolkit-agents
+  list widened to six. `plugins/toolkit/README.md`, root `README.md`, and the agent
+  roster updated (roster also fixed a decouple leftover — `code-quality-reviewer`'s
+  Pack column now reads `toolkit`, not `review-core`). `toolkit` `0.9.0` → `0.10.0`
+  (new agent), `agent-workshop` `0.1.16` → `0.1.17` (bundled roster doc grew). The
+  validator passes.
 
 ## 2026-06-24
 

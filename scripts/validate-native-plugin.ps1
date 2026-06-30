@@ -168,7 +168,7 @@ function Assert-ToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "toolkit skills"
     foreach ($skillName in $expectedSkills) {
@@ -184,7 +184,7 @@ function Assert-ToolkitPlugin {
 
     # The toolkit plugin payload is the canonical home for its own pieces; the
     # repo's .claude/ no longer mirrors them, so there is nothing to compare against.
-    $expected = @("code-quality-reviewer.md", "pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
+    $expected = @("ci-watcher.md", "code-quality-reviewer.md", "pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
     $actual = @(Get-ChildItem -LiteralPath $agentDir -File | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expected $actual "toolkit agents"
 }
@@ -195,7 +195,7 @@ function Assert-CodexToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "Codex toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "get-pr-comments", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "Codex toolkit skills"
 }
@@ -208,7 +208,7 @@ function Assert-OnboardingBundle {
     # `references/catalog.json` is the canonical pack catalog (no separate master).
 
     # General adoption docs are bundled in full from the source docs/.
-    foreach ($name in "conventions", "marketplace") {
+    foreach ($name in "conventions", "adoption") {
         foreach ($file in Get-ChildItem -LiteralPath "docs/$name" -File) {
             Assert-SameFile $file.FullName "$ReferenceRoot/docs/$name/$($file.Name)"
         }
@@ -357,6 +357,42 @@ if (-not (Has-Property $codexManifest "interface") -or -not (Has-Property $codex
 $capabilities = @($codexManifest.interface.capabilities)
 if ($capabilities.Count -ne 1 -or $capabilities[0] -ne "Skills") {
     Fail "Codex plugin capabilities must be exactly Skills"
+}
+
+# Cursor marketplace + per-plugin manifests (parallel host surface).
+$cursorMarketplace = Read-JsonFile ".cursor-plugin/marketplace.json"
+$cursorPlugins = @($cursorMarketplace.plugins)
+if ($cursorPlugins.Count -ne 2) {
+    Fail "Cursor marketplace must contain exactly two plugins (agent-workshop, toolkit)"
+}
+$cursorOnboardEntry = $cursorPlugins | Where-Object { $_.name -eq "agent-workshop" }
+$cursorToolkitEntry = $cursorPlugins | Where-Object { $_.name -eq "toolkit" }
+if (-not $cursorOnboardEntry) {
+    Fail "Cursor marketplace must contain the agent-workshop plugin"
+}
+if (-not $cursorToolkitEntry) {
+    Fail "Cursor marketplace must contain the toolkit plugin"
+}
+if ($cursorOnboardEntry.source -ne "plugins/agent-workshop") {
+    Fail "Cursor agent-workshop marketplace source must be plugins/agent-workshop"
+}
+if ($cursorToolkitEntry.source -ne "plugins/toolkit") {
+    Fail "Cursor toolkit marketplace source must be plugins/toolkit"
+}
+
+$cursorOnboardManifest = Read-JsonFile "plugins/agent-workshop/.cursor-plugin/plugin.json"
+$cursorToolkitManifest = Read-JsonFile "plugins/toolkit/.cursor-plugin/plugin.json"
+if ($cursorOnboardManifest.name -ne "agent-workshop") {
+    Fail "Cursor agent-workshop manifest name must be agent-workshop"
+}
+if ($cursorOnboardManifest.version -ne $claudeManifest.version) {
+    Fail "Cursor agent-workshop manifest version must match the agent-workshop plugin manifest"
+}
+if ($cursorToolkitManifest.name -ne "toolkit") {
+    Fail "Cursor toolkit manifest name must be toolkit"
+}
+if ($cursorToolkitManifest.version -ne $toolkitManifest.version) {
+    Fail "Cursor toolkit manifest version must match its plugin manifest"
 }
 
 Assert-SingleSkill "plugins/agent-workshop/skills" "agent-workshop-onboard"

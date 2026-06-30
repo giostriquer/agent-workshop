@@ -12,11 +12,15 @@ smallest useful pack set, and apply only an approved project-local file set.
 
 - Claude Code: `.claude-plugin/marketplace.json` with payload in `plugins/agent-workshop/`
 - Codex: `.agents/plugins/marketplace.json` with payload in `plugins/agent-workshop/`
+- Cursor: `.cursor-plugin/marketplace.json` with per-plugin `plugins/<name>/.cursor-plugin/plugin.json`
 
-Both marketplace surfaces point to the same slim plugin payload. That payload
+All three marketplace surfaces point to the same slim plugin payload. That payload
 contains `plugins/agent-workshop/.claude-plugin/plugin.json`,
-`plugins/agent-workshop/.codex-plugin/plugin.json`, and exactly one active skill
-directory: `plugins/agent-workshop/skills/agent-workshop-onboard/`.
+`plugins/agent-workshop/.codex-plugin/plugin.json`,
+`plugins/agent-workshop/.cursor-plugin/plugin.json`, and exactly one active skill
+directory: `plugins/agent-workshop/skills/agent-workshop-onboard/`. The Cursor
+per-plugin manifest version is kept in lockstep with the Claude/Codex manifests by
+`scripts/validate-native-plugin.ps1`.
 
 Marketplace installs point at this slim payload, never at repo root: the repo
 root also holds the scaffold's canonical `.claude/skills/` tree, and pointing an
@@ -49,11 +53,19 @@ codex plugin add agent-workshop@agent-workshop
 Use a new Codex thread after installing or updating the plugin so the newly
 installed `agent-workshop-onboard` skill is available to the session.
 
+For Cursor, custom-repo marketplaces are a **Team Marketplace** feature
+(Teams/Enterprise, admin). In the dashboard go to **Settings → Plugins → Team
+Marketplaces → Add Marketplace → Import from Repo**, point it at
+`giostriquer/agent-workshop`, then install `agent-workshop` / `toolkit` from
+**Customize** in the sidebar. (Plugins published to the official
+[cursor.com/marketplace](https://cursor.com/marketplace) install with `/add-plugin`
+or the **Add to Cursor** button.)
+
 `toolkit` is the Codex-native counterpart to the Claude Code
 `toolkit` plugin. Codex plugins distribute skills, apps, and MCP servers, so
 the active Codex surface is the `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, and
-`code-quality-review` skills. The
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, `code-quality-review`,
+and `get-pr-comments` skills. The
 reviewer agent files are bundled in the plugin payload for Claude Code and
 reference, but Codex custom agents still need repo-local `.codex/agents/`
 wrappers from onboarding.

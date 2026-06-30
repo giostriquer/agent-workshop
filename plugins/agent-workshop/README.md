@@ -13,3 +13,8 @@ For Codex, install it from the Agent Workshop marketplace:
 codex plugin marketplace add giostriquer/agent-workshop --ref main
 codex plugin add agent-workshop@agent-workshop
 ```
+
+For Cursor, import this repo as a **Team Marketplace** (Teams/Enterprise, admin) —
+**Dashboard → Settings → Plugins → Team Marketplaces → Add Marketplace → Import from
+Repo** (`giostriquer/agent-workshop`) — then install `agent-workshop` from
+**Customize** in the sidebar.
