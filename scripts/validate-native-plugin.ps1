@@ -29,19 +29,6 @@ function Read-JsonFile {
     }
 }
 
-function Get-RelativeFileList {
-    param([Parameter(Mandatory = $true)] [string] $Root)
-
-    if (-not (Test-Path -LiteralPath $Root -PathType Container)) {
-        Fail "missing directory: $Root"
-    }
-
-    $resolvedRoot = (Resolve-Path -LiteralPath $Root).Path
-    return Get-ChildItem -LiteralPath $resolvedRoot -Recurse -File |
-        ForEach-Object { $_.FullName.Substring($resolvedRoot.Length + 1).Replace("\", "/") } |
-        Sort-Object
-}
-
 function Assert-SameFile {
     param(
         [Parameter(Mandatory = $true)] [string] $ExpectedPath,
@@ -181,11 +168,13 @@ function Assert-ToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "toolkit skills"
     foreach ($skillName in $expectedSkills) {
-        Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
+        if (-not (Test-Path -LiteralPath "$skillsDir/$skillName/SKILL.md" -PathType Leaf)) {
+            Fail "toolkit skill missing SKILL.md: $skillName"
+        }
     }
 
     $agentDir = "$root/agents"
@@ -193,13 +182,11 @@ function Assert-ToolkitPlugin {
         Fail "toolkit must contain an agents directory"
     }
 
-    $expected = @("pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
+    # The toolkit plugin payload is the canonical home for its own pieces; the
+    # repo's .claude/ no longer mirrors them, so there is nothing to compare against.
+    $expected = @("code-quality-reviewer.md", "pattern-reviewer.md", "spec-reviewer.md", "test-quality-reviewer.md", "vigil.md")
     $actual = @(Get-ChildItem -LiteralPath $agentDir -File | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expected $actual "toolkit agents"
-
-    foreach ($name in $expected) {
-        Assert-SameFile ".claude/agents/$name" "$agentDir/$name"
-    }
 }
 
 function Assert-CodexToolkitPlugin {
@@ -208,61 +195,83 @@ function Assert-CodexToolkitPlugin {
     if (-not (Test-Path -LiteralPath $skillsDir -PathType Container)) {
         Fail "Codex toolkit must contain a skills directory"
     }
-    $expectedSkills = @("claim-check", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
+    $expectedSkills = @("claim-check", "code-quality-review", "doc-to-html", "handoff-goal", "handoff-pr", "handoff-review", "qa-sweep")
     $actualSkills = @(Get-ChildItem -LiteralPath $skillsDir -Directory | Select-Object -ExpandProperty Name | Sort-Object)
     Assert-SameFileList $expectedSkills $actualSkills "Codex toolkit skills"
-
-    foreach ($skillName in $expectedSkills) {
-        Assert-SameFile ".claude/skills/$skillName/SKILL.md" "$skillsDir/$skillName/SKILL.md"
-    }
 }
 
-function Assert-ReferenceSetMatchesSources {
+function Assert-OnboardingBundle {
     param([Parameter(Mandatory = $true)] [string] $ReferenceRoot)
 
-    Assert-SameFile "marketplace/catalog.json" "$ReferenceRoot/catalog.json"
+    # The onboarding plugin is a self-contained bundle. It no longer mirrors a
+    # universal .claude/ master; it bundles only the pieces onboarding adopts, and
+    # `references/catalog.json` is the canonical pack catalog (no separate master).
 
-    foreach ($file in Get-ChildItem -LiteralPath ".claude/agents" -File) {
-        Assert-SameFile $file.FullName "$ReferenceRoot/agents/$($file.Name)"
-    }
-    foreach ($file in Get-ChildItem -LiteralPath ".codex/agents" -File) {
-        Assert-SameFile $file.FullName "$ReferenceRoot/wrappers/codex/$($file.Name)"
-    }
-    foreach ($file in Get-ChildItem -LiteralPath ".gemini/agents" -File) {
-        Assert-SameFile $file.FullName "$ReferenceRoot/wrappers/gemini/$($file.Name)"
-    }
-    foreach ($file in Get-ChildItem -LiteralPath ".opencode/agents" -File) {
-        Assert-SameFile $file.FullName "$ReferenceRoot/wrappers/opencode/$($file.Name)"
-    }
-    foreach ($skill in Get-ChildItem -LiteralPath ".claude/skills" -Directory) {
-        Assert-SameFile "$($skill.FullName)/SKILL.md" "$ReferenceRoot/skills/$($skill.Name).md"
+    # General adoption docs are bundled in full from the source docs/.
+    foreach ($name in "conventions", "marketplace") {
+        foreach ($file in Get-ChildItem -LiteralPath "docs/$name" -File) {
+            Assert-SameFile $file.FullName "$ReferenceRoot/docs/$name/$($file.Name)"
+        }
     }
 
-    foreach ($name in "agents", "skills", "conventions", "marketplace") {
-        $sourceRoot = "docs/$name"
-        $targetRoot = "$ReferenceRoot/docs/$name"
-        foreach ($file in Get-ChildItem -LiteralPath $sourceRoot -File) {
-            Assert-SameFile $file.FullName "$targetRoot/$($file.Name)"
+    # Bundled origin docs (only for what onboarding adopts) must not go stale
+    # against the source docs/ they were copied from.
+    foreach ($area in "agents", "skills") {
+        foreach ($file in Get-ChildItem -LiteralPath "$ReferenceRoot/docs/$area" -File) {
+            Assert-SameFile "docs/$area/$($file.Name)" $file.FullName
+        }
+    }
+
+    # Every cataloged agent ships a complete bundle: spec, host wrappers, origin doc.
+    $catalogAgents = (Read-JsonFile "$ReferenceRoot/catalog.json").agents.PSObject.Properties.Name
+    foreach ($agentName in $catalogAgents) {
+        $required = @(
+            "$ReferenceRoot/agents/$agentName.md",
+            "$ReferenceRoot/wrappers/codex/$agentName.toml",
+            "$ReferenceRoot/wrappers/gemini/$agentName.md",
+            "$ReferenceRoot/wrappers/opencode/$agentName.md",
+            "$ReferenceRoot/docs/agents/$agentName.md"
+        )
+        foreach ($p in $required) {
+            if (-not (Test-Path -LiteralPath $p -PathType Leaf)) {
+                Fail "cataloged agent $agentName missing bundled file: $p"
+            }
         }
     }
 }
 
-$claudeManifest = Read-JsonFile ".claude-plugin/plugin.json"
+function Assert-RepoActiveMatchesBundle {
+    param([Parameter(Mandatory = $true)] [string] $ReferenceRoot)
+
+    # The few skills/agents the repo runs locally are the same artifact as their
+    # onboarding template, so they must stay byte-identical to the bundle copy.
+    foreach ($skill in Get-ChildItem -LiteralPath ".claude/skills" -Directory) {
+        Assert-SameFile "$($skill.FullName)/SKILL.md" "$ReferenceRoot/skills/$($skill.Name).md"
+    }
+    foreach ($agent in Get-ChildItem -LiteralPath ".claude/agents" -File) {
+        $name = [System.IO.Path]::GetFileNameWithoutExtension($agent.Name)
+        Assert-SameFile $agent.FullName "$ReferenceRoot/agents/$name.md"
+        Assert-SameFile ".codex/agents/$name.toml" "$ReferenceRoot/wrappers/codex/$name.toml"
+        Assert-SameFile ".opencode/agents/$name.md" "$ReferenceRoot/wrappers/opencode/$name.md"
+    }
+}
+
+# A marketplace repo needs no root plugin.json; the agent-workshop payload manifest
+# is the source of truth for the plugin's name and version.
 $claudeMarketplace = Read-JsonFile ".claude-plugin/marketplace.json"
-$claudePayloadManifest = Read-JsonFile "plugins/agent-workshop/.claude-plugin/plugin.json"
+$claudeManifest = Read-JsonFile "plugins/agent-workshop/.claude-plugin/plugin.json"
 $codexMarketplace = Read-JsonFile ".agents/plugins/marketplace.json"
 $codexManifest = Read-JsonFile "plugins/agent-workshop/.codex-plugin/plugin.json"
-$catalog = Read-JsonFile "marketplace/catalog.json"
 $toolkitManifest = Read-JsonFile "plugins/toolkit/.claude-plugin/plugin.json"
 
 if ($claudeManifest.name -ne "agent-workshop") {
-    Fail "Claude plugin name must be agent-workshop"
+    Fail "agent-workshop plugin manifest name must be agent-workshop"
 }
 if (Has-Property $claudeManifest "mcpServers") {
-    Fail "Claude plugin manifest must not contain mcpServers"
+    Fail "agent-workshop plugin manifest must not contain mcpServers"
 }
 if (Has-Property $claudeManifest "agents") {
-    Fail "Claude plugin manifest must not expose agents"
+    Fail "agent-workshop plugin manifest must not expose agents"
 }
 
 $claudePlugins = @($claudeMarketplace.plugins)
@@ -288,19 +297,6 @@ if ($toolkitEntry.source -ne "./plugins/toolkit") {
 }
 if ($toolkitEntry.version -ne $toolkitManifest.version) {
     Fail "toolkit marketplace version must match its plugin manifest"
-}
-
-if ($claudePayloadManifest.name -ne "agent-workshop") {
-    Fail "Claude plugin payload name must be agent-workshop"
-}
-if ($claudePayloadManifest.version -ne $claudeManifest.version) {
-    Fail "Claude payload manifest version must match the root Claude manifest"
-}
-if (Has-Property $claudePayloadManifest "mcpServers") {
-    Fail "Claude plugin payload manifest must not contain mcpServers"
-}
-if (Has-Property $claudePayloadManifest "agents") {
-    Fail "Claude plugin payload manifest must not expose agents"
 }
 
 $codexPlugins = @($codexMarketplace.plugins)
@@ -344,7 +340,7 @@ if ($codexManifest.name -ne "agent-workshop") {
     Fail "Codex plugin name must be agent-workshop"
 }
 if ($codexManifest.version -ne $claudeManifest.version) {
-    Fail "Codex plugin manifest version must match the Claude manifest"
+    Fail "Codex plugin manifest version must match the agent-workshop plugin manifest"
 }
 if ($codexManifest.skills -ne "./skills") {
     Fail "Codex plugin manifest must set skills to ./skills"
@@ -363,38 +359,15 @@ if ($capabilities.Count -ne 1 -or $capabilities[0] -ne "Skills") {
     Fail "Codex plugin capabilities must be exactly Skills"
 }
 
-Assert-SingleSkill "skills" "agent-workshop-onboard"
 Assert-SingleSkill "plugins/agent-workshop/skills" "agent-workshop-onboard"
 Assert-OnlyAllowedPluginSkillFiles
 Assert-OnlyAllowedPluginAgents
 Assert-ToolkitPlugin
 Assert-CodexToolkitPlugin
 
-Assert-SameFile `
-    "skills/agent-workshop-onboard/SKILL.md" `
-    "plugins/agent-workshop/skills/agent-workshop-onboard/SKILL.md"
-Assert-SameFile `
-    ".claude-plugin/plugin.json" `
-    "plugins/agent-workshop/.claude-plugin/plugin.json"
+$referenceRoot = "plugins/agent-workshop/skills/agent-workshop-onboard/references"
 
-$rootReferenceRoot = "skills/agent-workshop-onboard/references"
-$codexReferenceRoot = "plugins/agent-workshop/skills/agent-workshop-onboard/references"
-$rootFiles = Get-RelativeFileList $rootReferenceRoot
-$codexFiles = Get-RelativeFileList $codexReferenceRoot
-Assert-SameFileList $rootFiles $codexFiles "root/Codex references"
-
-foreach ($relativePath in $rootFiles) {
-    Assert-SameFile "$rootReferenceRoot/$relativePath" "$codexReferenceRoot/$relativePath"
-}
-
-Assert-ReferenceSetMatchesSources $rootReferenceRoot
-
-$catalogAgents = $catalog.agents.PSObject.Properties.Name | Sort-Object
-foreach ($agentName in $catalogAgents) {
-    $agentPath = "$rootReferenceRoot/agents/$agentName.md"
-    if (-not (Test-Path -LiteralPath $agentPath -PathType Leaf)) {
-        Fail "cataloged agent is missing from bundled agent references: $agentName"
-    }
-}
+Assert-OnboardingBundle $referenceRoot
+Assert-RepoActiveMatchesBundle $referenceRoot
 
 Write-Output "native plugin validation ok"

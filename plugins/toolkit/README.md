@@ -1,12 +1,13 @@
 # toolkit
 
 A direct-use Claude Code plugin from [Agent Workshop](https://github.com/giostriquer/agent-workshop):
-four curated review agents plus six direct-use skills you can run in any repo with **no setup**.
+five curated review agents plus seven direct-use skills you can run in any repo with **no setup**.
 The agents read your code, specs, and tests and report findings — they never modify your files.
 Three skills produce structured handoff artifacts (review briefs, PR opens, and goal documents
 for a new session to pursue); `doc-to-html` renders a markdown report as a standalone dark HTML page;
 `claim-check` runs an unbiased, evidence-grounded investigation of a premise and returns a verdict plus a readiness dossier;
-`qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts.
+`qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts;
+`code-quality-review` runs an unusually strict, structure-first maintainability review over a branch's diff and pushes for restructurings that delete complexity rather than rearrange it.
 
 ## Install
 
@@ -28,13 +29,13 @@ codex plugin add toolkit@agent-workshop
 
 Codex plugins do not currently expose standalone custom agents from plugin
 manifests. The Codex `toolkit` package exposes `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, and `qa-sweep` as skills and bundles the reviewer agent files inertly; use the
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, and `code-quality-review` as skills and bundles the reviewer agent files inertly; use the
 `agent-workshop` onboarding plugin when you want to copy true `.codex/agents/`
 wrappers into a target repo.
 
-After install, the four agents are available, namespaced `toolkit:<agent>` —
-e.g. `toolkit:spec-reviewer`. The six skills are available as `handoff-review`,
-`handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, and `qa-sweep` (skills are invoked by name, not namespaced). The same marketplace also
+After install, the five agents are available, namespaced `toolkit:<agent>` —
+e.g. `toolkit:spec-reviewer`. The seven skills are available as `handoff-review`,
+`handoff-pr`, `handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, and `code-quality-review` (skills are invoked by name, not namespaced). The same marketplace also
 hosts the `agent-workshop` onboarding plugin (`/plugin install agent-workshop@agent-workshop`)
 for the full scaffold-adoption flow.
 
@@ -43,11 +44,12 @@ for the full scaffold-adoption flow.
 | Agent | Reviews |
 | --- | --- |
 | `spec-reviewer` | a design spec or implementation plan for gaps, before you build |
+| `code-quality-reviewer` | a code diff for maintainability and structure — the 1k-line rule, spaghetti growth, code-judo simplification; loads the `code-quality-review` skill's rubric and runs before `pattern-reviewer` |
 | `test-quality-reviewer` | a test diff (or existing tests) for trustworthiness and risk coverage |
 | `pattern-reviewer` | a code diff for implementation-pattern conformance; with no documented conventions it infers patterns from sibling files and labels findings lower-confidence |
 | `vigil` | a repo's agent / skill / workflow layer for governance drift |
 
-All four are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Write`.
+All five are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Write`.
 
 ## Skills
 
@@ -59,6 +61,7 @@ All four are advisory and read-only (`Read, Grep, Glob, Bash`) — no `Edit`/`Wr
 | `doc-to-html` | a standalone dark-themed HTML page rendered from a markdown report / audit / findings doc (TOC, keyboard nav, evidence appendix, print stylesheet), with a rigid editing discipline for later revisions |
 | `claim-check` | an unbiased, evidence-grounded investigation of a premise (ticket / hunch / question) against the current repo — a validity verdict with evidence plus a readiness dossier (or exactly what's missing); never implements the work |
 | `qa-sweep` | a team-scale QA pass over a decomposable surface — fans one agent per slice against the real running artifact, reproduces every verdict-moving finding firsthand before it counts, separates regressions from pre-existing bugs, and returns a verdict-first, confidence-tagged report; never fixes what it finds |
+| `code-quality-review` | an unusually strict, structure-first maintainability review over a branch's diff — hunts for "code judo" reframes that delete complexity, treats file-size explosions, spaghetti-branch growth, boundary leaks, and unearned abstractions as presumptive blockers, and prefers a few high-conviction structural findings over cosmetic nits |
 
 ## Not included
 

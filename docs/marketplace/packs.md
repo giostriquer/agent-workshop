@@ -1,6 +1,6 @@
 # Marketplace Packs
 
-Pack metadata is defined in [`marketplace/catalog.json`](../../marketplace/catalog.json).
+Pack metadata is defined in the onboarding plugin's bundled catalog, `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`.
 This page explains how to choose between packs.
 
 ## Review Core

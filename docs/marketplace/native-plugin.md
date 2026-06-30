@@ -18,10 +18,9 @@ contains `plugins/agent-workshop/.claude-plugin/plugin.json`,
 `plugins/agent-workshop/.codex-plugin/plugin.json`, and exactly one active skill
 directory: `plugins/agent-workshop/skills/agent-workshop-onboard/`.
 
-The root `skills/agent-workshop-onboard/` copy remains a source copy for this
-repo, not the marketplace source. Marketplace installs must not point at repo
-root, because repo root also contains the scaffold's canonical `.claude/skills/`
-tree.
+Marketplace installs point at this slim payload, never at repo root: the repo
+root also holds the scaffold's canonical `.claude/skills/` tree, and pointing an
+install there would expose all of it as active skills.
 
 ## Install From A Separate Machine
 
@@ -53,7 +52,8 @@ installed `agent-workshop-onboard` skill is available to the session.
 `toolkit` is the Codex-native counterpart to the Claude Code
 `toolkit` plugin. Codex plugins distribute skills, apps, and MCP servers, so
 the active Codex surface is the `handoff-review`, `handoff-pr`,
-`handoff-goal`, `doc-to-html`, `claim-check`, and `qa-sweep` skills. The
+`handoff-goal`, `doc-to-html`, `claim-check`, `qa-sweep`, and
+`code-quality-review` skills. The
 reviewer agent files are bundled in the plugin payload for Claude Code and
 reference, but Codex custom agents still need repo-local `.codex/agents/`
 wrappers from onboarding.
@@ -73,20 +73,24 @@ wrappers from onboarding.
 
 ## Bundled References
 
-The plugin bundles copies of:
+The onboarding plugin is a **self-contained bundle** — it carries everything it
+adopts into a target repo, and only what it adopts (the project-coupled agents and
+the workflow skills). The direct-use, self-contained skills and the
+`code-quality-reviewer` agent are *not* bundled here; adopters get those by
+installing the `toolkit` plugin. The bundle holds:
 
-- `marketplace/catalog.json`
-- canonical `.claude/agents/*.md`
-- host wrappers under `.codex/`, `.gemini/`, and `.opencode/`
-- non-discoverable Markdown copies of mirrored `.claude/skills/*/SKILL.md`
-- marketplace, agent, skill, and convention docs
+- `references/catalog.json` (the canonical onboarding pack catalog)
+- canonical agent specs under `references/agents/<name>.md` (the bundle is the
+  canonical home for the onboarding-only agents)
+- host-wrapper templates under `references/wrappers/{codex,gemini,opencode}/`
+- flattened skill specs under `references/skills/<name>.md` (not nested `SKILL.md`)
+- origin docs for the bundled agents/skills plus the full convention and marketplace docs
 
-Those files live under the onboarding skill's `references/` directory. They are
-templates for approved repo-local adoption, not additional active plugin skills.
-Reference skill templates are stored as `references/skills/<skill>.md`, not as
-nested `SKILL.md` files.
+These are templates for approved repo-local adoption, not active plugin skills.
 
-The validator keeps those copies in sync with the canonical scaffold files:
+The validator checks that the bundle is self-consistent (catalog mirror, cataloged
+agents fully bundled, origin docs fresh against `docs/`) and that the few skills/
+agents this repo itself runs stay byte-identical to their bundle templates:
 
 ```powershell
 .\scripts\validate-native-plugin.ps1

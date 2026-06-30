@@ -4,7 +4,7 @@ The marketplace is the catalog view of `agent-workshop`: it groups the canonical
 agents into adoption packs, names the profile values an adopting project must
 fill, and keeps raw copy decisions out of guesswork.
 
-The canonical data lives in [`marketplace/catalog.json`](../../marketplace/catalog.json).
+The canonical data lives in the onboarding plugin's bundled catalog, `plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`.
 The docs in this directory explain how to read and apply that catalog.
 
 For Claude Code and Codex, the preferred guided path is the native plugin
@@ -59,11 +59,11 @@ review package:
 - The catalog is manifest-first; the native plugin is a guided onboarding layer,
   not a global installer for every scaffold agent.
 - Native marketplace entries point at the slim `plugins/agent-workshop/` payload,
-  not the repo root or the scaffold's canonical `.claude/skills/` tree.
+  not the repo root or this repo's own host-config dirs.
 
 ## What the marketplace does not do
 
 - It does not install files automatically without an approved `mode: apply` plan.
-- It does not move canonical specs out of `.claude/agents/`.
+- It does not expose adopted agents as plugin-global tools — they are written as repo-local files in the target project.
 - It does not make all agents default.
 - It does not encode private project paths or local domain decisions.

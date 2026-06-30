@@ -25,26 +25,23 @@ codex plugin add toolkit@agent-workshop
 codex plugin add agent-workshop@agent-workshop
 ```
 
-(On Codex, the `toolkit` plugin exposes the six skills; its reviewer agents need the repo-local wrappers that onboarding sets up.)
-
 ## The plugins
 
 ### `toolkit` — use right away
 
 Review agents and direct-use skills, ready immediately after install with nothing to configure:
 
-- **Agents:** `spec-reviewer` (design specs and plans), `test-quality-reviewer` (test code), `pattern-reviewer` (code-pattern conformance), and `vigil` (your agent/skill setup itself). All read-only — they review and report, never edit your files.
-- **Skills:** `handoff-review`, `handoff-pr`, and `handoff-goal` hand in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier; `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts.
+- **Agents:** `spec-reviewer` (design specs and plans), `code-quality-reviewer` (maintainability and structure of a diff), `test-quality-reviewer` (test code), `pattern-reviewer` (code-pattern conformance), and `vigil` (your agent/skill setup itself). All read-only — they review and report, never edit your files.
+- **Skills:** `handoff-review`, `handoff-pr`, and `handoff-goal` hand in-flight work to a fresh session or agent; `doc-to-html` turns a markdown report into a polished dark-themed HTML page; `claim-check` runs an unbiased investigation of a premise (ticket, hunch, or question) and returns a verdict plus a readiness dossier; `qa-sweep` fans a QA team over a broad surface and corroborates every finding firsthand before it counts; `code-quality-review` runs an unusually strict, structure-first maintainability review over a branch's diff and pushes for restructurings that delete complexity.
 
 Details in [`plugins/toolkit/README.md`](plugins/toolkit/README.md).
 
 ### `agent-workshop` — adopt the full scaffold
 
-One guided skill, `agent-workshop-onboard`, for when you want the whole working setup in your own project — eight agents, twelve skills, and the conventions that tie them together. Run it in the target repo: it first produces a read-only adoption plan, and only copies files after you approve.
+One guided skill, `agent-workshop-onboard`, for adopting the **project-coupled** scaffolding into your own repo — the agents that need adapting to your project (profile slots, conventions) and the workflow skills meant to live in-repo, plus the conventions that tie them together. It inspects the target, produces a read-only adoption plan, and only copies files after you approve. The direct-use review agents and self-contained skills don't need this — install `toolkit` for those.
 
 ## Going deeper
 
-- [`docs/setup.md`](docs/setup.md) — manual adoption: copy the files yourself, no plugin.
 - [`docs/agents/`](docs/agents/) and [`docs/skills/`](docs/skills/) — the origin story of every agent and skill: what problem it solved and how it's used in practice.
 - [`docs/conventions/`](docs/conventions/) — the portable working rules the agents rely on.
 - [`docs/marketplace/README.md`](docs/marketplace/README.md) — the pack catalog, maturity labels, and host support.

@@ -10,9 +10,9 @@ When a session starts in this repo:
 
 1. `README.md` — what this repo is and is not.
 2. This file (or `CLAUDE.md` for Claude sessions).
-3. `docs/setup.md` if the question involves adoption flow.
+3. `README.md`'s install section and the `agent-workshop-onboard` plugin if the question involves adoption flow.
 4. The relevant `docs/agents/<name>.md` or `docs/skills/<name>.md` if the question is about a specific piece.
-5. The canonical spec at `.claude/agents/<name>.md` or `.claude/skills/<name>/SKILL.md` only when verifying or modifying the spec itself.
+5. The canonical spec — in the plugin that ships it (`plugins/toolkit/…` or the onboarding `references/…`; see `CLAUDE.md` § "Source-of-truth boundaries") — only when verifying or modifying the spec itself.
 
 Do not load the full docs tree. Do not load all agent specs unless doing a cross-cutting audit (the `vigil` agent's territory).
 
@@ -29,11 +29,11 @@ The full loop documented in `docs/examples/spec-driven-development.md` applies t
 1. **Identify the change.** Mechanical (typo, link, formatting), substantive (new agent/skill, behavior change, convention shift), or structural (layout reorganization).
 2. **Mechanical changes** apply directly. No spec, no review, no change-log.
 3. **Substantive changes** get a short note in `docs/decisions/<name>.md` describing what's changing and why. Apply, then verify origin-doc parity.
-4. **Structural changes** require updating `README.md`, `docs/setup.md`, and any cross-references. Pause and ask the user before applying — structural changes affect every adopter.
+4. **Structural changes** require updating `README.md` and any cross-references. Pause and ask the user before applying — structural changes affect every adopter.
 
 ## Origin-doc parity
 
-Every agent has a matching `docs/agents/<name>.md`. Every skill has a matching `docs/skills/<name>.md`. When changing the canonical spec at `.claude/agents/<name>.md` or `.claude/skills/<name>/SKILL.md`:
+Every agent has a matching `docs/agents/<name>.md`. Every skill has a matching `docs/skills/<name>.md`. When changing a canonical spec (in the plugin that ships it):
 
 1. Apply the spec change.
 2. Read the origin doc.
@@ -44,16 +44,16 @@ The spec is the contract. The origin doc is the explanation. They must not drift
 
 ## Cross-host parity
 
-The scaffold ships canonical agent specs in `.claude/agents/` plus thin wrappers in `.codex/agents/`, `.gemini/agents/`, and `.opencode/agents/` as worked examples for each supported host. Skills mirror in full to `.codex/skills/` and `.gemini/skills/`; OpenCode is wrapper-only by convention (no `skills/` folder).
+Canonical definitions live in the plugins (see `CLAUDE.md` § "Source-of-truth boundaries"), not in a universal `.claude/`. This repo's own host dirs — `.claude/`, `.codex/`, `.opencode/` — carry only the small set the repo runs (`change-log`, `push`, `wiki-maintainer`, `vigil`). The onboarding plugin bundles the full host-wrapper templates for the adoptable agents under `references/wrappers/{codex,gemini,opencode}/`.
 
-The convention is **thin wrappers for agents** (each non-Claude wrapper points at `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) for the agent-wrapper pattern and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md) for skill mirroring.
+The portable conventions adopters apply in *their* repos are unchanged: **thin wrappers for agents** (each non-Claude wrapper points at the adopter's `.claude/agents/<name>.md`) and **full mirroring for skills** (each host carries its own SKILL.md). See [`docs/conventions/cross-host-wrappers.md`](docs/conventions/cross-host-wrappers.md) and [`docs/conventions/skill-parity.md`](docs/conventions/skill-parity.md). Gemini and OpenCode remain supported **adoption** targets (onboarding generates their wrappers); this repo simply doesn't keep its own `.gemini/` instance.
 
 ## Source priority
 
 When a question involves both this scaffold and an adopting project's specifics:
 
 1. The user's current question and explicit context.
-2. The relevant agent or skill canonical spec (`.claude/`).
+2. The relevant agent or skill canonical spec (in its shipping plugin).
 3. The origin doc (`docs/agents/` or `docs/skills/`).
 4. The convention doc (`docs/conventions/`).
 5. `README.md`, this file, `CLAUDE.md`.

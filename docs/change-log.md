@@ -1,5 +1,159 @@
 # Change Log
 
+## 2026-06-29
+
+### code-quality-review — new strict, structure-first maintainability skill
+
+Added `code-quality-review`, a direct-use toolkit skill that runs an unusually
+strict, **structure-first** maintainability review over a branch's diff. Its
+posture is structural ambition over nit-picking: its first instinct is to hunt for
+a "code judo" reframe that *deletes* whole categories of complexity rather than
+rearranging them, and it treats file-size explosions (the 1000-line crossing),
+ad-hoc spaghetti-branch growth, canonical-layer / boundary leaks, and unearned
+abstractions as **presumptive blockers** — waivable only with a clear
+justification — while preferring a few high-conviction structural findings over a
+long list of cosmetic notes. It fills the gap between the toolkit's review *agents*
+and its runtime QA skill (`qa-sweep`): the maintainability counterpart to
+`pattern-reviewer` and the correctness path. System-agnostic — no product, path, or
+ticket names in the body; the one concrete number (1000 lines) is a
+decomposition-conversation starter, not a mechanical gate.
+
+The skill content was **operator-provided as a finalized spec and adopted
+verbatim**, with three deltas: `name` is the neutral `code-quality-review`,
+`disable-model-invocation` is dropped (so the skill is model-invocable), and the
+spec's "thermo-nuclear" branding is dropped throughout (neutral H1 and trigger
+phrases). Because the content was supplied rather than designed here, the
+`writing-skills` RED→GREEN authoring loop doesn't apply — this was a wiring task,
+not a derivation. See [`docs/decisions/code-quality-review.md`](decisions/code-quality-review.md).
+
+- Canonical `.claude/skills/code-quality-review/SKILL.md` propagated byte-identical
+  to all five mirrors (`.codex`, `.gemini`, `toolkit`, both onboarding reference
+  roots); origin doc `docs/skills/code-quality-review.md` written and mirrored;
+  roster, root README, toolkit README, and the marketplace-doc Codex skill
+  enumeration updated. `toolkit` `0.8.4` → `0.9.0` (new skill = minor),
+  `agent-workshop` `0.1.15` → `0.1.16` (onboarding payload mirrors grew). Both
+  `$expectedSkills` arrays in `scripts/validate-native-plugin.ps1` widened; the
+  validator passes.
+
+### code-quality-reviewer — new toolkit agent for the code-quality review stage
+
+Added `code-quality-reviewer`, the fifth toolkit review agent and the dispatchable
+counterpart to the new `code-quality-review` skill. It fills a stage the scaffold
+always named but never shipped: the implementation-review loop runs **code quality
+→ pattern → test trustworthiness**, and `pattern-reviewer` documents that it runs
+"after code-quality review," but the code-quality agent itself was left for each
+project to supply. This agent is it — a review-only subagent that **loads the
+`code-quality-review` skill as its rubric** and applies it to a diff in its own
+context (keeping the full diff out of the parent's window), with a built-in fallback
+when the skill is absent. It reviews the `### Git / diff output` and `### Changed
+file contents` sections a parent supplies, or gathers `git diff <base>...HEAD`
+(default base `main`) itself.
+
+The agent spec was operator-provided (originating in a Cursor "team kit") and
+**adapted** into the scaffold rather than copied verbatim: de-branded (no
+"thermo-nuclear"), repointed from the foreign plugin to the bundled skill, and made
+host-agnostic (Cursor subagent-type names replaced with the host's Task mechanism;
+Claude-format frontmatter with thin `.codex` / `.gemini` / `.opencode` wrappers).
+See [`docs/decisions/code-quality-reviewer.md`](decisions/code-quality-reviewer.md).
+
+- Canonical `.claude/agents/code-quality-reviewer.md` + host wrappers propagated
+  byte-identical to `plugins/toolkit/agents/` and both onboarding reference roots
+  (canonical → `references/agents/`, wrappers → `references/wrappers/<host>/`); origin
+  doc `docs/agents/code-quality-reviewer.md` written and mirrored. `marketplace/catalog.json`
+  gains the agent (role `review-only`, maturity `core`, pack `review-core`) and the
+  `review-core` pack list grows; re-mirrored. Agent roster, root README, and toolkit
+  README (`four` → `five` agents) updated. The toolkit-agents list in
+  `scripts/validate-native-plugin.ps1` widened. Rides the same unreleased batch as the
+  skill — `toolkit` `0.9.0`, `agent-workshop` `0.1.16`, no further bump. The validator
+  passes.
+
+### Repo cleanup — drop the redundant root onboarding skill tree
+
+Removed `skills/agent-workshop-onboard/`, an 86-file near-clone of the real
+marketplace payload at `plugins/agent-workshop/skills/agent-workshop-onboard/`. It
+was authored first, then duplicated into the plugin payload; the marketplace was
+pointed at the plugin copy and the root copy was frozen as a "source copy" kept
+alive only by the validator. It is not the marketplace source (both marketplaces
+point at `./plugins/agent-workshop`), not discoverable by Claude in this repo
+(`.claude/skills/` doesn't carry it), and not part of the `.codex`/`.gemini`
+cross-host parity convention — so it was pure maintenance tax: every new skill/agent
+had to mirror its references into both onboarding trees. Going forward there is one
+onboarding reference tree, not two. See
+[`docs/decisions/remove-root-onboarding-skill-tree.md`](decisions/remove-root-onboarding-skill-tree.md).
+
+- Deleted the root tree; `scripts/validate-native-plugin.ps1` lost its root-tree
+  checks (the reference-parity and cataloged-agent checks now run against the single
+  `plugins/agent-workshop/.../references` payload) and its now-unused
+  `Get-RelativeFileList` helper. `docs/marketplace/native-plugin.md` dropped the
+  "source copy" paragraph (kept the slim-payload rationale) and was re-mirrored. A
+  stray Codex caveat line was trimmed from the `README.md` install block. **No version
+  change** — the installable plugin payloads are untouched. The validator passes. The
+  larger duplication layers (the committed payload `references/` tree;
+  `.codex`/`.gemini` skill mirrors) are noted in the decision doc as a later pass.
+
+### Decouple the two plugins; drop the universal `.claude/` master
+
+Reorganized the scaffold's source-of-truth from "everything is a canonical copy in
+`.claude/`, mirrored everywhere and validated against it" to **each plugin is
+self-contained and authoritative for its own content, with no forced matching
+between them.** This fixes two things at once: `.claude/` no longer misrepresents
+the repo (it now holds only the few pieces the scaffold runs on itself —
+`change-log`, `push`, `wiki-maintainer`, `vigil`), and the onboarding plugin stops
+bundling the direct-use, self-contained skills it never adapts (adopters install
+`toolkit` for those). Pieces sort into three buckets — **toolkit-only** (the 7
+self-contained skills + `code-quality-reviewer`), **both** (the reviewers
+`spec`/`pattern`/`test`/`vigil`, a copy in each plugin, free to diverge), and
+**onboarding-only** (the project-coupled agents + workflow skills). An earlier
+in-session attempt to scope the repo's active set via `.claude/settings.json` was
+reverted in favor of this structural fix. See
+[`docs/decisions/decouple-plugins-self-contained.md`](decisions/decouple-plugins-self-contained.md).
+
+- Host dirs trimmed to the used-4 across `.claude/`, `.codex/`, `.opencode/`;
+  **`.gemini/` deleted entirely** (still an *adoption* target via the bundle's
+  `wrappers/gemini/` templates, just not a repo host dir). Onboarding bundle trimmed
+  to the adopt-set (8 agents, 6 skills); `code-quality-reviewer` removed from
+  `marketplace/catalog.json`. `scripts/validate-native-plugin.ps1` **rewritten** to a
+  per-plugin model (toolkit ships its declared sets; the onboarding bundle is
+  self-consistent; the repo's local set matches its bundle templates) — the
+  `.claude/`-master parity logic and the unused `Get-RelativeFileList` helper are
+  gone. `CLAUDE.md`, `AGENTS.md`, the rosters,
+  `docs/marketplace/{README,native-plugin}.md`, root `README.md`, and the onboarding
+  `SKILL.md` updated to the new layout; the portable convention docs are unchanged.
+  `docs/setup.md` (the manual copy-by-hand guide) was **removed** — the guided
+  onboarding skill is the adoption path, and its mechanics had become fiddly
+  post-decouple; its references were cleaned up. **No version bump** — installable
+  payloads are unchanged (`toolkit` `0.9.0`, `agent-workshop` `0.1.16`). The
+  validator passes.
+
+### Drop the redundant root `.claude-plugin/plugin.json`
+
+A plugin **marketplace** repo needs only `.claude-plugin/marketplace.json` at the
+root plus a `plugin.json` inside each plugin (`plugins/<name>/.claude-plugin/`); a
+root-level plugin manifest is not part of that structure and no host reads it
+(`/plugin install` resolves through the marketplace's plugin entries and their
+`source` dirs). Ours was a leftover the validator kept byte-in-sync with the
+payload manifest. Removed it — `scripts/validate-native-plugin.ps1` now treats the
+agent-workshop **payload** manifest
+(`plugins/agent-workshop/.claude-plugin/plugin.json`) as the source of truth for the
+plugin's name/version, and the marketplace-entry and Codex-manifest version checks
+anchor on it. `.claude-plugin/` now holds only `marketplace.json` (the correct
+marketplace structure). No version change; the validator passes.
+
+### Fold the pack catalog into the onboarding bundle; drop top-level `marketplace/`
+
+`marketplace/catalog.json` was the editable master that the onboarding bundle
+mirrored at `references/catalog.json` — but the only consumer (the
+`agent-workshop-onboard` skill) reads the **bundle** copy, and the master doesn't
+even ship in the plugin payload. So it was redundant, and its top-level
+`marketplace/` folder was confusingly named (it is not a host marketplace; the host
+marketplaces are `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json`).
+Removed the master and made `references/catalog.json` the canonical pack catalog (it
+already lived in the bundle, where it's consumed and shipped). The validator dropped
+the catalog-mirror check and now reads the cataloged-agent list from the bundle copy;
+`CLAUDE.md`, the rosters, and `docs/marketplace/{README,packs}.md` re-point at the
+bundle path. The top-level `marketplace/` folder is gone. No version change; the
+validator passes.
+
 ## 2026-06-24
 
 ### handoff-review — add a verify-then-continue mode for clean restarts

@@ -1,6 +1,6 @@
 # Agents
 
-Origin docs for the eight agents shipped in `.claude/agents/`. Each doc covers:
+Origin docs for the nine agents the scaffold ships (across the `toolkit` and `agent-workshop` plugins). Each doc covers:
 
 - **Origin** — the pressure that created the agent.
 - **Problem** — what specifically it solves.
@@ -9,9 +9,9 @@ Origin docs for the eight agents shipped in `.claude/agents/`. Each doc covers:
 - **Pitfalls** — mistakes observed in lived-in use.
 - **Adaptation notes** — how to fit it to your project.
 
-The agent specs in `.claude/agents/<name>.md` are the canonical contracts. These docs explain the *why*.
+Each agent's canonical spec lives in the plugin that ships it — `plugins/toolkit/agents/<name>.md` for the direct-use reviewers, the onboarding bundle (`plugins/agent-workshop/.../references/agents/<name>.md`) for the adoptable ones. These docs explain the *why*.
 
-Marketplace pack metadata lives in [`../../marketplace/catalog.json`](../../marketplace/catalog.json), with operator-facing guidance in [`../marketplace/`](../marketplace/). The roster below explains agent roles; the marketplace explains adoption bundles and required project profiles.
+Pack metadata lives in the onboarding plugin's bundled catalog (`plugins/agent-workshop/skills/agent-workshop-onboard/references/catalog.json`), with operator-facing guidance in [`../marketplace/`](../marketplace/). The roster below explains agent roles; the marketplace docs explain adoption bundles and required project profiles.
 
 ## Roster
 
@@ -19,6 +19,7 @@ Marketplace pack metadata lives in [`../../marketplace/catalog.json`](../../mark
 |---|---|---|
 | [`wiki-maintainer`](wiki-maintainer.md) | `docs-core` | Repo-local documentation owner; diff-driven by default, audit-mode on request. |
 | [`doc-indexer`](doc-indexer.md) | `docs-core` | Routing and audit helper; reduces context burden on `wiki-maintainer`. |
+| [`code-quality-reviewer`](code-quality-reviewer.md) | `review-core` | Strict, structure-first code-quality audit over a diff; the code-quality stage before pattern-reviewer. Loads the `code-quality-review` skill's rubric. |
 | [`pattern-reviewer`](pattern-reviewer.md) | `review-core` | Diff-driven implementation-pattern compliance check after code-quality review. |
 | [`spec-reviewer`](spec-reviewer.md) | `review-core` | Pre-implementation gate for design specs and implementation plans. |
 | [`test-quality-reviewer`](test-quality-reviewer.md) | `review-core` | Test-code trustworthiness, risk coverage, and test-strategy review; diff, audit, and strategy modes. |
@@ -32,7 +33,7 @@ These agents are designed to compose, not duplicate:
 
 - **Documentation:** `wiki-maintainer` owns; `doc-indexer` retrieves and audits.
 - **Pre-implementation review:** `spec-reviewer` (specs and plans, before code).
-- **Implementation review:** the project's code-quality reviewer, then `pattern-reviewer`, then `test-quality-reviewer` (after code; use `mode: strategy` separately for project-level test-quality profiles).
+- **Implementation review:** `code-quality-reviewer` (maintainability and structure), then `pattern-reviewer` (pattern conformance), then `test-quality-reviewer` (test trustworthiness; use `mode: strategy` separately for project-level test-quality profiles).
 - **Forward-looking research:** `research` (skill) → `research` (agent).
 - **Visual execution:** `visual-advisor` (skill, taste) → `visual-implementer` (agent, execution).
 - **Governance:** `vigil` audits the agent layer itself.
