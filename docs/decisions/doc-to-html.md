@@ -146,6 +146,59 @@ doc re-mirrored. `toolkit` `0.7.0` → `0.7.1`, `agent-workshop` `0.1.9` →
 `0.1.10` (its onboarding payload carries the changed reference copies).
 `scripts/validate-native-plugin.ps1` passes.
 
+## Amendment (2026-07-02): nine field findings from a real end-to-end run
+
+An operator ran the skill (at `toolkit` 0.11.0) end-to-end on a 35-finding
+performance-audit markdown in a repo with house-style siblings and fed back
+nine findings — six from the run itself (F1–F6), three from reading the
+fallback path (F7–F9, flagged as un-executed and reviewed skeptically). All
+nine verified against the current source and were patched:
+
+- **F1 — self-contradictory sources.** New rigid process rule: derived numbers
+  (totals, per-section counts) are recomputed from the rendered items;
+  divergences from the source's stated numbers are flagged in the completion
+  summary, never silently shipped either way. Checklist item 6 extended to
+  match. (The run's source claimed "34 findings — 11/12/8/4", which sums
+  to 35.)
+- **F2 — source-owned id schemes.** The severity-ordering bullet gains an
+  exception: a source that already carries a stable, cross-referenced id
+  scheme keeps it; the Renumbering procedure governs ids the skill assigns.
+  Checklist item 3 reworded to "skill-assigned ids run top-down."
+- **F3 — default output path.** New process rule: same directory, same
+  basename, `.html` extension, unless the user or document names a target.
+- **F4 — conditional evidence appendix.** Moved out of the unconditional
+  "Every page gets" list: appendix only when the source carries bulk raw
+  evidence; compact evidence (`file:line`, short quotes) stays inline.
+- **F5 — rigid/adaptable boundary for architecture.** New paragraph: house
+  style governs visual treatment; it never waives the architecture itself
+  (self-contained file, working TOC/scroll-spy/keyboard nav, print, verified
+  links). Verified-links rule extended to relative/companion links (target
+  file must exist); checklist item 7 extended.
+- **F6 — sibling tie-break.** Several qualifying siblings → most recently
+  modified hand-authored report wins.
+- **F7 — Step 0 glob exclusions.** Generated output excluded
+  (`node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `.next/`);
+  a candidate counts only if hand-authored (inline `<style>`, prose content).
+- **F8 — reference implementation for mandated chrome.** Reference markup
+  gains the layout shell (sticky nav, progress bar, hero/stat-grid, table
+  wrap) and the ~20-line scroll-spy + keyboard-nav + progress-bar JS with the
+  three classic bugs pinned shut (key handlers inside form fields, short last
+  section never activating, order array drifting from the DOM).
+- **F9 — print reference + verification.** Reference print block added;
+  new checklist item 8 (white bg, dark text, nav/hints hidden, cards
+  `break-inside:avoid`).
+
+Core stances untouched: one-pass generation, adaptable design vs rigid
+process, house style beats defaults, terse instruction style. The patches add
+missing rules in place rather than restructuring.
+
+Packaging: the skill now ships only in `plugins/toolkit/` (post-decoupling;
+the onboarding bundle does not carry it), so one canonical copy changed.
+Origin doc `docs/skills/doc-to-html.md` updated for parity (third-round
+paragraph, solution-shape additions, five new pitfalls). `toolkit` `0.11.0` →
+`0.11.1` across all four manifests (Claude/Codex/Cursor plugin manifests and
+the Claude marketplace entry).
+
 ## Non-goals
 
 - Not a general frontend-design skill — scope is the report/document page

@@ -13,7 +13,7 @@ Two stances, deliberately different: the **visual design is adaptable** — firs
 
 ## Step 0 — match the repo's house style first
 
-Before applying any default in this skill, glob the repo (especially `tmp/` and `docs/`) for an existing standalone `.html` report. **If one exists, it is the house style:** read its `<style>` block and component vocabulary and match it — palette, type scale, class system, card/chip/table shapes. Consistency with a sibling artifact beats this skill's defaults every time; a wrong-aesthetic first pass gets thrown away whole, so detect before you generate.
+Before applying any default in this skill, glob the repo (especially `tmp/` and `docs/`) for an existing standalone `.html` report — excluding generated output (`node_modules/`, `dist/`, `coverage/`, `playwright-report/`, `.next/`, and similar build/test artifacts). A candidate counts only if it is hand-authored: an inline `<style>` block and prose content, not a minified or tool-emitted page. **If one exists, it is the house style:** read its `<style>` block and component vocabulary and match it — palette, type scale, class system, card/chip/table shapes. If several qualify, the most recently modified hand-authored report wins. Consistency with a sibling artifact beats this skill's defaults every time; a wrong-aesthetic first pass gets thrown away whole, so detect before you generate.
 
 The design system below is the **fallback for when no sibling report exists** — not the first choice.
 
@@ -24,10 +24,13 @@ Every page gets:
 - **Single self-contained file.** Inline CSS and JS, no external assets, no build step. The page must open from disk.
 - **Sticky TOC sidebar** (~288px) with an active-item highlight (scroll-spy) and keyboard navigation (`j`/`k` or arrow keys) driven by one explicit array of section ids in document order. A thin top progress bar is a nice touch.
 - **Tables over walls.** Short enumerable facts go in tables; explanation lives in the surrounding prose, not in the cells.
-- **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Note: some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch (e.g. client-side error-code decoders) — confirm a URL actually serves content before relying on it.
-- **Evidence appendix.** Raw quotes, terminal output, and source excerpts live in an appendix at the end; the body cites them with a small `→ A1` cite-chip. The body stays readable without dropping the proof. A footer listing the artifacts the work produced is high-value for audit/research output.
+- **Verified links only.** Don't ship a link you didn't fetch; annotate the result inline (small green/red run next to the link). Enrichment links are optional — but whatever ships is verified. Note: some canonical-looking doc URLs are JS-rendered and 404 to a server-side fetch (e.g. client-side error-code decoders) — confirm a URL actually serves content before relying on it. Relative/companion links (a sibling file, the source md): verify the target file exists.
 - **Styled scrollbars.** Every scroll container — the page, the sidebar, and especially overflowing `.term`/code blocks and wide tables — gets themed scrollbars, never the raw OS default (CSS below).
-- **Print media query.** White background, dark text, hide the nav and keyboard hints.
+- **Print media query.** White background, dark text, hide the nav and keyboard hints (reference CSS below; it's on the checklist).
+
+**Evidence appendix — conditional, not standing.** When the source carries bulk raw evidence (transcripts, terminal dumps, long excerpts), it moves to an appendix at the end and the body cites it with a small `→ A1` cite-chip — the body stays readable without dropping the proof. When the evidence is already compact (`file:line` refs, short quotes), it stays inline in the cards; an appendix of one-liners is empty ceremony. Either way, a footer listing the artifacts the work produced is high-value for audit/research output.
+
+**What yields to house style, what doesn't.** Step 0's sibling governs *visual treatment* — link-annotation style, nav chrome, chip/card/table shapes all follow the house look, including where it disagrees with the defaults below. It never waives the architecture itself: single self-contained file, working TOC/scroll-spy/keyboard nav, print stylesheet, and verified links ship on every page regardless of aesthetic.
 
 ## Design system — defaults (fallback only)
 
@@ -51,14 +54,16 @@ Use these only when Step 0 finds no house style. They reproduce a rich, card-and
 
 For reports that carry findings (audit, QA, review):
 
-- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order (e.g. medium, high, low, critical) ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure** so ids, cross-refs, TOC, and the nav array all match.
+- **Order by severity, descending.** Most severe first, always (critical → high → medium → low). The ids are then reassigned top-down, so a deck whose findings arrive in mixed order (e.g. medium, high, low, critical) ships as `F-1` critical, `F-2` high, …. After sorting, run the **Renumbering procedure** so ids, cross-refs, TOC, and the nav array all match. **Exception:** when the source already carries a stable, cross-referenced id scheme of its own (severity-coded ids tied to its priority matrix or roadmap), preserve those ids and skip reassignment — the Renumbering procedure governs ids this skill assigns, not ids the source owns.
 - **Every finding card carries evidence and an action.** Not just label → headline → body. Required shape: id + chip header (severity + evidence tier) → one-line **claim** (quote box) → an **Evidence** line that is concrete (a live result, `file:line`, or an appendix cite) → a **Fix** line with a cost pill. The headline states the finding; the body proves it and says what to do. Concise beats extensive — but never a claim without its evidence.
 - **Group when items partition.** When findings naturally split (by product, area, severity, owner), group them into sub-sections with prefixed ids (`AUTH-1`, `API-1`, …), each its own TOC group, then run the Renumbering procedure. A recognised variation, not an afterthought.
 - **Optional Method section.** For audit/QA/research output, a short "how this was produced" section — a few numbered practices + a one-line phase chain — helps the reader trust the claims.
 
 ## Process rules (rigid)
 
+- **Default output path.** Same directory as the source, same basename, `.html` extension — unless the user or the document itself names a different target.
 - **One pass.** Generate the full HTML in one pass from the markdown.
+- **Derived numbers are recomputed.** Totals and per-section counts come from the items actually rendered, not from the source's prose. When the source's stated numbers disagree — with the items, or with each other — render the recomputed values and flag the divergence to the user in the completion summary; never silently ship either side.
 - **Targeted edit vs clean rewrite.** Content tweaks are targeted edits. A change of design DIRECTION — including switching to match a house style found late — is always a full clean rewrite; incrementally restyling markup built for a different aesthetic compounds into a mess.
 - **One knob at a time.** If the user dislikes the result, ask which specific element fails (contrast, density, hierarchy) and turn that one knob; don't swing the whole design.
 - **Renumbering procedure.** When an insert, move, drop, sort, or re-group forces renumbering: renumber via descending replace-all or a temp placeholder (avoid collisions), then update every cross-reference, TOC entry, element id, and the keyboard-nav order array, and verify with a grep that ids are sequential and references resolve.
@@ -67,11 +72,12 @@ For reports that carry findings (audit, QA, review):
 
 1. Parse-check the HTML (balanced tags); no garbage/stray CSS tokens.
 2. Every TOC target id exists; the keyboard-nav order array matches document order.
-3. Findings are ordered most-severe-first; ids run top-down.
+3. Findings are ordered most-severe-first; skill-assigned ids run top-down (source-owned id schemes are preserved as-is).
 4. Every scroll container has a styled scrollbar (no raw OS bars).
 5. Section-number badges align with their headings; cost pills sit in one consistent place across all cards.
-6. No markdown content dropped — spot-check section count and headline statements.
-7. Every shipped link was fetched and annotated.
+6. No markdown content dropped — spot-check section count and headline statements; derived totals/counts match the rendered items, and any divergence from the source's stated numbers is flagged in the completion summary.
+7. Every shipped external link was fetched and annotated; every relative link's target file exists.
+8. Print media query present: white background, dark text, nav and keyboard hints hidden, cards avoid page breaks.
 
 ## Reference markup
 
@@ -89,6 +95,27 @@ Tokens and the cross-browser styled scrollbar (applies to the page and every scr
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#2c3a52;border-radius:6px;border:2px solid var(--bg)}
 ::-webkit-scrollbar-thumb:hover{background:#3a4d6b}
+```
+
+Layout shell — sticky nav, progress bar, hero + stat-grid, table wrap. This is the chrome the architecture section mandates; copy it on fallback runs instead of improvising:
+
+```css
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,'Segoe UI',sans-serif}
+.layout{display:flex;max-width:1400px;margin:0 auto}
+nav{position:sticky;top:0;flex:0 0 288px;height:100vh;overflow-y:auto;padding:28px 18px;border-right:1px solid var(--line)}
+nav a{display:block;color:var(--muted);text-decoration:none;font-size:13.5px;line-height:1.45;padding:6px 10px;border-radius:6px;border-left:2px solid transparent}
+nav a.active{color:var(--accent);background:#16202e;border-left-color:var(--accent)}
+main{flex:1;min-width:0;padding:40px 48px 80px}
+#bar{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:10}
+.hero{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:30px 34px;margin-bottom:36px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:20px}
+.stat{background:#101820;border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font-size:26px;color:var(--text)}
+.stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:14px 0}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}
+th{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.07em}
 ```
 
 Section / card header row — the number badge and its heading must share a centerline. Use `align-items:center` (NOT `baseline`) whenever the badge and heading font sizes differ, or the number floats high/low:
@@ -163,6 +190,46 @@ Vertical stepper (ordered process; connector line through the dots):
 .stepper li::before{content:"";position:absolute;left:7px;top:18px;bottom:0;width:2px;background:var(--line)}
 .stepper li:last-child::before{display:none}
 .dot{flex:none;width:16px;height:16px;margin-top:4px;border-radius:50%;border:2px solid var(--accent);background:#0f1520}
+```
+
+Interactive chrome — scroll-spy, keyboard nav, progress bar. The three classic bugs are pinned shut here: key handlers must not fire inside form fields, a short last section never enters a top-of-viewport observation band (the bottom-of-page fallback covers it), and the `order` array drifts from the DOM (keep the comment's warning; the renumbering procedure updates it):
+
+```html
+<script>
+const order=['hero','f01','f02','a1'];   // section ids in document order — MUST match the DOM
+const links=Object.fromEntries([...document.querySelectorAll('nav a')].map(a=>[a.hash.slice(1),a]));
+let active=null;                         // null, not order[0] — the first observer callback must apply the initial highlight
+const setActive=id=>{if(!links[id]||id===active)return;
+  links[active]?.classList.remove('active');links[id].classList.add('active');active=id;};
+const spy=new IntersectionObserver(es=>{
+  const v=es.filter(e=>e.isIntersecting);if(v.length)setActive(v[0].target.id);},
+  {rootMargin:'0px 0px -60% 0px'});      // activate in the top 40% of the viewport
+order.forEach(id=>{const el=document.getElementById(id);if(el)spy.observe(el);});
+addEventListener('keydown',e=>{
+  if(e.target.closest('input,textarea,select')||e.metaKey||e.ctrlKey||e.altKey)return;
+  const d={j:1,ArrowDown:1,k:-1,ArrowUp:-1}[e.key];if(!d)return;e.preventDefault();
+  const next=order[Math.min(order.length-1,Math.max(0,order.indexOf(active)+d))];
+  document.getElementById(next)?.scrollIntoView({behavior:'smooth'});setActive(next);
+});
+addEventListener('scroll',()=>{
+  const h=document.documentElement,p=h.scrollTop/(h.scrollHeight-h.clientHeight)||0;
+  document.getElementById('bar').style.width=p*100+'%';
+  if(p>0.99)setActive(order[order.length-1]);   // short last section: bottom of page wins
+},{passive:true});
+</script>
+```
+
+Print — mandatory architecture, checklist item 8:
+
+```css
+@media print{
+  body{background:#fff;color:#111}
+  nav,#bar,.kbd-hint{display:none}
+  .layout{display:block} main{padding:0}
+  .hero,.card,.stat{background:#fff;border-color:#bbb;break-inside:avoid}
+  .term{background:#f4f4f4;color:#222;border-color:#ccc}
+  a{color:#134a9e}
+}
 ```
 
 ## Suggested invocation

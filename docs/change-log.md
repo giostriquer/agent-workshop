@@ -1,5 +1,25 @@
 # Change Log
 
+## 2026-07-02
+
+### doc-to-html — nine field findings from an end-to-end run patched in
+
+An operator ran `doc-to-html` (at `toolkit` 0.11.0) end-to-end on a 35-finding
+performance audit and fed back nine findings; all nine verified against the current
+source and landed. The skill gains: a recompute-and-flag rule for sources whose own
+numbers contradict their items; an exception preserving source-owned id schemes from
+renumbering; a default output path (source dir/basename, `.html`); a conditional —
+not standing — evidence appendix; an explicit boundary between what yields to house
+style and what never does (plus relative-link verification); a tie-break and
+generated-output exclusions with a hand-authored test for Step 0's sibling glob; and
+reference implementations for the previously improvised chrome (layout shell,
+scroll-spy/keyboard-nav/progress-bar JS, print block) with a new print checklist
+item. Core stances (one-pass, adaptable design vs rigid process, house style first)
+untouched. Canonical copy is `plugins/toolkit/skills/doc-to-html/SKILL.md` only;
+origin doc updated for parity. `toolkit` `0.11.0` → `0.11.1` across all four
+manifests; the validator passes. See
+[`docs/decisions/doc-to-html.md`](decisions/doc-to-html.md) (2026-07-02 amendment).
+
 ## 2026-06-30
 
 ### Add a Cursor plugin marketplace surface + per-plugin LICENSEs
