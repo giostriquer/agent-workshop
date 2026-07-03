@@ -166,9 +166,13 @@ buries the verdict). It has three parts and nothing else:
    coordination or that a fix here could regress — plus one line on what was
    searched (so "none found" means something). Not a catalogue of every related
    ticket and branch.
-3. **Readiness:** if actionable, where to start, the relevant code / docs,
-   gotchas, dependencies, open unknowns; if not, exactly what is missing or what
-   decision unblocks it.
+3. **Readiness:** the section an implementer scans back to, so it is shaped for
+   scanning. It opens with a one-line call — actionable, blocked (and on what),
+   or not actionable (and exactly what is missing or what decision unblocks it)
+   — plus where to start when there is one. The substance follows as short
+   labeled bullets: one per candidate direction with its one-line trade-off
+   (mark the recommendation when you have one), one per gotcha, dependency, or
+   open unknown, each anchored to the relevant code or docs.
 
 A `confirmed` premise can still be `confirmed-but-blocked` on readiness — surface
 that when it is true.
@@ -214,7 +218,8 @@ or `tmp/<YYYY-MM-DD>-<slug>-claim-check.md`); otherwise in-chat.
   nor under-investigate a load-bearing claim.
 - Lead with the verdict; the report is verdict + prior/parallel work + readiness
   and nothing else — no per-claim table, no echoed source, no blockquote wrapper.
-  Keep prior/parallel work to what bears on the verdict.
+  Keep prior/parallel work to what bears on the verdict; shape readiness as a
+  one-line call followed by labeled bullets.
 - Stop at the fix, not at the search. Build the harness that proves or breaks a
   claim; do not implement the fix — acting on the findings is the separate step
   the operator owns.

@@ -1,5 +1,24 @@
 # Change Log
 
+## 2026-07-03
+
+### claim-check — readiness section reshaped for scanning
+
+An operator flagged a real claim-check report whose verdict and prior/parallel-work
+sections read well but whose readiness section was one dense paragraph — candidate
+directions inline as "(a) … (b) … (c) …" with gotchas woven in. The Output contract's
+readiness item was a content list with no shape, so it now carries a positive recipe
+(per `writing-skills` "match the form to the failure" — shaping failures get recipes,
+not prohibitions): a one-line readiness call, then short labeled bullets — one per
+candidate direction with its trade-off and marked recommendation, one per gotcha /
+dependency / open unknown, each anchored to code or docs. Verdict and prior-work stay
+prose. Wording micro-tested 5-vs-5 against the incumbent on the real failing material
+before landing: all five recipe reps converged on the scannable shape; the incumbent
+left gotchas as dense prose in five of five. Canonical copy is
+`plugins/toolkit/skills/claim-check/SKILL.md` only; origin doc updated for parity.
+`toolkit` `0.11.1` → `0.11.2` across all four manifests; the validator passes. See
+[`docs/decisions/claim-check-readiness-shape.md`](decisions/claim-check-readiness-shape.md).
+
 ## 2026-07-02
 
 ### doc-to-html — nine field findings from an end-to-end run patched in

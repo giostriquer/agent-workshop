@@ -129,6 +129,22 @@ Surfaced by early lived-in use on real tickets:
   the slug, memory, or inference for the resource. Distinct from `inconclusive` by
   construction (can't-start vs hit-a-wall). See
   [`docs/decisions/claim-check-access-precondition.md`](../decisions/claim-check-access-precondition.md).
+- **Readiness is shaped for scanning.** A real run returned a strong verdict and
+  prior-work sweep but a readiness section written as one dense paragraph — the
+  candidate directions inline as "(a) … (b) … (c) …" with the gotchas woven in —
+  and the operator flagged it as hard to read. This is a shaped-output failure,
+  not a discipline one, so per `writing-skills` ("match the form to the
+  failure") the fix is a recipe, not a prohibition: readiness opens with a
+  one-line call (actionable / blocked-and-on-what / not-actionable-and-why, plus
+  where to start) and everything enumerable follows as short labeled bullets —
+  one per candidate direction with its trade-off and marked recommendation, one
+  per gotcha / dependency / open unknown, each anchored to code or docs. The
+  wording was micro-tested 5-vs-5 against the incumbent on the real failing
+  material: all five recipe reps converged on the scannable shape, while the
+  incumbent left the gotchas as dense prose in five of five and reproduced the
+  fully-inline failure in one. Verdict and prior/parallel work stay prose — they
+  are read once; readiness is the part the implementer returns to. See
+  [`docs/decisions/claim-check-readiness-shape.md`](../decisions/claim-check-readiness-shape.md).
 - **Depth over speed — and "needs more information" is honest.** Two separate
   sessions returned confident verdicts too early and only found the real evidence
   after the operator contested them. The fix is a grounding gate, not a nudge: an
