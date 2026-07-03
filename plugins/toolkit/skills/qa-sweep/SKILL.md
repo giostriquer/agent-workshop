@@ -1,6 +1,6 @@
 ---
 name: qa-sweep
-description: Use when running a broad QA / verification pass over a release, branch, feature, or app surface that splits into independent slices, and you want team-scale coverage without trading away rigor. Fans out a QA team over the slices — each driving the real running artifact — then treats every returned finding as a lead and reproduces the verdict-moving ones firsthand before they count, drops claims that do not reproduce, separates regressions from pre-existing bugs against a baseline, and synthesizes a verdict-first report with each finding tagged by how it was verified. The decomposition gate and the firsthand-corroboration loop are the rigid core; how you slice, harness, and size the team is yours to adapt. NOT for a single code change (verify that one change at its runtime surface inline) or a single premise / ticket / hunch (that is claim-check) — this is the corroborated, team-scale sweep.
+description: Use when running a broad QA / verification pass over a release, branch, feature, or app surface that splits into independent slices, and you want team-scale coverage without trading away rigor. Fans out a QA team over the slices — each driving the real running artifact — then treats every returned finding as a lead and reproduces the verdict-moving ones firsthand before they count, drops claims that do not reproduce, separates regressions from pre-existing bugs against a baseline, and synthesizes a verdict-first report with each finding tagged by how it was verified. The decomposition gate and the firsthand-corroboration loop are the rigid core; how you slice, harness, and size the team is yours to adapt. NOT for a single code change (that is empirical-proof) or a single premise / ticket / hunch (that is claim-check) — this is the corroborated, team-scale sweep.
 ---
 
 # QA Sweep
@@ -24,8 +24,7 @@ Use when ALL of these hold:
 
 Reach for a cheaper tool instead when:
 
-- It's **one code change** — verify it at its runtime surface inline; you don't
-  need a team.
+- It's **one code change** — that's `empirical-proof`; you don't need a team.
 - It's **one premise, ticket, or hunch** — that's `claim-check`.
 - The surface **won't decompose**, or it's write-heavy with **no isolation
   available** (parallel mutation will corrupt the shared state you're testing).

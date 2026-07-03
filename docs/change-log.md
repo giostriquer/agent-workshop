@@ -2,6 +2,26 @@
 
 ## 2026-07-03
 
+### empirical-proof — new toolkit skill: post-change runtime proof with anti-cheating teeth
+
+A ninth direct-use skill lands in `toolkit`: after finishing work that touched a
+runnable surface (MCP tools and REST API endpoints are named must-covers), it
+gates on the app genuinely running (health-checked, right build), fans probe
+scenarios out to subagents under a raw-evidence contract (real MCP client
+connections / real HTTP only — never mocks or in-process harnesses),
+corroborates firsthand, and reports a verdict-first `verified` / `broken` /
+`blocked` — never fixing local setup or the bugs it finds. Built
+RED→GREEN→REFACTOR on a live bait harness (planted runtime-only bug, green unit
+tests over the same buggy code, a boot-blocked variant, request-log tripwires):
+baseline agents fixed-during-verify (3/4) and fabricated the missing dependency
+(2/2); with the skill, 6/6 runs verdict honestly, and the one GREEN loophole —
+unproven "server stopped" claims — became the evidence-bound cleanup rule.
+`qa-sweep`'s single-change NOT-for clause now routes to `empirical-proof`.
+`toolkit` `0.11.2` → `0.12.0` across all four manifests; the validator's
+expected-skills lists extended and passing. See
+[`docs/decisions/empirical-proof.md`](decisions/empirical-proof.md) and the
+origin doc [`docs/skills/empirical-proof.md`](skills/empirical-proof.md).
+
 ### claim-check — readiness section reshaped for scanning
 
 An operator flagged a real claim-check report whose verdict and prior/parallel-work
